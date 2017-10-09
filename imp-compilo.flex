@@ -6,11 +6,11 @@
 %unicode
 %line
 %column
+%type Symbol
 %standalone
 
 // Constructor code
 %init{
-	System.out.println("Initialization");
 %init}
 
 // Class code (methods and attributes)
@@ -19,27 +19,45 @@
 %}
 
 %eof{
-   System.out.println("Done");
 %eof}
 
 
-// Regular Expressions
-EndOfLine = "\r"?"\n"
+// Return value of the program
+%eofval{
+	return new Symbol(LexicalUnit.END, yyline, yycolumn);
+%eofval}
 
+// Extended Regular Expressions
+AlphaUpperCase = [A-Z]
+AlphaLowerCase = [a-z]
+Alpha          = {AlphaUpperCase}|{AlphaLowerCase}
+Numeric        = [0-9]
+AlphaNumeric	 = {Alpha}|{Numeric}
+
+Sign           = [+-]
+Integer        = {Sign}?(([1-9][0-9]*)|0)
+Decimal        = \.[0-9]*
+Exponent       = [eE]{Integer}
+Real           = {Integer}{Decimal}?{Exponent}?
+Identifier     = {Alpha}{AlphaNumeric}*
 
 // States
 
-%xstate YYINITIAL,PRINT
+%xstate YYINITIAL
 
 %% // Identification of tokens and actions
 
 <YYINITIAL>{
-   {EndOfLine} {yybegin(PRINT);}
-   .           {} //by default, all non matched char are printed on output
-                  //we force to not print them
-}
 
-<PRINT>{
-	{EndOfLine} {yybegin(YYINITIAL);}
-	.           {System.out.println(yytext());} //we print them explicitly
+	"!"		        {System.out.println("NOT: " + yytext()); return new Symbol(LexicalUnit.NOT,yyline, yycolumn);}
+
+	// Decimal number in scientific notation
+	{Real}			  {System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));}
+
+	// C99 variable identifier
+	{Identifier}  {System.out.println("VARNAME: " + yytext()); return new Symbol(LexicalUnit.VARNAME,yyline, yycolumn, yytext());}
+
+	// Ignore other characters
+	.             {}
+
 }

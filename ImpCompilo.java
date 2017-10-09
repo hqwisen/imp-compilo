@@ -18,7 +18,6 @@ class ImpCompilo {
 
   /** lexical states */
   public static final int YYINITIAL = 0;
-  public static final int PRINT = 2;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -27,15 +26,16 @@ class ImpCompilo {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1, 1
+     0, 0
   };
 
   /** 
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\12\0\1\2\1\3\1\3\1\1\167\0\1\3\u1fa2\0\1\3\1\3"+
-    "\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\12\0\1\10\1\10\1\10\1\10\23\0\1\7\11\0\1\3\1\0"+
+    "\1\3\1\5\1\0\1\2\11\4\7\0\4\1\1\6\25\1\6\0"+
+    "\4\1\1\6\25\1\12\0\1\10\u1fa2\0\1\10\1\10\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
 
   /** 
    * Translates characters to character classes
@@ -48,10 +48,11 @@ class ImpCompilo {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\1\1\1\2\1\3\1\2\1\4\1\2\1\5";
+    "\1\0\1\1\1\2\1\3\1\1\1\3\1\4\1\5"+
+    "\1\3\1\0\1\3\1\0\1\3";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[9];
+    int [] result = new int[13];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -76,11 +77,11 @@ class ImpCompilo {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\4\0\10\0\14\0\10\0\10\0\10\0\20"+
-    "\0\10";
+    "\0\0\0\11\0\22\0\33\0\44\0\55\0\11\0\11"+
+    "\0\66\0\77\0\11\0\110\0\121";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[9];
+    int [] result = new int[13];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -103,11 +104,15 @@ class ImpCompilo {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\6"+
-    "\6\0\1\5\3\0\1\11\1\0";
+    "\1\2\1\3\1\4\1\5\1\6\1\2\1\3\1\7"+
+    "\1\10\12\0\2\3\1\0\1\3\1\0\1\3\7\0"+
+    "\1\11\1\12\4\0\1\4\1\0\1\6\6\0\1\6"+
+    "\1\0\1\6\1\11\1\12\4\0\1\11\1\0\1\11"+
+    "\1\0\1\12\4\0\1\13\1\14\1\15\6\0\1\13"+
+    "\1\0\1\15\6\0\1\15\1\0\1\15\4\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[20];
+    int [] result = new int[90];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -145,10 +150,11 @@ class ImpCompilo {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\2\0\1\11\1\1\3\11\1\1\1\11";
+    "\1\0\1\11\4\1\2\11\1\1\1\0\1\11\1\0"+
+    "\1\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[9];
+    int [] result = new int[13];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -233,8 +239,7 @@ class ImpCompilo {
    * @param   in  the java.io.Reader to read input from.
    */
   ImpCompilo(java.io.Reader in) {
-  	System.out.println("Initialization");
-    this.zzReader = in;
+      this.zzReader = in;
   }
 
 
@@ -248,7 +253,7 @@ class ImpCompilo {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 54) {
+    while (i < 90) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -458,8 +463,7 @@ class ImpCompilo {
   private void zzDoEOF() {
     if (!zzEOFDone) {
       zzEOFDone = true;
-       System.out.println("Done");
-
+    
     }
   }
 
@@ -471,7 +475,7 @@ class ImpCompilo {
    * @return      the next token
    * @exception   java.io.IOException  if any I/O-Error occurs
    */
-  public int yylex() throws java.io.IOException {
+  public Symbol yylex() throws java.io.IOException {
     int zzInput;
     int zzAction;
 
@@ -608,7 +612,8 @@ class ImpCompilo {
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
             zzDoEOF();
-        return YYEOF;
+          { 	return new Symbol(LexicalUnit.END, yyline, yycolumn);
+ }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
@@ -617,19 +622,19 @@ class ImpCompilo {
             }
           case 6: break;
           case 2: 
-            { System.out.print(yytext());
+            { System.out.println("VARNAME: " + yytext()); return new Symbol(LexicalUnit.VARNAME,yyline, yycolumn, yytext());
             }
           case 7: break;
           case 3: 
-            { yybegin(PRINT);
+            { System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));
             }
           case 8: break;
           case 4: 
-            { System.out.println(yytext());
+            { System.out.println("NOT: " + yytext()); return new Symbol(LexicalUnit.NOT,yyline, yycolumn);
             }
           case 9: break;
           case 5: 
-            { yybegin(YYINITIAL);
+            { System.out.print(yytext());
             }
           case 10: break;
           default:
