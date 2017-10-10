@@ -33,9 +33,9 @@ class ImpCompilo {
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\12\0\1\10\1\10\1\10\1\10\23\0\1\7\11\0\1\3\1\0"+
-    "\1\3\1\5\1\0\1\2\11\4\7\0\4\1\1\6\25\1\6\0"+
-    "\4\1\1\6\25\1\12\0\1\10\u1fa2\0\1\10\1\10\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\12\0\1\0\1\7\1\7\1\7\42\0\1\0\11\0\7\0\32\0"+
+    "\6\0\1\0\1\1\1\0\1\6\1\2\1\0\1\3\1\0\1\4"+
+    "\4\0\1\5\14\0\12\0\1\7\u1fa2\0\1\7\1\7\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
 
   /** 
    * Translates characters to character classes
@@ -48,11 +48,10 @@ class ImpCompilo {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\1\1\1\2\1\3\1\1\1\3\1\4\1\5"+
-    "\1\3\1\0\1\3\1\0\1\3";
+    "\1\0\3\1\1\2\3\0\1\3\1\0\1\4";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[13];
+    int [] result = new int[11];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -77,11 +76,11 @@ class ImpCompilo {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\11\0\22\0\33\0\44\0\55\0\11\0\11"+
-    "\0\66\0\77\0\11\0\110\0\121";
+    "\0\0\0\10\0\20\0\30\0\10\0\40\0\50\0\60"+
+    "\0\10\0\70\0\10";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[13];
+    int [] result = new int[11];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -104,15 +103,12 @@ class ImpCompilo {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\2\1\3\1\4\1\5\1\6\1\2\1\3\1\7"+
-    "\1\10\12\0\2\3\1\0\1\3\1\0\1\3\7\0"+
-    "\1\11\1\12\4\0\1\4\1\0\1\6\6\0\1\6"+
-    "\1\0\1\6\1\11\1\12\4\0\1\11\1\0\1\11"+
-    "\1\0\1\12\4\0\1\13\1\14\1\15\6\0\1\13"+
-    "\1\0\1\15\6\0\1\15\1\0\1\15\4\0";
+    "\1\2\1\3\1\4\4\2\1\5\12\0\1\6\12\0"+
+    "\1\7\5\0\1\10\12\0\1\11\5\0\1\12\10\0"+
+    "\1\13\2\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[90];
+    int [] result = new int[64];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -150,11 +146,10 @@ class ImpCompilo {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\4\1\2\11\1\1\1\0\1\11\1\0"+
-    "\1\1";
+    "\1\0\1\11\2\1\1\11\3\0\1\11\1\0\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[13];
+    int [] result = new int[11];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -230,6 +225,13 @@ class ImpCompilo {
   private int zzFinalHighSurrogate = 0;
 
   /* user code: */
+
+    private Symbol symbol(LexicalUnit lexicalUnit){
+        Symbol symbolObject = new Symbol(lexicalUnit, yyline,
+                                         yycolumn, yytext());
+        System.out.println(symbolObject);
+        return symbolObject;
+    }
 
 
 
@@ -620,23 +622,19 @@ class ImpCompilo {
           case 1: 
             { 
             }
-          case 6: break;
+          case 5: break;
           case 2: 
-            { System.out.println("VARNAME: " + yytext()); return new Symbol(LexicalUnit.VARNAME,yyline, yycolumn, yytext());
-            }
-          case 7: break;
-          case 3: 
-            { System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));
-            }
-          case 8: break;
-          case 4: 
-            { System.out.println("NOT: " + yytext()); return new Symbol(LexicalUnit.NOT,yyline, yycolumn);
-            }
-          case 9: break;
-          case 5: 
             { System.out.print(yytext());
             }
-          case 10: break;
+          case 6: break;
+          case 3: 
+            { return symbol(LexicalUnit.END);
+            }
+          case 7: break;
+          case 4: 
+            { return symbol(LexicalUnit.BEGIN);
+            }
+          case 8: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

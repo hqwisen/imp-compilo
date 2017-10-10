@@ -1,5 +1,5 @@
 all: compil
-	java ImpCompilo input.txt
+	java ImpCompilo Euclid.imp 
 
 compil:
 	jflex imp-compilo.flex

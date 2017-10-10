@@ -16,6 +16,13 @@
 // Class code (methods and attributes)
 %{
 
+    private Symbol symbol(LexicalUnit lexicalUnit){
+        Symbol symbolObject = new Symbol(lexicalUnit, yyline,
+                                         yycolumn, yytext());
+        System.out.println(symbolObject);
+        return symbolObject;
+    }
+
 %}
 
 %eof{
@@ -27,19 +34,15 @@
 	return new Symbol(LexicalUnit.END, yyline, yycolumn);
 %eofval}
 
-// Extended Regular Expressions
+// Extended Regular Expressions: Shortcuts
 AlphaUpperCase = [A-Z]
 AlphaLowerCase = [a-z]
 Alpha          = {AlphaUpperCase}|{AlphaLowerCase}
 Numeric        = [0-9]
-AlphaNumeric	 = {Alpha}|{Numeric}
-
-Sign           = [+-]
-Integer        = {Sign}?(([1-9][0-9]*)|0)
-Decimal        = \.[0-9]*
-Exponent       = [eE]{Integer}
-Real           = {Integer}{Decimal}?{Exponent}?
-Identifier     = {Alpha}{AlphaNumeric}*
+AlphaNumeric   = {Alpha}|{Numeric}
+Number         = ([1-9]{Numeric}*)|0
+VarName        = {Alpha}{AlphaNumeric}*
+NewLine        = "\n"
 
 // States
 
@@ -49,15 +52,16 @@ Identifier     = {Alpha}{AlphaNumeric}*
 
 <YYINITIAL>{
 
-	"!"		        {System.out.println("NOT: " + yytext()); return new Symbol(LexicalUnit.NOT,yyline, yycolumn);}
+	"begin"        {return symbol(LexicalUnit.BEGIN);}
+    "end"          {return symbol(LexicalUnit.END);}
 
 	// Decimal number in scientific notation
-	{Real}			  {System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));}
+	// {Number}       {System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));}
 
 	// C99 variable identifier
-	{Identifier}  {System.out.println("VARNAME: " + yytext()); return new Symbol(LexicalUnit.VARNAME,yyline, yycolumn, yytext());}
+	// {Varname}   {System.out.println("VARNAME: " + yytext()); return new Symbol(LexicalUnit.VARNAME,yyline, yycolumn, yytext());}
 
 	// Ignore other characters
-	.             {}
+	.|{NewLine}    {}
 
 }
