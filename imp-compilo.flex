@@ -42,7 +42,8 @@ Numeric        = [0-9]
 AlphaNumeric   = {Alpha}|{Numeric}
 Number         = ([1-9]{Numeric}*)|0
 VarName        = {Alpha}{AlphaNumeric}*
-NewLine        = "\n"
+NewLine        = "\n" // FIXME Windows new lines (/r) ?
+Spaces         = \s* // * greedy: match as much space as possible
 
 // States
 
@@ -51,9 +52,25 @@ NewLine        = "\n"
 %% // Identification of tokens and actions
 
 <YYINITIAL>{
-
+    // Language specifics
 	"begin"        {return symbol(LexicalUnit.BEGIN);}
     "end"          {return symbol(LexicalUnit.END);}
+
+    // Assign
+    {VarName}      {return symbol(LexicalUnit.VARNAME);}
+    ":="           {return symbol(LexicalUnit.ASSIGN);}
+
+    // Operations
+    // TODO to test
+    // "+"           {return symbol(LexicalUnit.PLUS);}
+    // "-"           {return symbol(LexicalUnit.MINUS);}
+    // "*"           {return symbol(LexicalUnit.TIMES);}
+    // "/"           {return symbol(LexicalUnit.DIVIDE);}
+
+    // {VarName}{Spaces}":="{Spaces}{Number} {System.out.println(yytext());}
+
+
+
 
 	// Decimal number in scientific notation
 	// {Number}       {System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));}

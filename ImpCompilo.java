@@ -33,9 +33,11 @@ class ImpCompilo {
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\12\0\1\0\1\7\1\7\1\7\42\0\1\0\11\0\7\0\32\0"+
-    "\6\0\1\0\1\1\1\0\1\6\1\2\1\0\1\3\1\0\1\4"+
-    "\4\0\1\5\14\0\12\0\1\7\u1fa2\0\1\7\1\7\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
+    "\11\0\1\0\1\0\1\13\1\13\1\13\22\0\1\0\17\0\1\2"+
+    "\11\2\1\11\2\0\1\12\3\0\32\1\6\0\1\1\1\3\1\1"+
+    "\1\10\1\4\1\1\1\5\1\1\1\6\4\1\1\7\14\1\12\0"+
+    "\1\13\32\0\1\0\u15df\0\1\0\u097f\0\13\0\35\0\1\13\1\13"+
+    "\5\0\1\0\57\0\1\0\u0fa0\0\1\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\ud00f\0";
 
   /** 
    * Translates characters to character classes
@@ -48,10 +50,11 @@ class ImpCompilo {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\3\1\1\2\3\0\1\3\1\0\1\4";
+    "\1\0\1\1\3\2\1\1\1\3\2\2\1\4\1\2"+
+    "\1\5\1\2\1\6";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[11];
+    int [] result = new int[14];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -76,11 +79,11 @@ class ImpCompilo {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\10\0\20\0\30\0\10\0\40\0\50\0\60"+
-    "\0\10\0\70\0\10";
+    "\0\0\0\14\0\30\0\44\0\60\0\74\0\14\0\110"+
+    "\0\124\0\14\0\140\0\30\0\154\0\30";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[11];
+    int [] result = new int[14];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -103,12 +106,14 @@ class ImpCompilo {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\2\1\3\1\4\4\2\1\5\12\0\1\6\12\0"+
-    "\1\7\5\0\1\10\12\0\1\11\5\0\1\12\10\0"+
-    "\1\13\2\0";
+    "\1\2\1\3\1\2\1\4\1\5\4\3\1\6\1\2"+
+    "\1\7\15\0\10\3\4\0\3\3\1\10\4\3\4\0"+
+    "\6\3\1\11\1\3\15\0\1\12\2\0\4\3\1\13"+
+    "\3\3\4\0\7\3\1\14\4\0\5\3\1\15\2\3"+
+    "\4\0\6\3\1\16\1\3\3\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[64];
+    int [] result = new int[120];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -146,10 +151,10 @@ class ImpCompilo {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\2\1\1\11\3\0\1\11\1\0\1\11";
+    "\1\0\1\11\4\1\1\11\2\1\1\11\4\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[11];
+    int [] result = new int[14];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -255,7 +260,7 @@ class ImpCompilo {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 90) {
+    while (i < 126) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -622,19 +627,27 @@ class ImpCompilo {
           case 1: 
             { 
             }
-          case 5: break;
-          case 2: 
-            { System.out.print(yytext());
-            }
-          case 6: break;
-          case 3: 
-            { return symbol(LexicalUnit.END);
-            }
           case 7: break;
-          case 4: 
-            { return symbol(LexicalUnit.BEGIN);
+          case 2: 
+            { return symbol(LexicalUnit.VARNAME);
             }
           case 8: break;
+          case 3: 
+            { System.out.print(yytext());
+            }
+          case 9: break;
+          case 4: 
+            { return symbol(LexicalUnit.ASSIGN);
+            }
+          case 10: break;
+          case 5: 
+            { return symbol(LexicalUnit.END);
+            }
+          case 11: break;
+          case 6: 
+            { return symbol(LexicalUnit.BEGIN);
+            }
+          case 12: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

@@ -7,9 +7,11 @@ Tested with Java 9 (JDK)
 * make
 * jflex
 
+```bash
+apt install jflex # Ubuntu
+pacman -S jflex # Arch Linux
 ```
-# ubuntu
-apt install jflex
-# arch
-pacman -S jflex
-```
+
+## Resources
+
+http://jflex.de/manual.html
