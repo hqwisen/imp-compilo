@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+mainClassName = "Main"
+version = ''
+
+sourceSets {
+    main {
+        java {
+            srcDir 'more/src'
+        }
+    }
+    test {
+        java {
+            srcDir 'more/tests'
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'ImpCompilo',
+                   'Implementation-Version': version,
+                   'Main-Class': mainClassName
+    }
+    baseName 'imp-compilo'
+    destinationDir file('dist/')
+
+}
+
+repositories{
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}

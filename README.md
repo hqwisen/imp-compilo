@@ -1,6 +1,12 @@
 # imp-compilo
 
-Tested with Java 9 (JDK)
+Tested with Java 8 (JDK)
+
+# How To
+
+```bash
+gradle run
+```
 
 ## Dependencies
 
