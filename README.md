@@ -5,7 +5,8 @@ Tested with Java 8 (JDK)
 # How To
 
 ```bash
-gradle run
+gradle run # Run Main class
+gradle jar # Create dist/imp-compilo.jar with Main as Main Class
 ```
 
 ## Dependencies
