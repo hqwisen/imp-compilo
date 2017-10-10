@@ -1,4 +1,5 @@
 //import java_cup.runtime.*; uncommet if you use CUP
+import math;
 
 %% // Options of the scanner
 
@@ -15,10 +16,17 @@
 
 // Class code (methods and attributes)
 %{
+    private HasMap<String, Intenger> identifiers;
 
     private Symbol symbol(LexicalUnit lexicalUnit){
+        value = yytext();
         Symbol symbolObject = new Symbol(lexicalUnit, yyline,
-                                         yycolumn, yytext());
+                                         yycolumn, value));
+        if(lexicalUnit == LexicalUnit.VARNAME &&
+            !identifiers.containsKey(value)) {
+            identifiers.add(value, yyline);
+            // log something
+        }
         System.out.println(symbolObject);
         return symbolObject;
     }
