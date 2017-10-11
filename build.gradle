@@ -4,9 +4,6 @@ apply plugin: 'application'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = "Main"
-version = ''
-
 sourceSets {
     main {
         java {
@@ -23,12 +20,27 @@ sourceSets {
 jar {
     manifest {
         attributes 'Implementation-Title': 'ImpCompilo',
-                   'Implementation-Version': version,
-                   'Main-Class': mainClassName
+                   'Implementation-Version': '',
+                   'Main-Class': 'Main'
     }
     baseName 'imp-compilo'
     destinationDir file('dist/')
+}
 
+task generateMain {
+    javaexec {
+        main='-jar';
+        args = ['dist/lib/jflex.jar', 'more/src/LexicalAnalyzer.flex']
+    }
+}
+
+task generateJar (dependsOn: [generateMain, jar])
+
+task scan (dependsOn: generateJar) {
+  javaexec {
+      main='-jar';
+      args = ['dist/imp-compilo.jar', project.input]
+  }
 }
 
 repositories{
@@ -36,5 +48,6 @@ repositories{
 }
 
 dependencies {
+    // compile fileTree(dir: 'dist/lib', include: ['*.jar'])
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
