@@ -2,22 +2,24 @@
 
 Tested with Java 8 (JDK)
 
-# How To
+## How To
 
+Run scanner
 ```bash
-gradle run # Run Main class
-gradle jar # Create dist/imp-compilo.jar with Main as Main Class
+gradle scan -Pinput=<input>
+```
+Generate **more/src/Main.java** from LexicalAnalyzer.flex
+```bash
+gradle generateMain
+```
+Generate jar **dist/imp-compilo.jar**
+```bash
+gradle generateJar
 ```
 
 ## Dependencies
 
-* make
-* jflex
-
-```bash
-apt install jflex # Ubuntu
-pacman -S jflex # Arch Linux
-```
+* gradle
 
 ## Resources
 
