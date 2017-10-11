@@ -53,18 +53,19 @@ Spaces         = \s* // * greedy: match as much space as possible
 
 // States
 
-%xstate YYINITIAL
+%xstate YYINITIAL, CODE, INSTLIST, INSTRUCTION
 
 %% // Identification of tokens and actions
 
 <YYINITIAL>{
     // Language specifics
-	  "begin"        {return symbol(LexicalUnit.BEGIN);}
-    "end"          {return symbol(LexicalUnit.END);}
+	  "begin"        {yybegin(CODE); return symbol(LexicalUnit.BEGIN);}
+      // FIXME where to put the end ? in CODE or INITIAL ?
+      "end"          {return symbol(LexicalUnit.END);}
 
     // Assign
-    {VarName}      {return symbol(LexicalUnit.VARNAME);}
-    ":="           {return symbol(LexicalUnit.ASSIGN);}
+    // {VarName}      {return symbol(LexicalUnit.VARNAME);}
+    // ":="           {return symbol(LexicalUnit.ASSIGN);}
 
     // Operations
     // TODO to test
@@ -87,4 +88,45 @@ Spaces         = \s* // * greedy: match as much space as possible
 	// Ignore other characters
 	.|{NewLine}    {}
 
+}
+
+<CODE>{
+    // "="            {return symbol(LexicalUnit.ASSIGN);}
+    // FIXME INITIAL or generate error ?
+    // NOTE beginend.imp: show END because of the NewLine RE
+    .             {}
+    {NewLine}     {yybegin(INSTLIST);}
+}
+
+<INSTLIST>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<INSTRUCTION>{
+    ":="            {return symbol(LexicalUnit.ASSIGN);}
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<ASSIGN>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<IF>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<WHILE>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<FOR>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<PRINT>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
+}
+
+<READ>{
+    .|{NewLine}     {yybegin(YYINITIAL);}
 }

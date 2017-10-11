@@ -37,9 +37,11 @@ task generateMain {
 task generateJar (dependsOn: [generateMain, jar])
 
 task scan (dependsOn: generateJar) {
-  javaexec {
-      main='-jar';
-      args = ['dist/imp-compilo.jar', project.input]
+  doLast{
+      javaexec {
+          main='-jar';
+          args = ['dist/imp-compilo.jar', project.input]
+      }
   }
 }
 
