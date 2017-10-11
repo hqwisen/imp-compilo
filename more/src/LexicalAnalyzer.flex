@@ -1,9 +1,8 @@
 //import java_cup.runtime.*; uncommet if you use CUP
-import math;
 
 %% // Options of the scanner
 
-%class ImpCompilo	//Name
+%class Main
 %unicode
 %line
 %column
@@ -16,17 +15,15 @@ import math;
 
 // Class code (methods and attributes)
 %{
-    private HasMap<String, Intenger> identifiers;
+    // private HasMap<String, Integer> identifiers;
 
     private Symbol symbol(LexicalUnit lexicalUnit){
-        value = yytext();
-        Symbol symbolObject = new Symbol(lexicalUnit, yyline,
-                                         yycolumn, value));
-        if(lexicalUnit == LexicalUnit.VARNAME &&
-            !identifiers.containsKey(value)) {
+        String value = yytext();
+        Symbol symbolObject = new Symbol(lexicalUnit, yyline, yycolumn, value);
+        /*if(lexicalUnit == LexicalUnit.VARNAME && !identifiers.containsKey(value)) {
             identifiers.add(value, yyline);
             // log something
-        }
+        }*/
         System.out.println(symbolObject);
         return symbolObject;
     }
@@ -39,6 +36,7 @@ import math;
 
 // Return value of the program
 %eofval{
+  // FIXME is eofval return necessary ?
 	return new Symbol(LexicalUnit.END, yyline, yycolumn);
 %eofval}
 
@@ -61,7 +59,7 @@ Spaces         = \s* // * greedy: match as much space as possible
 
 <YYINITIAL>{
     // Language specifics
-	"begin"        {return symbol(LexicalUnit.BEGIN);}
+	  "begin"        {return symbol(LexicalUnit.BEGIN);}
     "end"          {return symbol(LexicalUnit.END);}
 
     // Assign
