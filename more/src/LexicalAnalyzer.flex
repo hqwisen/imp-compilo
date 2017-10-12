@@ -50,12 +50,23 @@ Number         = ([1-9]{Numeric}*)|0
 VarName        = {Alpha}{AlphaNumeric}*
 NewLine        = "\n" // FIXME Windows new lines (/r) ?
 Spaces         = \s* // * greedy: match as much space as possible
+Blank          = \s
 
 // States
 
-%xstate YYINITIAL, CODE, INSTLIST, INSTRUCTION
+%xstate YYINITIAL, CODE, INSTLIST, INSTRUCTION, COND
 
 %% // Identification of tokens and actions
+
+<INSTRUCTION>{
+    "if"        {return symbol(LexicalUnit.IF); yybegin(COND);}
+}
+
+<COND>{
+    {Blank} {yybegin(EXPRAITHM);}
+}
+
+
 
 <YYINITIAL>{
     // Language specifics
@@ -104,29 +115,5 @@ Spaces         = \s* // * greedy: match as much space as possible
 
 <INSTRUCTION>{
     ":="            {return symbol(LexicalUnit.ASSIGN);}
-    .|{NewLine}     {yybegin(YYINITIAL);}
-}
-
-<ASSIGN>{
-    .|{NewLine}     {yybegin(YYINITIAL);}
-}
-
-<IF>{
-    .|{NewLine}     {yybegin(YYINITIAL);}
-}
-
-<WHILE>{
-    .|{NewLine}     {yybegin(YYINITIAL);}
-}
-
-<FOR>{
-    .|{NewLine}     {yybegin(YYINITIAL);}
-}
-
-<PRINT>{
-    .|{NewLine}     {yybegin(YYINITIAL);}
-}
-
-<READ>{
     .|{NewLine}     {yybegin(YYINITIAL);}
 }
