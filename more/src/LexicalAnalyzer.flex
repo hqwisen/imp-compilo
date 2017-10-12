@@ -1,5 +1,9 @@
 //import java_cup.runtime.*; uncommet if you use CUP
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+
 %% // Options of the scanner
 
 %class Main
@@ -10,12 +14,9 @@
 %standalone
 
 // Constructor code
-%init{
-%init}
-
 // Class code (methods and attributes)
 %{
-    // private HasMap<String, Integer> identifiers;
+    private Logger log = Logger.getLogger("ImpCompilo");
 
     private Symbol symbol(LexicalUnit lexicalUnit){
         String value = yytext();
@@ -25,10 +26,16 @@
             // log something
         }*/
         System.out.println(symbolObject);
+        new States().print();
         return symbolObject;
     }
 
 %}
+
+%init{
+%init}
+
+
 
 %eof{
 %eof}
@@ -48,72 +55,39 @@ Numeric        = [0-9]
 AlphaNumeric   = {Alpha}|{Numeric}
 Number         = ([1-9]{Numeric}*)|0
 VarName        = {Alpha}{AlphaNumeric}*
-NewLine        = "\n" // FIXME Windows new lines (/r) ?
+LineTerminator = \r|\n|\r\n
 Spaces         = \s* // * greedy: match as much space as possible
-Blank          = \s
+Blank          = {Spaces} // \s matches also the new line character
 
 // States
 
-%xstate YYINITIAL, CODE, INSTLIST, INSTRUCTION, COND
+%xstate CODE, INSTLIST, INSTRUCTION, COND
 
 %% // Identification of tokens and actions
-
-<INSTRUCTION>{
-    "if"        {return symbol(LexicalUnit.IF); yybegin(COND);}
-}
-
-<COND>{
-    {Blank} {yybegin(EXPRAITHM);}
-}
 
 
 
 <YYINITIAL>{
     // Language specifics
-	  "begin"        {yybegin(CODE); return symbol(LexicalUnit.BEGIN);}
-      // FIXME where to put the end ? in CODE or INITIAL ?
-      "end"          {return symbol(LexicalUnit.END);}
-
-    // Assign
-    // {VarName}      {return symbol(LexicalUnit.VARNAME);}
-    // ":="           {return symbol(LexicalUnit.ASSIGN);}
-
-    // Operations
-    // TODO to test
-    // "+"           {return symbol(LexicalUnit.PLUS);}
-    // "-"           {return symbol(LexicalUnit.MINUS);}
-    // "*"           {return symbol(LexicalUnit.TIMES);}
-    // "/"           {return symbol(LexicalUnit.DIVIDE);}
-
-    // {VarName}{Spaces}":="{Spaces}{Number} {System.out.println(yytext());}
-
-
-
-
-	// Decimal number in scientific notation
-	// {Number}       {System.out.println("NUMBER: " + yytext()); return new Symbol(LexicalUnit.NUMBER,yyline, yycolumn, new Integer(yytext()));}
-
-	// C99 variable identifier
-	// {Varname}   {System.out.println("VARNAME: " + yytext()); return new Symbol(LexicalUnit.VARNAME,yyline, yycolumn, yytext());}
-
-	// Ignore other characters
-	.|{NewLine}    {}
-
+    "begin"        {yybegin(CODE); return symbol(LexicalUnit.BEGIN);}
+    "end"          {return symbol(LexicalUnit.END);}
 }
 
-<CODE>{
-    // "="            {return symbol(LexicalUnit.ASSIGN);}
-    // FIXME INITIAL or generate error ?
-    // NOTE beginend.imp: show END because of the NewLine RE
-    .             {}
-    {NewLine}     {yybegin(INSTLIST);}
-}
+/*/<CODE>{
 
+}*/
+/*
 <INSTLIST>{
-    .|{NewLine}     {yybegin(YYINITIAL);}
+    ";" return SEMICOLUMN
+    . {pushback(1), go to INSTRUCTION}
 }
 
 <INSTRUCTION>{
-    ":="            {return symbol(LexicalUnit.ASSIGN);}
-    .|{NewLine}     {yybegin(YYINITIAL);}
+    "read" go to READ
 }
+
+<READ>{
+    "("     {return symbol(LexicalUnit.LPAREN);}
+    {VarName}   {return symbol(LexicalUnit.VARNAME);}
+    ")"     {yybegin(INSTLIST); return symbol(LexicalUnit.LPAREN);}
+}*/
