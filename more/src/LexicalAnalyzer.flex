@@ -7,6 +7,8 @@ import java.util.logging.Level;
 %% // Options of the scanner
 
 %class Main
+// %public
+%extends ImpCompilo
 %unicode
 %line
 %column
@@ -16,20 +18,29 @@ import java.util.logging.Level;
 // Constructor code
 // Class code (methods and attributes)
 %{
-    private Logger log = Logger.getLogger("ImpCompilo");
-
-    private Symbol symbol(LexicalUnit lexicalUnit){
-        String value = yytext();
-        Symbol symbolObject = new Symbol(lexicalUnit, yyline, yycolumn, value);
-        /*if(lexicalUnit == LexicalUnit.VARNAME && !identifiers.containsKey(value)) {
-            identifiers.add(value, yyline);
-            // log something
-        }*/
-        System.out.println(symbolObject);
-        new States().print();
-        return symbolObject;
+    public int column(){
+        return yycolumn;
     }
 
+    public int line(){
+        return yyline;
+    }
+
+    public String text(){
+        return yytext();
+    }
+
+    public int length(){
+        return yylength();
+    }
+
+    public void pushback(int number){
+        yypushback(number);
+    }
+
+    public void changeState(int state){
+        yybegin(state);
+    }
 %}
 
 %init{
@@ -44,7 +55,7 @@ import java.util.logging.Level;
 // Return value of the program
 %eofval{
   // FIXME is eofval return necessary ?
-	return new Symbol(LexicalUnit.END, yyline, yycolumn);
+  return new Symbol(LexicalUnit.END, yyline, yycolumn);
 %eofval}
 
 // Extended Regular Expressions: Shortcuts
@@ -59,9 +70,14 @@ LineTerminator = \r|\n|\r\n
 Spaces         = \s* // * greedy: match as much space as possible
 Blank          = {Spaces} // \s matches also the new line character
 
+// Code states
+
+CodeTerminator = "end"
+
 // States
 
-%xstate CODE, INSTLIST, INSTRUCTION, COND
+%xstate CODE
+ /*, INSTLIST, INSTRUCTION, COND*/
 
 %% // Identification of tokens and actions
 
@@ -69,13 +85,15 @@ Blank          = {Spaces} // \s matches also the new line character
 
 <YYINITIAL>{
     // Language specifics
-    "begin"        {yybegin(CODE); return symbol(LexicalUnit.BEGIN);}
+    "begin"        {startState(YYINITIAL, CODE); return symbol(LexicalUnit.BEGIN);}
     "end"          {return symbol(LexicalUnit.END);}
 }
 
-/*/<CODE>{
+<CODE>{
+    "code"  {return symbol(LexicalUnit.ASSIGN);}
+    {CodeTerminator}   {endState();}
+}
 
-}*/
 /*
 <INSTLIST>{
     ";" return SEMICOLUMN

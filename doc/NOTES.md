@@ -26,6 +26,11 @@ Changing states ?
 
 ## States
 
+A regular expression can only be matched when its associated set of lexical states includes
+the currently active lexical state of the scanner or if the set of associated lexical states is
+empty and the currently active lexical state is inclusive. Exclusive and inclusive states
+only differ at this point: rules with an empty set of associated states.
+
 ### CODE
 
 When in CODE we need to know if we just began to process the block
