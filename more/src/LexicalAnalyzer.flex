@@ -76,7 +76,7 @@ CodeTerminator = "end"
 
 // States
 
-%xstate CODE
+%xstate CODE, INSTLIST
  /*, INSTLIST, INSTRUCTION, COND*/
 
 %% // Identification of tokens and actions
@@ -90,8 +90,11 @@ CodeTerminator = "end"
 }
 
 <CODE>{
-    "code"  {return symbol(LexicalUnit.ASSIGN);}
     {CodeTerminator}   {endState();}
+}
+
+<INSTLIST>{
+    ";"     {return symbol(LexicalUnit.SEMICOLON);}
 }
 
 /*

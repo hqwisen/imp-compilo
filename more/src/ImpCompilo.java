@@ -1,16 +1,30 @@
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.Stack;
 
 
 public abstract class ImpCompilo{
 
+    public class CodeState{
+
+        private int parentState;
+
+        public CodeState(int parentState){
+            this.parentState = parentState;
+        }
+
+        public int getParentState(){
+            return this.parentState;
+        }
+    }
+
     private Logger log = Logger.getLogger("ImpCompilo");
 
-    private int lastCodeState;
+    private Stack<CodeState> codeStack;
 
-    /*public ImpCompilo(){
-
-    }*/
+    public ImpCompilo(){
+        this.codeStack = new Stack<>();
+    }
 
     public Symbol symbol(LexicalUnit lexicalUnit){
        String value = text();
@@ -24,13 +38,14 @@ public abstract class ImpCompilo{
    }
 
    public void startState(int currentState, int newState){
-       lastCodeState = currentState;
+       codeStack.push(new CodeState(currentState));
        changeState(newState);
    }
 
    public void endState(){
+       CodeState newState = codeStack.pop();
        pushback(length());
-       changeState(lastCodeState);
+       changeState(newState.getParentState());
    }
 
     public abstract String text();
