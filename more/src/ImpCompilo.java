@@ -1,57 +1,66 @@
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 
-public abstract class ImpCompilo{
+public abstract class ImpCompilo {
 
-    public class CodeState{
+    public class CodeState {
 
         private int parentState;
 
-        public CodeState(int parentState){
+        public CodeState(int parentState) {
             this.parentState = parentState;
         }
 
-        public int getParentState(){
+        public int getParentState() {
             return this.parentState;
         }
     }
 
-    private Logger log = Logger.getLogger("ImpCompilo");
-
+    private static Logger log = Logger.getLogger("ImpCompilo");
     private Stack<CodeState> codeStack;
 
-    public ImpCompilo(){
+    public ImpCompilo() {
         this.codeStack = new Stack<>();
     }
 
-    public Symbol symbol(LexicalUnit lexicalUnit){
-       String value = text();
-       Symbol symbolObject = new Symbol(lexicalUnit, line(), column(), value);
+    public Symbol symbol(LexicalUnit lexicalUnit) {
+        String value = text();
+        Symbol symbolObject = new Symbol(lexicalUnit, line(), column(), value);
        /*if(lexicalUnit == LexicalUnit.VARNAME && !identifiers.containsKey(value)) {
            identifiers.add(value, yyline);
            // log something
        }*/
-       System.out.println(symbolObject);
-       return symbolObject;
-   }
+        System.out.println(symbolObject);
+        return symbolObject;
+    }
 
-   public void startState(int currentState, int newState){
-       codeStack.push(new CodeState(currentState));
-       changeState(newState);
-   }
 
-   public void endState(){
-       CodeState newState = codeStack.pop();
-       pushback(length());
-       changeState(newState.getParentState());
-   }
+
+    public void endCodeState() {
+        CodeState newState = codeStack.pop();
+        // Pushback to <end> token
+        pushback(length());
+        changeState(newState.getParentState());
+    }
+
+    public void pushbackWord(){
+        pushback(length());
+    }
+
+    public void pushCodeState(int parentState){
+        codeStack.push(new CodeState(parentState));
+    }
 
     public abstract String text();
+
     public abstract int line();
+
     public abstract int column();
+
     public abstract int length();
+
     public abstract void pushback(int number);
+
     public abstract void changeState(int state);
 }

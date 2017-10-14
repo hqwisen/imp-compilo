@@ -76,7 +76,7 @@ CodeTerminator = "end"
 
 // States
 
-%xstate CODE, INSTLIST
+%xstate CODE, INSTLIST, INSTRUCTION, READ
  /*, INSTLIST, INSTRUCTION, COND*/
 
 %% // Identification of tokens and actions
@@ -85,16 +85,31 @@ CodeTerminator = "end"
 
 <YYINITIAL>{
     // Language specifics
-    "begin"        {startState(YYINITIAL, CODE); return symbol(LexicalUnit.BEGIN);}
+    "begin"        {pushCodeState(YYINITIAL);
+                    changeState(INSTRUCTION);
+                    return symbol(LexicalUnit.BEGIN);}
+
     "end"          {return symbol(LexicalUnit.END);}
 }
 
 <CODE>{
-    {CodeTerminator}   {endState();}
+    <INSTLIST> {CodeTerminator}   {endCodeState();}
 }
 
 <INSTLIST>{
-    ";"     {return symbol(LexicalUnit.SEMICOLON);}
+    ";"     {changeState(INSTRUCTION); return symbol(LexicalUnit.SEMICOLON);}
+}
+
+
+<INSTRUCTION> {
+    "read"  {pushbackWord(); changeState(READ);}
+}
+
+<READ> {
+    "read"  {return symbol(LexicalUnit.READ);}
+    "("     {return symbol(LexicalUnit.LPAREN);}
+    ")"     {changeState(INSTLIST); return symbol(LexicalUnit.RPAREN);}
+
 }
 
 /*
