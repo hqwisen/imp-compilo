@@ -37,7 +37,7 @@ public abstract class ImpCompilo {
 
 
 
-    public void endCodeState() {
+    public void endLastCodeState() {
         CodeState newState = codeStack.pop();
         // Pushback to <end> token
         pushback(length());

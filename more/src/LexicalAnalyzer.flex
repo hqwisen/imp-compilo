@@ -76,41 +76,53 @@ CodeTerminator = "end"
 
 // States
 
-%xstate CODE, INSTLIST, INSTRUCTION, READ
+%xstate CODE, INSTLIST, INSTRUCTION, READ, PRINT, EXPR_ARITH, ASSIGN
  /*, INSTLIST, INSTRUCTION, COND*/
 
 %% // Identification of tokens and actions
-
-
 
 <YYINITIAL>{
     // Language specifics
     "begin"        {pushCodeState(YYINITIAL);
                     changeState(INSTRUCTION);
                     return symbol(LexicalUnit.BEGIN);}
-
     "end"          {return symbol(LexicalUnit.END);}
 }
 
 <CODE>{
-    <INSTLIST> {CodeTerminator}   {endCodeState();}
+    <INSTLIST> {CodeTerminator}   {endLastCodeState();}
 }
 
 <INSTLIST>{
     ";"     {changeState(INSTRUCTION); return symbol(LexicalUnit.SEMICOLON);}
+    .*      {System.out.println("[InstList] Error: " + text());}
 }
 
 
 <INSTRUCTION> {
-    "read"  {pushbackWord(); changeState(READ);}
+    "read"      {changeState(READ); return symbol(LexicalUnit.READ);}
+    "print"     {changeState(PRINT); return symbol(LexicalUnit.PRINT);}
+    {VarName}   {changeState(ASSIGN); return symbol(LexicalUnit.VARNAME);}
 }
 
-<READ> {
-    "read"  {return symbol(LexicalUnit.READ);}
-    "("     {return symbol(LexicalUnit.LPAREN);}
-    ")"     {changeState(INSTLIST); return symbol(LexicalUnit.RPAREN);}
+<ASSIGN> {
+    ":="        {changeState(EXPR_ARITH); return symbol(LexicalUnit.ASSIGN);}
+}
+
+<EXPR_ARITH> {
+    {Number}    {changeState(INSTLIST); return symbol(LexicalUnit.NUMBER);}
+    {VarName}   {changeState(INSTLIST); return symbol(LexicalUnit.VARNAME);}
 
 }
+
+
+<READ, PRINT> {
+    "("         {return symbol(LexicalUnit.LPAREN);}
+    ")"         {changeState(INSTLIST); return symbol(LexicalUnit.RPAREN);}
+}
+
+<READ, PRINT> {VarName}   {return symbol(LexicalUnit.VARNAME);}
+
 
 /*
 <INSTLIST>{
