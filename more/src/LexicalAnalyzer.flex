@@ -112,9 +112,18 @@ CodeTerminator = "end"
 <EXPR_ARITH> {
     {Number}    {changeState(INSTLIST); return symbol(LexicalUnit.NUMBER);}
     {VarName}   {changeState(INSTLIST); return symbol(LexicalUnit.VARNAME);}
-
+    "-"         {return symbol(LexicalUnit.MINUS);}
+    {Number}|{VarName}({Operation}{})
 }
 
+
+<OP> {
+    "+"         {return symbol(LexicalUnit.PLUS);}
+    "-"         {return symbol(LexicalUnit.MINUS);}
+    "*"         {return symbol(LexicalUnit.TIMES);}
+    "/"         {return symbol(LexicalUnit.DIVIDE);}
+
+}
 
 <READ, PRINT> {
     "("         {return symbol(LexicalUnit.LPAREN);}
