@@ -70,12 +70,15 @@ LineTerminator = \r|\n|\r\n
 Spaces         = \s* // * greedy: match as much space as possible
 Blank          = {Spaces} // \s matches also the new line character
 
+%xstate COMMENT
 
 %% // Identification of tokens and actions
 
 <YYINITIAL>{
-    // Language specifics
+    // Comment
+    "(*"            {changeState(COMMENT);}
 
+    // Language specifics
     ";"             {return symbol(LexicalUnit.SEMICOLON);}
     ":="            {return symbol(LexicalUnit.ASSIGN);}
     "("             {return symbol(LexicalUnit.LPAREN);}
@@ -129,3 +132,7 @@ Blank          = {Spaces} // \s matches also the new line character
     .              {System.out.println("Unknown token: " + text());}
 }
 
+<COMMENT>{
+    "*)"    {changeState(YYINITIAL);}
+    .       {} // Ignoring all characters
+}

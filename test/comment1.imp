@@ -1,0 +1,7 @@
+begin
+    a := 5
+    b =: 7 ; (* Are you seeing me ? *)
+    c := a - b - d + 7 * 3
+end (* Because you should,'t *)
+
+(* Like really *)

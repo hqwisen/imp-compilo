@@ -20,9 +20,12 @@ The regex \s match also then new line characters
 
 ## Nested comments
 
-Use the same idea from C++, Java
+Comments work as follow:
 
-Changing states ?
+* If (\* detected, change state to COMMENT
+* In states COMMENT all charecters are ignored except \*)
+
+Since nested comments are forbidden, this is enough.
 
 ## States
 
