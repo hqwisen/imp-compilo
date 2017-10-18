@@ -55,6 +55,7 @@ import java.util.logging.Level;
 // Return value of the program
 %eofval{
   // FIXME is eofval return necessary ?
+  postScan();
   return new Symbol(LexicalUnit.EOS, yyline, yycolumn);
 %eofval}
 
@@ -129,7 +130,7 @@ Blank          = {Spaces} // \s matches also the new line character
     {Number}       {return symbol(LexicalUnit.NUMBER);}
 
     {Blank}        {}
-    .              {System.out.println("Unknown token: " + text());}
+    .              {System.out.println("Unknown token: '" + text() + "'");}
 }
 
 <COMMENT>{
