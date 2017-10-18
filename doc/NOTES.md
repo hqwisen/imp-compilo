@@ -34,3 +34,11 @@ only differ at this point: rules with an empty set of associated states.
 ### CODE
 
 When in CODE we need to know if we just began to process the block
+
+
+## Regexp order
+
+The order of the regex in YYINITIAL are important. For example VarName
+is a the end because if set, for example, before end, there are two matches
+if the token end is detected, 'VarName' and 'end' and regex are (matched) and the same length
+so the first one will be used.

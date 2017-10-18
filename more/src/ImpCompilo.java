@@ -4,24 +4,9 @@ import java.util.logging.Logger;
 
 public abstract class ImpCompilo {
 
-    public class CodeState {
-
-        private int parentState;
-
-        public CodeState(int parentState) {
-            this.parentState = parentState;
-        }
-
-        public int getParentState() {
-            return this.parentState;
-        }
-    }
-
     private static Logger log = Logger.getLogger("ImpCompilo");
-    private Stack<CodeState> codeStack;
 
     public ImpCompilo() {
-        this.codeStack = new Stack<>();
     }
 
     public Symbol symbol(LexicalUnit lexicalUnit) {
@@ -36,21 +21,10 @@ public abstract class ImpCompilo {
     }
 
 
-
-    public void endLastCodeState() {
-        CodeState newState = codeStack.pop();
-        // Pushback to <end> token
-        pushback(length());
-        changeState(newState.getParentState());
-    }
-
-    public void pushbackWord(){
+    public void pushbackWord() {
         pushback(length());
     }
 
-    public void pushCodeState(int parentState){
-        codeStack.push(new CodeState(parentState));
-    }
 
     public abstract String text();
 

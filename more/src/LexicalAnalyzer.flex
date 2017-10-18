@@ -55,7 +55,7 @@ import java.util.logging.Level;
 // Return value of the program
 %eofval{
   // FIXME is eofval return necessary ?
-  return new Symbol(LexicalUnit.END, yyline, yycolumn);
+  return new Symbol(LexicalUnit.EOS, yyline, yycolumn);
 %eofval}
 
 // Extended Regular Expressions: Shortcuts
@@ -70,81 +70,62 @@ LineTerminator = \r|\n|\r\n
 Spaces         = \s* // * greedy: match as much space as possible
 Blank          = {Spaces} // \s matches also the new line character
 
-// Code states
-
-CodeTerminator = "end"
-
-// States
-
-%xstate CODE, INSTLIST, INSTRUCTION, READ, PRINT, EXPR_ARITH, ASSIGN
- /*, INSTLIST, INSTRUCTION, COND*/
 
 %% // Identification of tokens and actions
 
 <YYINITIAL>{
     // Language specifics
-    "begin"        {pushCodeState(YYINITIAL);
-                    changeState(INSTRUCTION);
-                    return symbol(LexicalUnit.BEGIN);}
+
+    ";"             {return symbol(LexicalUnit.SEMICOLON);}
+    ":="            {return symbol(LexicalUnit.ASSIGN);}
+    "("             {return symbol(LexicalUnit.LPAREN);}
+    ")"             {return symbol(LexicalUnit.RPAREN);}
+
+
+    "+"             {return symbol(LexicalUnit.PLUS);}
+    "-"             {return symbol(LexicalUnit.MINUS);}
+    "*"             {return symbol(LexicalUnit.TIMES);}
+    "/"             {return symbol(LexicalUnit.DIVIDE);}
+
+    "if"             {return symbol(LexicalUnit.IF);}
+    "then"             {return symbol(LexicalUnit.THEN);}
+    "endif"             {return symbol(LexicalUnit.ENDIF);}
+    "else"             {return symbol(LexicalUnit.ELSE);}
+
+    "while"             {return symbol(LexicalUnit.WHILE);}
+
+    "for"             {return symbol(LexicalUnit.FOR);}
+    "from"             {return symbol(LexicalUnit.FROM);}
+    "by"             {return symbol(LexicalUnit.BY);}
+    "to"             {return symbol(LexicalUnit.TO);}
+
+    "do"             {return symbol(LexicalUnit.DO);}
+    "done"             {return symbol(LexicalUnit.DONE);}
+
+    "not"             {return symbol(LexicalUnit.NOT);}
+
+    "and"             {return symbol(LexicalUnit.AND);}
+    "or"             {return symbol(LexicalUnit.OR);}
+
+
+    "="             {return symbol(LexicalUnit.EQ);}
+    ">="             {return symbol(LexicalUnit.GEQ);}
+    ">"             {return symbol(LexicalUnit.GT);}
+    "<="             {return symbol(LexicalUnit.LEQ);}
+    "<"             {return symbol(LexicalUnit.LT);}
+    "<>"             {return symbol(LexicalUnit.NEQ);}
+
+
+    "print"             {return symbol(LexicalUnit.PRINT);}
+    "read"             {return symbol(LexicalUnit.READ);}
+
+    "begin"        {return symbol(LexicalUnit.BEGIN);}
     "end"          {return symbol(LexicalUnit.END);}
+
+    {VarName}      {return symbol(LexicalUnit.VARNAME);}
+    {Number}       {return symbol(LexicalUnit.NUMBER);}
+
+    {Blank}        {}
+    .              {System.out.println("Unknown token: " + text());}
 }
 
-<CODE>{
-    <INSTLIST> {CodeTerminator}   {endLastCodeState();}
-}
-
-<INSTLIST>{
-    ";"     {changeState(INSTRUCTION); return symbol(LexicalUnit.SEMICOLON);}
-    .*      {System.out.println("[InstList] Error: " + text());}
-}
-
-
-<INSTRUCTION> {
-    "read"      {changeState(READ); return symbol(LexicalUnit.READ);}
-    "print"     {changeState(PRINT); return symbol(LexicalUnit.PRINT);}
-    {VarName}   {changeState(ASSIGN); return symbol(LexicalUnit.VARNAME);}
-}
-
-<ASSIGN> {
-    ":="        {changeState(EXPR_ARITH); return symbol(LexicalUnit.ASSIGN);}
-}
-
-<EXPR_ARITH> {
-    {Number}    {changeState(INSTLIST); return symbol(LexicalUnit.NUMBER);}
-    {VarName}   {changeState(INSTLIST); return symbol(LexicalUnit.VARNAME);}
-    "-"         {return symbol(LexicalUnit.MINUS);}
-    {Number}|{VarName}({Operation}{})
-}
-
-
-<OP> {
-    "+"         {return symbol(LexicalUnit.PLUS);}
-    "-"         {return symbol(LexicalUnit.MINUS);}
-    "*"         {return symbol(LexicalUnit.TIMES);}
-    "/"         {return symbol(LexicalUnit.DIVIDE);}
-
-}
-
-<READ, PRINT> {
-    "("         {return symbol(LexicalUnit.LPAREN);}
-    ")"         {changeState(INSTLIST); return symbol(LexicalUnit.RPAREN);}
-}
-
-<READ, PRINT> {VarName}   {return symbol(LexicalUnit.VARNAME);}
-
-
-/*
-<INSTLIST>{
-    ";" return SEMICOLUMN
-    . {pushback(1), go to INSTRUCTION}
-}
-
-<INSTRUCTION>{
-    "read" go to READ
-}
-
-<READ>{
-    "("     {return symbol(LexicalUnit.LPAREN);}
-    {VarName}   {return symbol(LexicalUnit.VARNAME);}
-    ")"     {yybegin(INSTLIST); return symbol(LexicalUnit.LPAREN);}
-}*/
