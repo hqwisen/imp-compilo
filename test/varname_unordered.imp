@@ -1,0 +1,6 @@
+begin
+    z := 5;
+    c := b
+    v := a;
+    a:= 8
+end

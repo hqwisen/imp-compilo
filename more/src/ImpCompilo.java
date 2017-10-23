@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -55,11 +56,18 @@ public abstract class ImpCompilo {
     public void postScan() {
         System.out.println();
         System.out.println("Identifiers");
-        for (Entry<String, Integer> entry : identifiers.entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue());
+        for(String key: identifiersKeysSorted()){
+                System.out.println(key + " " + identifiers.get(key));
         }
     }
 
+    public String[] identifiersKeysSorted(){
+        String[] keys = identifiers.keySet()
+                        .toArray(new String[identifiers.size()]);
+        Arrays.sort(keys);
+        return keys;
+    }
+    
     public List<Symbol> getSymbols(){
         return this.symbols;
     }
