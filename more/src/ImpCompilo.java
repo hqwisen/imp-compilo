@@ -1,5 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,25 +9,30 @@ import java.util.logging.Logger;
 
 public abstract class ImpCompilo {
 
-    private static Logger log = Logger.getLogger("ImpCompilo");
-    private HashMap<String, Integer> identifiers = new HashMap<>();
+    private static Logger log;
+    private HashMap<String, Integer> identifiers;
+    private List<Symbol> symbols;
 
     static{
+        log = Logger.getLogger("ImpCompilo");
         log.setLevel(Level.OFF);
     }
 
     public ImpCompilo() {
+        this.identifiers = new HashMap<>();
+        this.symbols = new ArrayList<>();
     }
 
     public Symbol symbol(LexicalUnit lexicalUnit) {
         String value = text();
-        Symbol symbolObject = new Symbol(lexicalUnit, line(), column(), value);
+        Symbol symbol = new Symbol(lexicalUnit, line(), column(), value);
         if (lexicalUnit == LexicalUnit.VARNAME) {
             addIdentifier(value, line());
         }
+        symbols.add(symbol);
         // The println method uses the toString automatically
-        System.out.println(symbolObject);
-        return symbolObject;
+        System.out.println(symbol);
+        return symbol;
     }
 
     public boolean idAlreadyScan(String value) {
@@ -53,6 +60,9 @@ public abstract class ImpCompilo {
         }
     }
 
+    public List<Symbol> getSymbols(){
+        return this.symbols;
+    }
     public abstract String text();
 
     public abstract int line();

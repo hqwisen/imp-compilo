@@ -1,13 +1,8 @@
 //import java_cup.runtime.*; uncommet if you use CUP
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-
-
 %% // Options of the scanner
 
 %class Main
-// %public
 %extends ImpCompilo
 %unicode
 %line
@@ -52,9 +47,7 @@ import java.util.logging.Level;
 %eof}
 
 
-// Return value of the program
 %eofval{
-  // FIXME is eofval return necessary ?
   postScan();
   return new Symbol(LexicalUnit.EOS, yyline, yycolumn);
 %eofval}
@@ -67,7 +60,7 @@ Numeric        = [0-9]
 AlphaNumeric   = {Alpha}|{Numeric}
 Number         = ([1-9]{Numeric}*)|0
 VarName        = {Alpha}{AlphaNumeric}*
-LineTerminator = \r|\n|\r\n
+// LineTerminator = \r|\n|\r\n
 Spaces         = \s* // * greedy: match as much space as possible
 Blank          = {Spaces} // \s matches also the new line character
 
@@ -129,11 +122,11 @@ Blank          = {Spaces} // \s matches also the new line character
     {VarName}      {return symbol(LexicalUnit.VARNAME);}
     {Number}       {return symbol(LexicalUnit.NUMBER);}
 
-    {Blank}        {}
+    {Blank}        {} // Blank (space and new lines) are ignored
     .              {System.out.println("Unknown token: '" + text() + "'");}
 }
 
 <COMMENT>{
     "*)"    {changeState(YYINITIAL);}
-    .       {} // Ignoring all characters
+    .|{Blank}       {} // Ignoring all characters
 }
