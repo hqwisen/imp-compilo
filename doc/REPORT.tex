@@ -1,0 +1,35 @@
+\documentclass[letterpaper]{article}
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.5in]{geometry}
+
+
+
+\title{Introduction to language theory and compiling
+\\ Project - Part 1}
+\author{Université Libre de Bruxelles \\
+\\ Hakim Boulahya}
+
+
+\begin{document}
+\maketitle
+
+\section{Extended regular expressions}
+\subsection{Shortcuts}
+
+AlphaUpperCase = [A-Z]
+AlphaLowerCase = [a-z]
+Alpha          = {AlphaUpperCase}|{AlphaLowerCase}
+Numeric        = [0-9]
+AlphaNumeric   = {Alpha}|{Numeric}
+
+\subsection{Advanced}
+
+Number         = ([1-9]{Numeric}*)|0
+VarName        = {Alpha}{AlphaNumeric}*
+Spaces         = \s* // * greedy: match as much space as possible
+Blank          = {Spaces} // \s matches also the new line character
+
+
+
+\end{document}
