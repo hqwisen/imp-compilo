@@ -14,22 +14,51 @@
 \begin{document}
 \maketitle
 
+\section{Definition}
+\begin{itemize}
+    \item MUST
+    \item OR
+    \item CAN
+\end{itemize}
+
+\begin{itemize}
+    \item case-senstive characters
+    \item alpha numeric
+\end{itemize}
+
 \section{Extended regular expressions}
+This section describe extended regular expressions use by the lexer.
+The shortcuts section describes simple ERE that are used to write
+the advanced ERE.
 \subsection{Shortcuts}
 
-AlphaUpperCase = [A-Z]
-AlphaLowerCase = [a-z]
-Alpha          = {AlphaUpperCase}|{AlphaLowerCase}
-Numeric        = [0-9]
-AlphaNumeric   = {Alpha}|{Numeric}
+\begin{enumerate}
+    \item \texttt{AlphaUpperCase = [A-Z]} : Match all uppercase letters
+    \item \texttt{AlphaLowerCase = [a-z]} : Match all lowercase letters
+    \item \texttt{Alpha = \{AlphaUpperCase\}|\{AlphaLowerCase\}} :
+    Match alphabet case-sensitive characters
+    \item \texttt{Numeric = [0-9]} : Match digit characters
+    \item \texttt{AlphaNumeric = \{Alpha\}|\{Numeric\}} :
+    Match alphabetic \textbf{OR} digit characters
+\end{enumerate}
 
 \subsection{Advanced}
 
-Number         = ([1-9]{Numeric}*)|0
-VarName        = {Alpha}{AlphaNumeric}*
-Spaces         = \s* // * greedy: match as much space as possible
-Blank          = {Spaces} // \s matches also the new line character
+\begin{enumerate}
+    \item \texttt{Number = ([1-9]{Numeric}*)|0} :
+    Match all numbers that \textbf{MUST} start with a non-zero digit and follow
+    by 0 or more digits (first RE),
+    \textbf{OR} match only zero digit (second RE). This RE correspond to
+    the [Number] lexical unit.
+    \item \texttt{VarName = {Alpha}{AlphaNumeric}*}
+    Match identifiers. Identifiers \textbf{MUST} starts with a alphabetic
+    character and \textbf{CAN} be followed by 0 or more digits \textbf{OR}
+    alphabetic characters.
+    Correspond to the [VarName] lexical unit.
+    \item \texttt{Spaces = \\s+}
+\end{enumerate}
 
 
+\section{All in yyinitial vs states for different grammars}
 
 \end{document}

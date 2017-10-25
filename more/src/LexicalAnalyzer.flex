@@ -61,7 +61,7 @@ AlphaNumeric   = {Alpha}|{Numeric}
 Number         = ([1-9]{Numeric}*)|0
 VarName        = {Alpha}{AlphaNumeric}*
 // LineTerminator = \r|\n|\r\n
-Spaces         = \s* // * greedy: match as much space as possible
+Spaces         = \s+ // * greedy: match as much space as possible
 Blank          = {Spaces} // \s matches also the new line character
 
 %xstate COMMENT
