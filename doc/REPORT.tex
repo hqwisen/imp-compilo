@@ -15,18 +15,24 @@
 \maketitle
 
 \section{Definition}
+
+\subsection{Emphasizing}
+
 \begin{itemize}
     \item MUST
     \item OR
     \item CAN
 \end{itemize}
 
+\subsection{Notation and defintions}
+
 \begin{itemize}
     \item case-senstive characters
     \item alpha numeric
+    \item ERE: Extended Regular Expression
 \end{itemize}
 
-\section{Extended regular expressions}
+\section{Extended Regular Expressions}
 This section describe extended regular expressions use by the lexer.
 The shortcuts section describes simple ERE that are used to write
 the advanced ERE.
@@ -43,7 +49,7 @@ the advanced ERE.
 \end{enumerate}
 
 \subsection{Advanced}
-
+\label{advanced-ere}
 \begin{enumerate}
     \item \texttt{Number = ([1-9]{Numeric}*)|0} :
     Match all numbers that \textbf{MUST} start with a non-zero digit and follow
@@ -57,6 +63,64 @@ the advanced ERE.
     Correspond to the [VarName] lexical unit.
     \item \texttt{Spaces = \\s+}
 \end{enumerate}
+
+\subsection{Keyword}
+
+\label{ere-keywords}
+
+All the following keyword are matching \textit{themself} directly: <Include
+keyword>
+
+\section{Implementation}
+
+\subsection{Code structure}
+
+\paragraph{Files}
+
+Our implementation is contained in two files: \texttt{LexicalAnalyzer.flex},
+contains the ERE that analyse the input sources and \texttt{ImpCompilo.java}
+that contains the Java source code, used in the regular Expressions
+matching actions.
+
+
+\paragraph{Code flexibility}
+
+To allow a better code flexibility, the Jflex generated class will
+\texttt{extends} \texttt{ImpCompilo} class. This allow to develop the
+compilator directly from a Java source class, instead of putting the
+ERE and the logical code inside the .flex file.
+
+\subsection{Implemenation choices}
+
+\subsubsection{States}
+
+\paragraph{}
+
+This section describe the states\cite{jflexdocstates} implemented in our
+lexical analyzer and the corresponding ERE used.
+
+\paragraph{}
+
+One state is enough (necessary) to return the IMP language tokens.
+The state \textbf{YYINITIAL} (the default inclusive state) is used to match
+all the keywords listed in section \ref{ere-keywords}. For each keyword
+the action is running the method \texttt{ImpCompilo.symbol(LexicalUnit)}.
+This method runs the following instruction:
+\begin{enumerate}
+    \item if LexicalUnit is VarName: add it to \texttt{identifiers} dictionnary
+    \item Add the symbol to \texttt{symbols}
+    \item Output the symbol using the provided \texttt{toString} method.
+\end{enumerate}
+\paragraph{Example}
+
+For the keyword \texttt{if}, the corresping ERE line in YYINITIAL is:
+"if"             {return symbol(LexicalUnit.IF);}
+
+\paragraph{}
+[VarName] and [Number] lexical units are also handled in \textbf{YYINITIAL}.
+The only difference is that the right-side of the line code is not a keyword
+but the correspding ERE defined in section \ref{advanced-ere}.
+
 
 
 \section{All in yyinitial vs states for different grammars}

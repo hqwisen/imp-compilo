@@ -30,7 +30,7 @@ public abstract class ImpCompilo {
      * The symbols is added to {@link ImpCompilo#symbols} list.
      * If the lexical unit is {@link LexicalUnit#VARNAME},
      * and the VarName is encountered for the first time, the value
-     * and the line of the symbol are added to {@link ImpCompilo#identifiers}.{@link Demo#num}
+     * and the line of the symbol are added to {@link ImpCompilo#identifiers}
      *
      * @param lexicalUnit lexical unit associated to the symbol to create
      * @return the created symbol object
@@ -49,7 +49,8 @@ public abstract class ImpCompilo {
 
     /**
      * @param identifier key (identifier) to test
-     * @return true if identifier is in {@link ImpCompilo#identifiers}, false otherwise.
+     * @return true if identifier is in {@link ImpCompilo#identifiers},
+     * false otherwise.
      */
     public boolean idAlreadyScan(String identifier) {
         return identifiers.containsKey(identifier);
@@ -66,7 +67,8 @@ public abstract class ImpCompilo {
             log.info("Adding identifier: " + identifier + " line " + idLine);
             identifiers.put(identifier, idLine);
         } else {
-            log.fine("The identifier " + identifier + " has already been added.");
+            log.fine("The identifier " + identifier +
+            " has already been added.");
         }
     }
 
@@ -75,7 +77,8 @@ public abstract class ImpCompilo {
      * Outputs:
      * - a new line
      * - 'Identifiers' line to separate from the tokens
-     * - and a line per identifier with the corresponding first-encountering line.
+     * - and a line per identifier with the corresponding
+     *  first-encountering line.
      */
     public void postScan() {
         System.out.println();
@@ -86,7 +89,8 @@ public abstract class ImpCompilo {
     }
 
     /**
-     * @return an array of String of encountered identifiers, sorted alphabetically.
+     * @return an array of String of encountered identifiers,
+     * sorted alphabetically.
      */
     public String[] identifiersKeysSorted() {
         String[] keys = identifiers.keySet()
