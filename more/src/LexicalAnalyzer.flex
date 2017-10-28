@@ -3,6 +3,7 @@
 %% // Options of the scanner
 
 %class Main
+%public
 %extends ImpCompilo
 %unicode
 %line
@@ -10,9 +11,9 @@
 %type Symbol
 %standalone
 
-// Constructor code
-// Class code (methods and attributes)
 %{
+    // Implementation of ImpCompilo abstract methods
+
     public int column(){
         return yycolumn;
     }
@@ -60,9 +61,9 @@ Numeric        = [0-9]
 AlphaNumeric   = {Alpha}|{Numeric}
 Number         = ([1-9]{Numeric}*)|0
 VarName        = {Alpha}{AlphaNumeric}*
-Blank          = \s+ // \s+ * greedy: match as much space as possible
-                     // \s matches also the new line character
-
+// \s+ * greedy: match as much space as possible
+// \s matches also the new line character
+Blank          = \s+
 %xstate COMMENT
 
 %% // Identification of tokens and actions
