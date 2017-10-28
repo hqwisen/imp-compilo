@@ -2,9 +2,7 @@
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1.5in]{geometry}
-% \usepackage[T1]{fontenc}
-
-
+\usepackage{listings}
 
 \title{Introduction to language theory and compiling
 \\ Project - Part 1}
@@ -14,7 +12,7 @@
 
 \begin{document}
 \maketitle
-
+\tableofcontents
 \section{Definition}
 
 \subsection{Emphasizing}
@@ -62,7 +60,7 @@ the advanced ERE.
     character and \textbf{CAN} be followed by 0 or more digits \textbf{OR}
     alphabetic characters.
     Correspond to the [VarName] lexical unit.
-    \item \texttt{Spaces = \\s+}
+    \item \texttt{Blank = \\s+}
 \end{enumerate}
 
 \subsection{Keyword}
@@ -105,14 +103,13 @@ matching actions.
 
 \paragraph{Code flexibility}
 
-To allow a better code flexibility, the Jflex generated class will
+To allow a better code flexibility, the JFlex generated class will
 \texttt{extends} \texttt{ImpCompilo} class. This allow to develop the
 compilator directly from a Java source class, instead of putting the
-ERE and the logical code inside the .flex file.
+ERE and the logical code inside the .flex file. The generated class is named
+\texttt{Main.java}, which should be used to run the scanner.
 
-\subsection{Implemenation choices}
-
-\subsubsection{States}
+\subsection{Keywords}
 
 \paragraph{}
 
@@ -134,14 +131,91 @@ This method runs the following instruction:
 \paragraph{Example}
 
 For the keyword \texttt{if}, the corresping ERE line in YYINITIAL is:
+
+\begin{lstlisting}[frame=single]
 "if"             {return symbol(LexicalUnit.IF);}
+\end{lstlisting}
 
 \paragraph{}
 [VarName] and [Number] lexical units are also handled in \textbf{YYINITIAL}.
 The only difference is that the right-side of the line code is not a keyword
 but the correspding ERE defined in section \ref{advanced-ere}.
 
+\subsection{Blank characters}
 
+Blank characters, space, new line and tabs characters,
+are ignored by the scanner. It is
+done by matching space \textit{i.e.} the ERE \texttt{\s+}, which match
+1 or more blank character, to an empty action. We have in YYINITIAL:
+\begin{lstlisting}[frame=single]
+{Blank}        {}
+\end{lstlisting}
+
+\subsection{Unknown token}
+
+If some characters don't match any of the ERE in YYINITIAL, the scanner
+will output:
+
+\begin{lstlisting}[frame=single]
+Unknown token: '<text>'
+\end{lstlisting}
+
+Note that this does not append in the COMMENT state (section \ref{comment}),
+since everything is ignored.
+
+\subsection{Comments}
+\label{comment}
+
+\paragraph{}
+
+Comments can only be represented by an enclosed text:
+ \texttt{(* \textit{Comments content} *)}.
+
+Therefore the solution provide to ignore the comments is the following:
+\begin{itemize}
+
+\item In YYINITIAL and comment is opened, i.e. matches \texttt{(*},
+change state to COMMENT
+
+\item In COMMENT, Ignore all characters
+(including blank characters) except the ending comment
+characters \texttt{*)}.
+If these characters are matched change state to YYINITIAL.
+
+\end{itemize}
+
+This process will ignore all characters in enclosed in comments.
+
+\subsubsection{Forbidden behaviours}
+\paragraph{}
+
+There are two forbidden behaviours of comment detection that can be highlighted:
+
+\begin{enumerate}
+    \item A comment is opened but not closed.
+    \item A closed comment is detected, but no opening precede it.
+\end{enumerate}
+
+The behaviour number 1 will ignore every characters until the EOF, since
+the state will change to COMMENT.
+\paragraph{}
+
+The behaviour number 2 is in state YYINITIAL, which means that the \textit{closed}
+comment characters \texttt{*)} will match
+the TIMES and LPAREN \textt{LexicalUnit},
+because the closed comment characters are only defined in COMMENT state.
+\paragraph{}
+
+With our implementation the nested comments, that are forbidden, will
+raise a syntax error, when detected in the parser. Because with
+\texttt{(* (* *) *)}, the second comment opening will be ignored in the
+COMMENT state, the first closed comment characters will close the first comment
+opening. The last closed comment characters is left as if we were in
+behaviour number 2.
+
+\subsubsection{Nested comments (Bonus)}
+
+Use counter ?
 
 \section{All in yyinitial vs states for different grammars}
 
