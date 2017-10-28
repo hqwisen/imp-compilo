@@ -63,11 +63,13 @@ the advanced ERE.
     \item \texttt{Blank = \\s+}
 \end{enumerate}
 
-\subsection{Keyword}
+\subsection{Keywords}
 
 \label{ere-keywords}
 
-All the following keyword are matching \textit{themself} directly: \\
+All the following keyword are matching \textit{themself} directly \textit{i.e.}
+return the corresponding symbol and lexical unit
+(see section \ref{impl-keywords}):\\
 
 \begin{tabular}{|c|c|c|c|c|}
     \hline
@@ -111,9 +113,11 @@ ERE and the logical code inside the .flex file. The generated class is named
 
 \subsection{Keywords}
 
+\label{impl-keywords}
+
 \paragraph{}
 
-This section describe the states\cite{jflexdocstates} implemented in our
+This section describe the states implemented in our
 lexical analyzer and the corresponding ERE used.
 
 \paragraph{}
@@ -263,17 +267,48 @@ closeComment(){
 \end{lstlisting}
 
 \paragraph{}
-
 For the example given in section \ref{comment_forbidden}, if we use the
 solution proposed above, no error will be detected, and the nested
 comments will be ignored.
 
-\section{All in yyinitial vs states for different grammars}
+\section{HowTo}
 
-Changes between states are diffuclt to detect Unknown tokens
-it increase diffulcty of impl
-better to use one state
-always makes no sense to use multi state since the grammar is checked
-during the scanner, therefore the grammar should be impl in part 2.
+\subsection{Files}
+
+The executable jar is \textbf{dist/imp-compilo.jar}.
+The source files are in \textbf{more/src}. It contains the following files:
+
+\begin{itemize}
+    \item LexicalUnit.java: provided class.
+    \item Symbol.java: provided class.
+    \item ImpCompilo.java: the class that the lexer extends, containing the
+    source code used in the lexer.
+    \item LexicalAnalyzer.jflex: the lexical analyzer that generates the
+    Main.java class.
+\end{itemize}
+
+\subsection{Compile}
+
+## How To
+
+Run scanner
+java -jar dist/imp-compilo.jar <input>
+or
+gradle scan -Pinput=<input>
+
+Generate **more/src/Main.java** from more/src/LexicalAnalyzer.flex
+```bash
+gradle generateMain
+```
+Generate jar **dist/imp-compilo.jar**
+```bash
+gradle generateJar
+```
+
+Generate JavaDoc in **doc/javadoc**
+```bash
+gradle generateDoc
+```
+
 
 \end{document}
