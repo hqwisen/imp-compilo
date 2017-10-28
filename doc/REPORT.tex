@@ -187,8 +187,8 @@ If these characters are matched change state to YYINITIAL.
 This process will ignore all characters in enclosed in comments.
 
 \subsubsection{Forbidden behaviours}
+\label{comment_forbidden}
 \paragraph{}
-
 There are two forbidden behaviours of comment detection that can be highlighted:
 
 \begin{enumerate}
@@ -200,7 +200,8 @@ The behaviour number 1 will ignore every characters until the EOF, since
 the state will change to COMMENT.
 \paragraph{}
 
-The behaviour number 2 is in state YYINITIAL, which means that the \textit{closed}
+The behaviour number 2 is in state YYINITIAL,
+which means that the \textit{closed}
 comment characters \texttt{*)} will match
 the TIMES and LPAREN \textt{LexicalUnit},
 because the closed comment characters are only defined in COMMENT state.
@@ -215,7 +216,57 @@ behaviour number 2.
 
 \subsubsection{Nested comments (Bonus)}
 
-Use counter ?
+\paragraph{}
+If we need to handle nested comments, an easy implementation is to use a
+counter that will count how many comments are opened, therefore how many
+comments still need to be closed. The process is the following:
+\begin{enumerate}
+    \item in YYINITIAL, if comment open: init counter to 1 and change state
+    to COMMENT.
+    \item in COMMENT, if comment open: increment the counter.
+    \item in COMMENT, if comment close: decrement the counter, and
+    if the counter is equal to 0, change state to YYINITIAL.
+\end{enumerate}
+
+Here is an implementation of the proposed solution (in pseudocode): \\
+\begin{lstlisting}[frame=single]
+// Lexer
+<YYINITIAL> {
+    ...
+    "(*"    {initCommentState();}
+    ...
+}
+
+<COMMENT> {
+    "(*"    {openComment();}
+    "*)"    {closeComment();}
+    .|{Blank}   {} // Ignore everything else
+}
+
+// Code
+
+initCommentState(){
+    commentCounter = 1;
+    changeState(COMMENT);
+}
+
+openComment(){
+    commentCounter++;
+}
+
+closeComment(){
+    commentCounter--;
+    if (commentCounter == 0) // If all closed, scan
+        changeState(YYINITIAL);
+}
+
+\end{lstlisting}
+
+\paragraph{}
+
+For the example given in section \ref{comment_forbidden}, if we use the
+solution proposed above, no error will be detected, and the nested
+comments will be ignored.
 
 \section{All in yyinitial vs states for different grammars}
 
