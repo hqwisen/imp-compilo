@@ -45,6 +45,11 @@ task scan (dependsOn: generateJar) {
   }
 }
 
+task generateDoc (type: Javadoc){
+    source = sourceSets.main.allJava
+    destinationDir file('doc/javadoc')
+}
+
 repositories{
     mavenCentral()
 }

@@ -125,4 +125,10 @@ but the correspding ERE defined in section \ref{advanced-ere}.
 
 \section{All in yyinitial vs states for different grammars}
 
+Changes between states are diffuclt to detect Unknown tokens
+it increase diffulcty of impl
+better to use one state
+always makes no sense to use multi state since the grammar is checked
+during the scanner, therefore the grammar should be impl in part 2.
+
 \end{document}

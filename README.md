@@ -17,6 +17,11 @@ Generate jar **dist/imp-compilo.jar**
 gradle generateJar
 ```
 
+Generate JavaDoc in **doc/javadoc**
+```bash
+gradle generateDoc
+```
+
 ## Dependencies
 
 * gradle
