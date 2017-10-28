@@ -2,6 +2,7 @@
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1.5in]{geometry}
+% \usepackage[T1]{fontenc}
 
 
 
@@ -68,8 +69,27 @@ the advanced ERE.
 
 \label{ere-keywords}
 
-All the following keyword are matching \textit{themself} directly: <Include
-keyword>
+All the following keyword are matching \textit{themself} directly: \\
+
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    ; & := & ( & )  & + \\
+    \hline
+    - & *  & / & if & then \\
+    \hline
+    endif & else & while & for & from \\
+    \hline
+    by & to & do & done & note \\
+    \hline
+    and & or & = & $>$= & $>$ \\
+    \hline
+    $<$= & $<$ & $<>$ & print & read \\
+    \hline
+    begin & end & & &  \\
+    \hline
+\end{tabular}
+
+
 
 \section{Implementation}
 
