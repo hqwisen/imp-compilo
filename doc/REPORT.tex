@@ -1,37 +1,117 @@
 \documentclass[letterpaper]{article}
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=1.5in]{geometry}
+%\usepackage[margin=1in]{geometry}
+\usepackage{geometry}
 \usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{graphicx}%images
+\usepackage{fancyhdr}%for headers and footers
+\pagestyle{fancy}
 
-\title{Introduction to language theory and compiling
-\\ Project - Part 1}
-\author{Université Libre de Bruxelles \\
-\\ Hakim Boulahya}
+\usepackage{xcolor}
+\usepackage{adjustbox}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{fancyhdr}
 
+% ------ HEADERS AND FOOTERS -----------
+\lhead{INFO-F403}
+\rhead{Université Libre de Bruxelles}
+% \rhead{Algorithmique et recherche opérationnelle}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{Academic Year 2017-18}
+
+% ---------- COMMAND SETTERS -----------
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} %newcommand for cover page
+
+% ------------ PROMPT COMMAND ----------
+\definecolor{shadecolor}{rgb}{.9, .9, .9}
+
+\newenvironment{prompt}%
+   {\par\noindent\adjustbox{margin=1ex,bgcolor=shadecolor,margin=5ex
+   \medskipamount}\bgroup\minipage\linewidth\verbatim}%
+   {\endverbatim\endminipage\egroup}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 
 \begin{document}
-\maketitle
+\begin{titlepage}
+\begin{center}
+
+
+\textsc{\LARGE universit\'e libre de bruxelles}\\[1.0cm]
+\textsc{\Large D\'epartment d'Informatique}\\[1.5cm]
+
+% Upper part of the page. The '~' is needed because \\
+% only works if a paragraph has started.
+\includegraphics[width=0.2\textwidth]{image/ulblogo.jpg}~\\[1cm]
+
+\textsc{\Large INFO-F403 - Introduction to language theory and compiling
+\\[0.3cm]}\\[0.5cm]
+
+% Title
+\HRule \\[0.4cm]
+{ \huge \bfseries Project Report – Part 1  \\[0.4cm] }
+
+\HRule \\[1.5cm]
+
+% Author and supervisor
+\noindent
+\begin{center} \large
+
+\emph{Author:}\\
+Hakim \textsc{Boulahya}\\
+\end{center}
+\begin{center} \large
+
+\emph{Professor:} \\
+Gilles \textsc{Geeraerts}\\
+
+\end{center}
+
+\vfill
+
+% Bottom of the page
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
 \tableofcontents
-\section{Definition}
+\newpage
 
-\subsection{Emphasizing}
 
-\begin{itemize}
-    \item MUST
-    \item OR
-    \item CAN
-\end{itemize}
-
-\subsection{Notation and defintions}
-
-\begin{itemize}
-    \item case-senstive characters
-    \item alpha numeric
-    \item ERE: Extended Regular Expression
-\end{itemize}
-
-\section{Extended Regular Expressions}
+\section{Extended Regular Expressions (ERE)}
 This section describe extended regular expressions use by the lexer.
 The shortcuts section describes simple ERE that are used to write
 the advanced ERE.
@@ -149,7 +229,7 @@ but the correspding ERE defined in section \ref{advanced-ere}.
 
 Blank characters, space, new line and tabs characters,
 are ignored by the scanner. It is
-done by matching space \textit{i.e.} the ERE \texttt{\s+}, which match
+done by matching space \textit{i.e.} the ERE \texttt{\\s+}, which match
 1 or more blank character, to an empty action. We have in YYINITIAL:
 \begin{lstlisting}[frame=single]
 {Blank}        {}
@@ -207,7 +287,7 @@ the state will change to COMMENT.
 The behaviour number 2 is in state YYINITIAL,
 which means that the \textit{closed}
 comment characters \texttt{*)} will match
-the TIMES and LPAREN \textt{LexicalUnit},
+the TIMES and LPAREN \texttt{LexicalUnit},
 because the closed comment characters are only defined in COMMENT state.
 \paragraph{}
 
