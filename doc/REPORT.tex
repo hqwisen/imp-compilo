@@ -271,7 +271,7 @@ For the example given in section \ref{comment_forbidden}, if we use the
 solution proposed above, no error will be detected, and the nested
 comments will be ignored.
 
-\section{HowTo}
+\section{How To}
 
 \subsection{Files}
 
@@ -287,30 +287,16 @@ The source files are in \textbf{more/src}. It contains the following files:
     Main.java class.
 \end{itemize}
 
-\subsection{Build and JavaDoc}
+\subsection{Run and JavaDoc}
 
-## How To
-
-Run scanner
+\paragraph{Run}
+Execute the following command to run the scanner:
+\begin{lstlisting}[frame=single]
 java -jar dist/imp-compilo.jar <input>
-or
-gradle scan -Pinput=<input>
+\end{lstlisting}
+\paragraph{Doc}
 
-Generate **more/src/Main.java** from more/src/LexicalAnalyzer.flex
-```bash
-gradle generateMain
-```
-Generate jar **dist/imp-compilo.jar**
-```bash
-gradle generateJar
-```
+The JavaDoc is available at \textbf{doc/javadoc/ImpCompilo.html}.
 
-Generate JavaDoc in **doc/javadoc**
-```bash
-gradle generateDoc
-```
-
-
-The JavaDoc is available at doc/javadoc/ImpCompilo.html
 
 \end{document}
