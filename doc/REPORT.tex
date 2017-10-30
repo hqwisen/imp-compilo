@@ -138,7 +138,9 @@ the advanced ERE.
     character and \textbf{CAN} be followed by 0 or more digits \textbf{OR}
     alphabetic characters.
     Correspond to the [VarName] lexical unit.
-    \item \texttt{Blank = \textbackslash s+}
+    \item \texttt{Blank = \textbackslash s+} Match 1 or more
+    \textit{blank} character: spaces,
+    new lines and/or tabulations.
 \end{enumerate}
 
 \subsection{Keywords}
@@ -175,9 +177,11 @@ return the corresponding symbol with the corresponding lexical unit
 \paragraph{Files}
 
 They are two source files for the compilator: \texttt{LexicalAnalyzer.flex},
-contains the ERE that analyse the input sources and \texttt{ImpCompilo.java}
+contains the lexer ERE
+that analyse the input sources and \texttt{ImpCompilo.java}
 that contains the Java source code, used in the Regular Expressions
-matching actions.
+matching actions. For details about each method of \texttt{ImpCompilo.java},
+read the JavaDoc at \textbf{doc/javadoc/ImpCompilo.html}.
 
 
 \paragraph{Code flexibility}

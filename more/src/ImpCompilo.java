@@ -47,6 +47,7 @@ public abstract class ImpCompilo {
     }
 
     /**
+     * Check if an identifier had already been encountered during the scan.
      * @param identifier key (identifier) to test
      * @return true if identifier is in {@link ImpCompilo#identifiers},
      * false otherwise.
@@ -88,6 +89,8 @@ public abstract class ImpCompilo {
     }
 
     /**
+     * Sort the identifiers alphabetically, and return an array
+     * of String identifiers.
      * @return an array of String of encountered identifiers,
      * sorted alphabetically.
      */
@@ -98,24 +101,41 @@ public abstract class ImpCompilo {
         return keys;
     }
 
-    public void pushbackWord() {
-        pushback(length());
-    }
-
+    /**
+     * Return the list of scanned symbols.
+     * @return {@link ImpCompilo#symbols} list.
+     */
     public List<Symbol> getSymbols() {
         return this.symbols;
     }
 
-
+    /**
+     * Return the current match ERE value.
+     * @return the current match text string.
+     */
     public abstract String text();
 
+    /**
+     * Return the current scanned line, starting at 0.
+     * @return the line number
+     */
     public abstract int line();
 
+    /**
+     * Return the current scanned column, starting at 0.
+     * @return the column number
+     */
     public abstract int column();
 
+    /**
+     * Return the length of the current {@link ImpCompilo#text}.
+     * @return {@link ImpCompilo#text} size.
+     */
     public abstract int length();
 
-    public abstract void pushback(int number);
-
+    /**
+     * Change the current state of the lexer to state.
+     * @param state new state
+     */
     public abstract void changeState(int state);
 }

@@ -30,10 +30,6 @@
         return yylength();
     }
 
-    public void pushback(int number){
-        yypushback(number);
-    }
-
     public void changeState(int state){
         yybegin(state);
     }
