@@ -1,0 +1,25 @@
+begin
+    b := 2 * 7;
+    a := 1 + b * (b); (* This is apparently useless *)
+    if not -a <> (b) and 5 = b then
+        read(c) ;
+        print(c) ;
+        for i from -1 to ((20-5) / 1) do
+            j := (i + 5);
+            print(j) ;
+        for v from 1 by 2 to 11 do
+        done
+        if a >= b or c <= A and c < d or d > i
+        then
+        print(a);
+        else
+        endif;
+        (*
+        I don't know why i'm doing this;
+        B := 1;
+        *)
+        a := 10;
+        while a >= 1 do
+            a := a - 1;
+        done
+end
