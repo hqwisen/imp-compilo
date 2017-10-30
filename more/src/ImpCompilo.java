@@ -26,7 +26,7 @@ public abstract class ImpCompilo {
 
     /**
      * Create a new symbol based on the current state (text, line, column).
-     * The symbol is printed (using {@link symbol#toString} to stdout.
+     * The symbol is printed (using {@link symbol#toString} to stdout).
      * The symbols is added to {@link ImpCompilo#symbols} list.
      * If the lexical unit is {@link LexicalUnit#VARNAME},
      * and the VarName is encountered for the first time, the value
