@@ -19,7 +19,7 @@
 
 % ------ HEADERS AND FOOTERS -----------
 \lhead{INFO-F403}
-\rhead{Université Libre de Bruxelles}
+\rhead{Project Report - Part 1}
 \lfoot{}
 \cfoot{\thepage}
 %\lfoot{Academic Year 2017-18}
@@ -110,10 +110,10 @@ Gilles \textsc{Geeraerts}\\
 
 
 \section{Extended Regular Expressions (ERE)}
-This section describe extended regular expressions use by the lexer.
-The shortcuts section describes simple ERE that are used to write
+This section describes the extended regular expressions used by the lexer.
+The macros section describes simple ERE that are used to write
 the advanced ERE.
-\subsection{Shortcuts}
+\subsection{Macros}
 
 \begin{enumerate}
     \item \texttt{AlphaUpperCase = [A-Z]} : Match all uppercase letters
@@ -125,7 +125,7 @@ the advanced ERE.
     Match alphabetic \textbf{OR} digit characters
 \end{enumerate}
 
-\subsection{Advanced}
+\subsection{Macros - Lexical Units}
 \label{advanced-ere}
 \begin{enumerate}
     \item \texttt{Number = ([1-9]{Numeric}*)|0} :
@@ -138,15 +138,15 @@ the advanced ERE.
     character and \textbf{CAN} be followed by 0 or more digits \textbf{OR}
     alphabetic characters.
     Correspond to the [VarName] lexical unit.
-    \item \texttt{Blank = \\s+}
+    \item \texttt{Blank = \textbackslash s+}
 \end{enumerate}
 
 \subsection{Keywords}
 
 \label{ere-keywords}
-
-All the following keyword are matching \textit{themself} directly \textit{i.e.}
-return the corresponding symbol and lexical unit
+\paragraph{}
+All the following keywords are matching \textit{themself} directly \textit{i.e.}
+return the corresponding symbol with the corresponding lexical unit
 (see section \ref{impl-keywords}):\\
 
 \begin{tabular}{|c|c|c|c|c|}
@@ -168,16 +168,15 @@ return the corresponding symbol and lexical unit
 \end{tabular}
 
 
-
 \section{Implementation}
 
 \subsection{Code structure}
 
 \paragraph{Files}
 
-Our implementation is contained in two files: \texttt{LexicalAnalyzer.flex},
+They are two source files for the compilator: \texttt{LexicalAnalyzer.flex},
 contains the ERE that analyse the input sources and \texttt{ImpCompilo.java}
-that contains the Java source code, used in the regular Expressions
+that contains the Java source code, used in the Regular Expressions
 matching actions.
 
 
@@ -187,7 +186,7 @@ To allow a better code flexibility, the JFlex generated class will
 \texttt{extends} \texttt{ImpCompilo} class. This allow to develop the
 compilator directly from a Java source class, instead of putting the
 ERE and the logical code inside the .flex file. The generated class is named
-\texttt{Main.java}, which should be used to run the scanner.
+\texttt{Main.java}, which is used to run the scanner.
 
 \subsection{Keywords}
 
@@ -195,21 +194,20 @@ ERE and the logical code inside the .flex file. The generated class is named
 
 \paragraph{}
 
-This section describe the states implemented in our
-lexical analyzer and the corresponding ERE used.
-
-\paragraph{}
-
-One state is enough (necessary) to return the IMP language tokens.
-The state \textbf{YYINITIAL} (the default inclusive state) is used to match
+One state is enough to return the IMP language tokens.
+The state YYINITIAL (the default inclusive state) is used to match
 all the keywords listed in section \ref{ere-keywords}. For each keyword
 the action is running the method \texttt{ImpCompilo.symbol(LexicalUnit)}.
 This method runs the following instruction:
 \begin{enumerate}
     \item if LexicalUnit is VarName: add it to \texttt{identifiers} dictionnary
-    \item Add the symbol to \texttt{symbols}
+    \item Add the symbol to list \texttt{symbols}
     \item Output the symbol using the provided \texttt{toString} method.
 \end{enumerate}
+
+The instruction that add the symbol to the list \texttt{symbols}
+will be relevant for the part 2 of the project.
+
 \paragraph{Example}
 
 For the keyword \texttt{if}, the corresping ERE line in YYINITIAL is:
@@ -219,15 +217,17 @@ For the keyword \texttt{if}, the corresping ERE line in YYINITIAL is:
 \end{lstlisting}
 
 \paragraph{}
-[VarName] and [Number] lexical units are also handled in \textbf{YYINITIAL}.
+\textbf{[VarName]} and \textbf{[Number]} lexical units
+are also handled in YYINITIAL.
 The only difference is that the right-side of the line code is not a keyword
 but the correspding ERE defined in section \ref{advanced-ere}.
 
 \subsection{Blank characters}
 
-Blank characters, space, new line and tabs characters,
+Blank characters (space, new line and tab character)
 are ignored by the scanner. It is
-done by matching space \textit{i.e.} the ERE \texttt{\\s+}, which match
+done by matching space \textit{i.e.} the ERE \texttt{\textbackslash s+},
+which matches
 1 or more blank character, to an empty action. We have in YYINITIAL:
 \begin{lstlisting}[frame=single]
 {Blank}        {}
@@ -242,7 +242,7 @@ will output:
 Unknown token: '<text>'
 \end{lstlisting}
 
-Note that this does not append in the COMMENT state (section \ref{comment}),
+Note that this doesn't happen in the COMMENT state (see section \ref{comment}),
 since everything is ignored.
 
 \subsection{Comments}
@@ -253,25 +253,26 @@ since everything is ignored.
 Comments can only be represented by an enclosed text:
  \texttt{(* \textit{Comments content} *)}.
 
-Therefore the solution provide to ignore the comments is the following:
+Therefore the solution provided to ignore comments is the following:
 \begin{itemize}
 
-\item In YYINITIAL and comment is opened, i.e. matches \texttt{(*},
+\item In YYINITIAL when a comment is opened, i.e. matches \texttt{(*},
 change state to COMMENT
 
-\item In COMMENT, Ignore all characters
+\item In COMMENT, ignore all characters
 (including blank characters) except the ending comment
 characters \texttt{*)}.
 If these characters are matched change state to YYINITIAL.
 
 \end{itemize}
 
-This process will ignore all characters in enclosed in comments.
+This process will ignore all characters enclosed in comments.
 
 \subsubsection{Forbidden behaviours}
 \label{comment_forbidden}
 \paragraph{}
-There are two forbidden behaviours of comment detection that can be highlighted:
+There are two \textit{forbidden}
+behaviours of comment detection that can be highlighted:
 
 \begin{enumerate}
     \item A comment is opened but not closed.
@@ -279,7 +280,7 @@ There are two forbidden behaviours of comment detection that can be highlighted:
 \end{enumerate}
 
 The behaviour number 1 will ignore every characters until the EOF, since
-the state will change to COMMENT.
+the state will change to COMMENT, and never revert to YYINITIAL.
 \paragraph{}
 
 The behaviour number 2 is in state YYINITIAL,
@@ -289,12 +290,13 @@ the TIMES and LPAREN \texttt{LexicalUnit},
 because the closed comment characters are only defined in COMMENT state.
 \paragraph{}
 
-With our implementation the nested comments, that are forbidden, will
+With our implementation the nested comments, that are \textit{forbidden}, should
 raise a syntax error, when detected in the parser. Because with
 \texttt{(* (* *) *)}, the second comment opening will be ignored in the
 COMMENT state, the first closed comment characters will close the first comment
 opening. The last closed comment characters is left as if we were in
-behaviour number 2.
+behaviour number 2. Note that this behaviour is the one implemented in the Java
+language.
 
 \subsubsection{Nested comments (Bonus)}
 
@@ -345,6 +347,7 @@ closeComment(){
 \end{lstlisting}
 
 \paragraph{}
+
 For the example given in section \ref{comment_forbidden}, if we use the
 solution proposed above, no error will be detected, and the nested
 comments will be ignored.
@@ -357,13 +360,18 @@ The executable jar is \textbf{dist/imp-compilo.jar}.
 The source files are in \textbf{more/src}. It contains the following files:
 
 \begin{itemize}
-    \item LexicalUnit.java: provided class.
-    \item Symbol.java: provided class.
-    \item ImpCompilo.java: the class that the lexer extends, containing the
+    \item \textbf{LexicalUnit.javthis doesn't happensa}: provided class.
+    \item \textbf{Symbol.java}: provided class.
+    \item \textbf{ImpCompilo.java}:
+    the class that the lexer extends, containing the
     source code used in the lexer.
-    \item LexicalAnalyzer.jflex: the lexical analyzer that generates the
-    Main.java class.
+    \item \textbf{LexicalAnalyzer.jflex}:
+    the lexical analyzer that generates the
+    \textbf{Main.java} class.
 \end{itemize}
+
+All the imp source files, used to test the scanner,
+are in \textbf{test} directory.
 
 \subsection{Run and JavaDoc}
 
@@ -375,6 +383,5 @@ java -jar dist/imp-compilo.jar <input>
 \paragraph{Doc}
 
 The JavaDoc is available at \textbf{doc/javadoc/ImpCompilo.html}.
-
 
 \end{document}
