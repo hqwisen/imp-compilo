@@ -58,14 +58,14 @@ public abstract class ImpCompilo {
 
     /**
      * Add key: identifier, value: idLine to {@link ImpCompilo#identifiers}.
-     *
+     * idLine is incremented before adding the {@link ImpCompilo#identifiers}.
      * @param identifier
      * @param idLine     line where the identifier was encountered.
      */
     public void addIdentifier(String identifier, int idLine) {
         if (!idAlreadyScan(identifier)) {
             log.info("Adding identifier: " + identifier + " line " + idLine);
-            identifiers.put(identifier, idLine);
+            identifiers.put(identifier, idLine + 1);
         } else {
             log.fine("The identifier " + identifier +
             " has already been added.");
