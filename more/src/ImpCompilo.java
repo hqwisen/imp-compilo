@@ -42,8 +42,7 @@ public abstract class ImpCompilo {
             addIdentifier(value, line());
         }
         symbols.add(symbol);
-        // The println method uses the toString automatically
-        System.out.println(symbol);
+        System.out.println(symbol.toString());
         return symbol;
     }
 
