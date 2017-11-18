@@ -1,0 +1,166 @@
+\documentclass[letterpaper]{article}
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+%\usepackage[margin=1in]{geometry}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{graphicx}%images
+\usepackage{fancyhdr}%for headers and footers
+\pagestyle{fancy}
+
+\usepackage{xcolor}
+\usepackage{adjustbox}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{fancyhdr}
+
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{array}
+
+% ------ HEADERS AND FOOTERS -----------
+\lhead{INFO-F403}
+\rhead{Project Report - Part 1}
+\lfoot{}
+\cfoot{\thepage}
+%\lfoot{Academic Year 2017-18}
+
+\lstset{
+  basicstyle=\itshape,
+  xleftmargin=3em,
+  literate={->}{$\rightarrow$}{2}
+           {α}{$\alpha$}{1}
+           {δ}{$\delta$}{1}
+}
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+
+
+\textsc{\LARGE universit\'e libre de bruxelles}\\[1.0cm]
+\textsc{\Large D\'epartment d'Informatique}\\[1.5cm]
+
+% Upper part of the page. The '~' is needed because \\
+% only works if a paragraph has started.
+\includegraphics[width=0.2\textwidth]{image/ulblogo.jpg}~\\[1cm]
+
+\textsc{\Large INFO-F403 - Introduction to language theory and compiling
+\\[0.3cm]}
+% Title
+\HRule \\[0.4cm]
+{ \huge \bfseries Project Report – Part 2  \\[0.4cm] }
+
+\HRule \\[1.5cm]
+
+% Author and supervisor
+\noindent
+\begin{center} \large
+
+\emph{Author:}\\
+Hakim \textsc{Boulahya}\\
+\end{center}
+\begin{center} \large
+
+\emph{Professor:} \\
+Gilles \textsc{Geeraerts}\\
+
+\end{center}
+
+\vfill
+
+% Bottom of the page
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Grammar}
+
+\subsection{Unproductive and unreachable symbols (a)}
+
+In the given grammar, there is no unproductive and/or unreachable symbols.
+
+\subsection{Priority and associativity of the operators (b)}
+
+\paragraph{Note} In this section, P&A refers to priority and associativity
+of the operators, AE to arithmetic expression and BE to boolean expression.
+
+\subsubsection{Arithmetic expressions}
+
+\paragraph{}
+
+Since an arithmetic expression must always be process first before bing compared
+to another one in a boolean expression, we will consider those two separatly.
+
+\paragraph{}
+
+First let's consider the P&A of the arithmetic expressions. We have the
+following P&A:
+
+\begin{tabular}{|c|c|}
+    \hline
+    - & right \\
+    \hline
+    *, / & left \\
+    \hline
+    +, - & left \\
+    \hline
+\end{tabular}
+
+ And the following grammar:
+
+\begin{lstlisting}
+<ExprArith> -> [VarName]
+<ExprArith> -> [Number]
+<ExprArith> -> (<ExprArith>)
+<ExprArith> -> - <ExprArith>
+<ExprArith> -> <ExprArith> <Op> <ExprArith>
+<Op> -> +
+<Op> -> -
+<Op> -> *
+<Op> -> /
+\end{lstlisting}
+
+
+As mention in the course page 111, an AE must be a \textit{sum of products},
+more specifically in our case a \textit{\{sum, substraction\}
+of \{produts, division\}}. We will use the same atom definition in the course,
+with \texttt{Number} as the constant rule and \texttt{VarName} as the id rule.
+The minus operator as a right associativity, meaning that it is always linked
+to the atom next to the operator, so we will set this operator directly as
+an atom rule.
+
+Same thing goes for the parenthesis. The must be handled without considering
+the operators outside the parenthesis, so as an atom.
+
+We have the following grammar results:
+
+\begin{lstlisting}
+<ExprArith> -> <ExprArith> <SumSubOp> <ExprProd>
+<ExprArith> -> <ExprProd>
+<ExprProd> -> <ExprProd> <ProdOp> <Atom>
+<ExprProd> -> <Atom>
+<SumSubOp> -> +
+<SumSubOp> -> -
+<ProdOp> -> *
+<ProdOp> -> /
+<Atom> -> [VarName]
+<Atom> -> [Number]
+<ExprArith> -> - <Atom>
+<ExprArith> -> (<ExprArith>)
+\end{lstlisting}
+
+
+\subsubsection{Boolean expressions}
+
+
+
+
+\end{document}
