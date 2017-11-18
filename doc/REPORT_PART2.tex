@@ -51,10 +51,10 @@
 \textsc{\Large INFO-F403 - Introduction to language theory and compiling
 \\[0.3cm]}
 % Title
-\HRule \\[0.4cm]
+% \HRule \\[0.4cm]
 { \huge \bfseries Project Report – Part 2  \\[0.4cm] }
 
-\HRule \\[1.5cm]
+%\HRule \\[1.5cm]
 
 % Author and supervisor
 \noindent
@@ -89,7 +89,7 @@ In the given grammar, there is no unproductive and/or unreachable symbols.
 
 \subsection{Priority and associativity of the operators (b)}
 
-\paragraph{Note} In this section, P&A refers to priority and associativity
+\paragraph{Note} In this section, P\&A refers to priority and associativity
 of the operators, AE to arithmetic expression and BE to boolean expression.
 
 \subsubsection{Arithmetic expressions}
@@ -101,8 +101,8 @@ to another one in a boolean expression, we will consider those two separatly.
 
 \paragraph{}
 
-First let's consider the P&A of the arithmetic expressions. We have the
-following P&A:
+First let's consider the P\&A of the arithmetic expressions. We have the
+following P\&A:
 
 \begin{tabular}{|c|c|}
     \hline
@@ -159,6 +159,63 @@ We have the following grammar results:
 
 
 \subsubsection{Boolean expressions}
+
+For boolean expressions we have the following P\&A:
+
+
+\begin{tabular}{|c|c|}
+    \hline
+    not & right \\
+    \hline
+    $>$, $<$, $>=$, $<=$, $=$, $<>$ / & left \\
+    \hline
+    and & left \\
+    \hline
+    or & left \\
+    \hline
+\end{tabular}
+
+And the following grammar:
+
+\begin{lstlisting}
+<Cond> -> <Cond> <BinOp> <Cond>
+<Cond> -> not <SimpleCond>
+<Cond> -> <SimpleCond>
+<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
+<BinOp> -> and
+<BinOp> -> or
+<Comp> -> =
+<Comp> -> >=
+<Comp> -> >
+<Comp> -> <=
+<Comp> -> <
+<Comp> -> <>
+\end{lstlisting}
+
+Following the same principe as for AE, we have here
+\textit{disjonction of conjonctions of comparaisons}. By using the same
+mechanics as above, we have this grammar:
+
+
+\begin{lstlisting}
+<Cond> -> <Cond> or <ConjCond>
+<Cond> -> <ConjCond>
+<ConjCond> -> <ConjCond> and <AtomCond>
+<ConjCond> -> <AtomCond>
+
+<AtomCond> -> <SimpleCond>
+<AtomCond> -> not <SimpleCond>
+
+<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
+<Comp> -> =
+<Comp> -> >=
+<Comp> -> >
+<Comp> -> <=
+<Comp> -> <
+<Comp> -> <>
+
+\end{lstlisting}
+
 
 
 
