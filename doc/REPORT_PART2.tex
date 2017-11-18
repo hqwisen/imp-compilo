@@ -145,16 +145,20 @@ We have the following grammar results:
 \begin{lstlisting}
 <ExprArith> -> <ExprArith> <SumSubOp> <ExprProd>
 <ExprArith> -> <ExprProd>
+
 <ExprProd> -> <ExprProd> <ProdOp> <Atom>
 <ExprProd> -> <Atom>
+
 <SumSubOp> -> +
 <SumSubOp> -> -
+
 <ProdOp> -> *
 <ProdOp> -> /
+
 <Atom> -> [VarName]
 <Atom> -> [Number]
-<ExprArith> -> - <Atom>
-<ExprArith> -> (<ExprArith>)
+<Atom> -> - <Atom>
+<Atom> -> (<ExprArith>)
 \end{lstlisting}
 
 
@@ -200,6 +204,7 @@ mechanics as above, we have this grammar:
 \begin{lstlisting}
 <Cond> -> <Cond> or <ConjCond>
 <Cond> -> <ConjCond>
+
 <ConjCond> -> <ConjCond> and <AtomCond>
 <ConjCond> -> <AtomCond>
 
@@ -207,6 +212,7 @@ mechanics as above, we have this grammar:
 <AtomCond> -> not <SimpleCond>
 
 <SimpleCond> -> <ExprArith> <Comp> <ExprArith>
+
 <Comp> -> =
 <Comp> -> >=
 <Comp> -> >
@@ -216,8 +222,73 @@ mechanics as above, we have this grammar:
 
 \end{lstlisting}
 
+\subsection{Removing left recusion}
+
+For the new AE:
+
+\begin{lstlisting}
+
+<ExprArith> -> <ExprProd> <ExprArithPrime>
+
+<ExprArithPrime> -> <SumSubOp> <ExprProd> <ExprArithPrime>
+<ExprArithPrime> -> \epsilon
 
 
+<ExprProd> -> <Atom> <ExprProdPrime>
 
+<ExprProdPrime> -> <ProdOp> <Atom> <ExprProdPrime>
+<ExprProdPrime> -> \epsilon
+
+
+<SumSubOp> -> +
+<SumSubOp> -> -
+
+<ProdOp> -> *
+<ProdOp> -> /
+
+<Atom> -> [VarName]
+<Atom> -> [Number]
+
+<ExprArith> -> - <Atom>
+<ExprArith> -> (<ExprArith>)
+
+\end{lstlisting}
+
+
+For the new BE:
+
+\begin{lstlisting}
+<Cond> -> <ConjCond> <CondPrime>
+
+
+<CondPrime> -> or <ConjCond> <CondPrime>
+<CondPrime> -> \epsilon
+
+<ConjCond> -> <AtomCond> <ConjCondPrime>
+
+
+<ConjCondPrime> -> and <AtomCond> <ConjCondPrime>
+<ConjCondPrime> -> \epsilon
+
+<AtomCond> -> <SimpleCond>
+<AtomCond> -> not <SimpleCond>
+
+<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
+
+<Comp> -> =
+<Comp> -> >=
+<Comp> -> >
+<Comp> -> <=
+<Comp> -> <
+<Comp> -> <>
+
+\end{lstlisting}
+
+Those are the only rules where left-recusion appears, all the other rules
+are right-recusion or no recursion at all.
+
+\subsection{Factorisation}
+
+We ca factorize the following set of rules: <InstList>, <If>, <For>
 
 \end{document}
