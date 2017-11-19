@@ -1,135 +1,15 @@
-& $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$ $<$InstListSeq$>$ \\
-& $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$ \\
-& $<$InstListSeq$>$ & $\rightarrow$ \epsilon \\
-& $<$Instruction$>$ & $\rightarrow$ $<$Assign$>$ \\
-& $<$Instruction$>$ & $\rightarrow$ $<$If$>$ \\
-& $<$Instruction$>$ & $\rightarrow$ $<$While$>$ \\
-& $<$Instruction$>$ & $\rightarrow$ $<$For$>$ \\
-& $<$Instruction$>$ & $\rightarrow$ $<$Print$>$ \\
-& $<$Instruction$>$ & $\rightarrow$ $<$Read$>$ \\
+$>$ExprArith$>$ &$\rightarrow$ $>$ExprArith$>$ $>$SumSubOp$>$ $>$ExprProd$>$ \\
+$>$ExprArith$>$ &$\rightarrow$ $>$ExprProd$>$ \\
+$>$ExprProd$>$ &$\rightarrow$ $>$ExprProd$>$ $>$ProdOp$>$ $>$Atom$>$ \\
+$>$ExprProd$>$ &$\rightarrow$ $>$Atom$>$ \\
 
-& $<$Assign$>$ & $\rightarrow$ [VarName] := $<$ExprArith$>$  \\
-& $<$ExprArith$>$ & $\rightarrow$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
-& $<$ExprArithPrime$>$ & $\rightarrow$ $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
-& $<$ExprArithPrime$>$ & $\rightarrow$ \epsilon \\
-& $<$ExprProd$>$ & $\rightarrow$ $<$Atom$>$ $<$ExprProdPrime$>$ \\
-& $<$ExprProdPrime$>$ & $\rightarrow$ $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$ \\
-& $<$ExprProdPrime$>$ & $\rightarrow$ \epsilon \\
+$>$SumSubOp$>$ &$\rightarrow$ + \\
+$>$SumSubOp$>$ &$\rightarrow$ -
 
-& $<$SumSubOp$>$ & $\rightarrow$ + \\
-& $<$SumSubOp$>$ & $\rightarrow$ - \\
-& $<$ProdOp$>$ & $\rightarrow$ * \\
-& $<$ProdOp$>$ & $\rightarrow$ / \\
-& $<$Atom$>$ & $\rightarrow$ [VarName] \\
-& $<$Atom$>$ & $\rightarrow$ [Number] \\
-& $<$Atom$>$ & $\rightarrow$ - $<$Atom$>$ \\
-& $<$Atom$>$ & $\rightarrow$ ($<$ExprArith$>$) \\
+$>$ProdOp$>$ &$\rightarrow$ * \\
+$>$ProdOp$>$ &$\rightarrow$ / \\
 
-& $<$If$>$ & $\rightarrow$ \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$ \\
-& $<$IfSeq$>$ & $\rightarrow$ \texttt{endif} \\
-& $<$IfSeq$>$ & $\rightarrow$ \texttt{else} $<$Code$>$ \texttt{endif} \\
-
-& $<$Cond$>$ & $\rightarrow$ $<$ConjCond$>$ $<$CondPrime$>$ \\
-& $<$CondPrime$>$ & $\rightarrow$ \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
-& $<$CondPrime$>$ & $\rightarrow$ \epsilon \\
-& $<$ConjCond$>$ & $\rightarrow$ $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
-& $<$ConjCondPrime$>$ & $\rightarrow$ and $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
-& $<$ConjCondPrime$>$ & $\rightarrow$ \epsilon \\
-& $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$ \\
-& $<$AtomCond$>$ & $\rightarrow$ not $<$SimpleCond$>$ \\
-
-& $<$SimpleCond$>$ & $\rightarrow$ $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
-& $<$Comp$>$ & $\rightarrow$ $=$ \\
-& $<$Comp$>$ & $\rightarrow$ $>=$ \\
-& $<$Comp$>$ & $\rightarrow$ $>$ \\
-& $<$Comp$>$ & $\rightarrow$ $<=$ \\
-& $<$Comp$>$ & $\rightarrow$ $<$ \\
-& $<$Comp$>$ & $\rightarrow$ $<>$ \\
-
-& $<$While$>$ & $\rightarrow$ \texttt{while} $<$Cond$>$ \texttt{do} $<$Code$>$ \texttt{done} \\
-& $<$For$>$ & $\rightarrow$ \texttt{for} [VarName] \texttt{from}
-$<$ExprArith$>$ $<$ForOp$>$ \texttt{to} $<$ExprArith$>$ \texttt{do} $<$Code$>$ \texttt{done} \\
-& $<$ForOp$>$ & $\rightarrow$ \texttt{by} $<$ExprArith$>$ \\
-& $<$ForOp$>$ & $\rightarrow$ \epsilon \\
-& $<$Print$>$ & $\rightarrow$ \texttt{print}([VarName]) \\
-& $<$Read$>$ & $\rightarrow$ \texttt{read}([VarName]) \\
-
-
-
-\begin{lstlisting}
-
-<InstList> -> <Instruction> <InstListSeq>
-<InstListSeq> -> ; <InstList>
-<InstListSeq> -> \epsilon
-
-<Instruction> -> <Assign>
-<Instruction> -> <If>
-<Instruction> -> <While>
-<Instruction> -> <For>
-<Instruction> -> <Print>
-<Instruction> -> <Read>
-
-<Assign> -> [VarName] := <ExprArith>
-
-<ExprArith> -> <ExprProd> <ExprArithPrime>
-
-<ExprArithPrime> -> <SumSubOp> <ExprProd> <ExprArithPrime>
-<ExprArithPrime> -> \epsilon
-
-
-<ExprProd> -> <Atom> <ExprProdPrime>
-
-<ExprProdPrime> -> <ProdOp> <Atom> <ExprProdPrime>
-<ExprProdPrime> -> \epsilon
-
-
-<SumSubOp> -> +
-<SumSubOp> -> -
-
-<ProdOp> -> *
-<ProdOp> -> /
-
-<Atom> -> [VarName]
-<Atom> -> [Number]
-<Atom> -> - <Atom>
-<Atom> -> (<ExprArith>)
-
-
-<If> -> if <Cond> then <Code> <IfSeq>
-<IfSeq> -> endif
-<IfSeq> -> else <Code> endif
-
-<Cond> -> <ConjCond> <CondPrime>
-
-<CondPrime> -> or <ConjCond> <CondPrime>
-<CondPrime> -> \epsilon
-
-<ConjCond> -> <AtomCond> <ConjCondPrime>
-
-
-<ConjCondPrime> -> and <AtomCond> <ConjCondPrime>
-<ConjCondPrime> -> \epsilon
-
-<AtomCond> -> <SimpleCond>
-<AtomCond> -> not <SimpleCond>
-
-<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
-
-<Comp> -> =
-<Comp> -> >=
-<Comp> -> >
-<Comp> -> <=
-<Comp> -> <
-<Comp> -> <>
-
-<While> -> while <Cond> do <Code> done
-
-<For> -> for [VarName] from <ExprArith> <ForOp> to <ExprArith> do <Code> done
-
-<ForOp> -> by <ExprArith>
-<ForOp> -> \epsilon
-
-<Print> -> print([VarName])
-<Read> -> read([VarName])
-
-\end{lstlisting}
+$>$Atom$>$ &$\rightarrow$ [VarName] \\
+$>$Atom$>$ &$\rightarrow$ [Number] \\
+$>$Atom$>$ &$\rightarrow$ - $>$Atom$>$ \\
+$>$Atom$>$ &$\rightarrow$ ($>$ExprArith$>$) \\

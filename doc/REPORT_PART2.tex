@@ -9,7 +9,6 @@
 \usepackage{verbatim}
 \usepackage{graphicx}%images
 \usepackage{fancyhdr}%for headers and footers
-\pagestyle{fancy}
 
 \usepackage{xcolor}
 \usepackage{adjustbox}
@@ -22,19 +21,12 @@
 \usepackage{array}
 
 % ------ HEADERS AND FOOTERS -----------
-\lhead{INFO-F403}
-\rhead{Project Report - Part 1}
-\lfoot{}
-\cfoot{\thepage}
+% \lhead{INFO-F403}
+% \rhead{Project Report - Part 1}
+\pagestyle{fancy}
+\rfoot{\thepage}
+\cfoot{}
 %\lfoot{Academic Year 2017-18}
-
-\lstset{
-  basicstyle=\itshape,
-  xleftmargin=3em,
-  literate={->}{$\rightarrow$}{2}
-           {α}{$\alpha$}{1}
-           {δ}{$\delta$}{1}
-}
 
 \begin{document}
 \begin{titlepage}
@@ -115,18 +107,20 @@ following P\&A:
 \end{tabular}
 
  And the following grammar:
-
-\begin{lstlisting}
-<ExprArith> -> [VarName]
-<ExprArith> -> [Number]
-<ExprArith> -> (<ExprArith>)
-<ExprArith> -> - <ExprArith>
-<ExprArith> -> <ExprArith> <Op> <ExprArith>
-<Op> -> +
-<Op> -> -
-<Op> -> *
-<Op> -> /
-\end{lstlisting}
+    \begin{center}
+            \begin{tabular}{l l}
+                $<$ExprArith$>$ &$\rightarrow$ [VarName] \\
+                $<$ExprArith$>$ &$\rightarrow$ [Number] \\
+                $<$ExprArith$>$ &$\rightarrow$ ($<$ExprArith$>$) \\
+                $<$ExprArith$>$ &$\rightarrow$ - $<$ExprArith$>$ \\
+                $<$ExprArith$>$ &$\rightarrow$
+                $<$ExprArith$>$ $<$Op$>$ $<$ExprArith$>$ \\
+                $<$Op$>$ &$\rightarrow$ $+$ \\
+                $<$Op$>$ &$\rightarrow$ $-$ \\
+                $<$Op$>$ &$\rightarrow$ $*$ \\
+                $<$Op$>$ &$\rightarrow$ $/$ \\
+            \end{tabular}
+    \end{center}
 
 
 As mention in the course page 111, an AE must be a \textit{sum of products},
@@ -142,23 +136,30 @@ the operators outside the parenthesis, so as an atom.
 
 We have the following grammar results:
 
+
+    \begin{center}
+            \begin{tabular}{l l}
+                $<$ExprArith$>$ &$\rightarrow$ $<$ExprArith$>$ $<$SumSubOp$>$ $<$ExprProd$>$ \\
+                $<$ExprArith$>$ &$\rightarrow$ $<$ExprProd$>$ \\
+                $<$ExprProd$>$ &$\rightarrow$ $<$ExprProd$>$ $<$ProdOp$>$ $<$Atom$>$ \\
+                $<$ExprProd$>$ &$\rightarrow$ $<$Atom$>$ \\
+
+                $<$SumSubOp$>$ &$\rightarrow$ + \\
+                $<$SumSubOp$>$ &$\rightarrow$ - \\
+
+                $<$ProdOp$>$ &$\rightarrow$ * \\
+                $<$ProdOp$>$ &$\rightarrow$ / \\
+
+                $<$Atom$>$ &$\rightarrow$ [VarName] \\
+                $<$Atom$>$ &$\rightarrow$ [Number] \\
+                $<$Atom$>$ &$\rightarrow$ - $<$Atom$>$ \\
+                $<$Atom$>$ &$\rightarrow$ ($<$ExprArith$>$) \\
+
+            \end{tabular}
+    \end{center}
+
+
 \begin{lstlisting}
-<ExprArith> -> <ExprArith> <SumSubOp> <ExprProd>
-<ExprArith> -> <ExprProd>
-
-<ExprProd> -> <ExprProd> <ProdOp> <Atom>
-<ExprProd> -> <Atom>
-
-<SumSubOp> -> +
-<SumSubOp> -> -
-
-<ProdOp> -> *
-<ProdOp> -> /
-
-<Atom> -> [VarName]
-<Atom> -> [Number]
-<Atom> -> - <Atom>
-<Atom> -> (<ExprArith>)
 \end{lstlisting}
 
 
