@@ -248,9 +248,8 @@ For the new AE:
 
 <Atom> -> [VarName]
 <Atom> -> [Number]
-
-<ExprArith> -> - <Atom>
-<ExprArith> -> (<ExprArith>)
+<Atom> -> - <Atom>
+<Atom> -> (<ExprArith>)
 
 \end{lstlisting}
 
@@ -289,6 +288,132 @@ are right-recusion or no recursion at all.
 
 \subsection{Factorisation}
 
-We can only factorize the following set of rules: <InstList>, <If>, <For>.
+We can only factorize the following set of rules: $<InstList>$, $<If>$, $<For>$.
+
+We have the following new rules:
+
+\begin{lstlisting}
+<InstList> -> <Instruction> <InstListSeq>
+<InstListSeq> -> ; <InstList>
+<InstListSeq> -> \epsilon
+
+<If> -> if <Cond> then <Code> <IfSeq>
+<IfSeq> -> endif
+<IfSeq> -> else <Code> endif
+
+<For> -> for [VarName] from <ExprArith> <ForOp> to <ExprArith> do <Code> done
+
+<ForOp> -> by <ExprArith>
+<ForOp> -> \epsilon
+
+\end{lstlisting}
+
+\subsection{Transformed Grammar}
+
+\begin{figure}
+    \begin{center}
+            \begin{tabular}{r l l}
+                $[1]$ & $<$Program$>$ & $\rightarrow$ begin $<$Code$>$
+                \texttt{end} \\
+
+                $[2]$ & $<$Code$>$ & $\rightarrow$ $\epsilon$ \\
+                $[3]$ &            & $\rightarrow$ $<$InstList$>$ \\
+
+                $[4]$ & $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$
+                $<$InstListSeq$>$ \\
+
+                $[5]$ & $<$InstListSeq$>$ & $\rightarrow$ $\epsilon$ \\
+                $[6]$ &                   & $\rightarrow$ ; $<$InstList$>$ \\
+
+                $[7]$ & $<$Instruction$>$ & $\rightarrow$ $<$Assign$>$ \\
+                $[8]$ &                   & $\rightarrow$ $<$If$>$ \\
+                $[9]$ &                   & $\rightarrow$ $<$While$>$ \\
+                $[10]$ &                   & $\rightarrow$ $<$For$>$ \\
+                $[11]$ &                   & $\rightarrow$ $<$Print$>$ \\
+                $[12]$ &                   & $\rightarrow$ $<$Read$>$ \\
+
+                $[13]$ & $<$Assign$>$ & $\rightarrow$
+                 [VarName] := $<$ExprArith$>$  \\
+
+                $[14]$ & $<$ExprArith$>$ & $\rightarrow$
+                $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+
+                $[15]$ & $<$ExprArithPrime$>$ & $\rightarrow$
+                $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+                $[16]$ & & $\rightarrow$ $\epsilon$ \\
+
+                $[17]$ & $<$ExprProd$>$ & $\rightarrow$
+                $<$Atom$>$ $<$ExprProdPrime$>$ \\
+
+                $[18]$ & $<$ExprProdPrime$>$ & $\rightarrow$ $\epsilon$ \\
+                $[19]$ & & $\rightarrow$
+                $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$ \\
+
+                $[20]$ & $<$SumSubOp$>$ & $\rightarrow$ $+$ \\
+                $[21]$ & & $\rightarrow$ $-$ \\
+                $[22]$ & $<$ProdOp$>$ & $\rightarrow$ $*$ \\
+                $[23]$ & & $\rightarrow$ $/$ \\
+                $[24]$ & $<$Atom$>$ & $\rightarrow$ [VarName] \\
+                $[25]$ & & $\rightarrow$ [Number] \\
+                $[26]$ & & $\rightarrow$ - $<$Atom$>$ \\
+                $[27]$ & & $\rightarrow$ ($<$ExprArith$>$) \\
+
+                $[28]$ & $<$If$>$ & $\rightarrow$
+                \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$ \\
+                $[29]$ & $<$IfSeq$>$ & $\rightarrow$
+                \texttt{endif} \\
+                $[30]$ & & $\rightarrow$
+                \texttt{else} $<$Code$>$ \texttt{endif} \\
+
+                $[31]$ & $<$Cond$>$ & $\rightarrow$
+                $<$ConjCond$>$ $<$CondPrime$>$ \\
+                $[32]$ & $<$CondPrime$>$ & $\rightarrow$
+                \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
+                $[33]$ & & $\rightarrow$ $\epsilon$ \\
+                $[34]$ & $<$ConjCond$>$ & $\rightarrow$
+                $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+                $[35]$ & $<$ConjCondPrime$>$ & $\rightarrow$
+                \textt{and} $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+                $[36]$ & & $\rightarrow$ $\epsilon$ \\
+                $[37]$ & $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$ \\
+                $[38]$ & & $\rightarrow$ \texttt{not} $<$SimpleCond$>$ \\
+
+                $[39]$ & $<$SimpleCond$>$ & $\rightarrow$
+                $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
+                $[40]$ & $<$Comp$>$ & $\rightarrow$ $=$ \\
+                $[41]$ & & $\rightarrow$ $>=$ \\
+                $[42]$ & & $\rightarrow$ $>$ \\
+                $[43]$ & & $\rightarrow$ $<=$ \\
+                $[44]$ & & $\rightarrow$ $<$ \\
+                $[45]$ & & $\rightarrow$ $<>$ \\
+
+                $[46]$ & $<$While$>$ & $\rightarrow$
+                \texttt{while} $<$Cond$>$ \texttt{do}
+                $<$Code$>$ \texttt{done} \\
+                $[47]$ & $<$For$>$ & $\rightarrow$
+                \texttt{for} [VarName] \texttt{from}
+                $<$ExprArith$>$ $<$ForOp$>$ \\
+                & &
+                $\quad$ \texttt{to} $<$ExprArith$>$
+                \texttt{do} $<$Code$>$ \texttt{done} \\
+                $[48]$ & $<$ForOp$>$ & $\rightarrow$
+                \texttt{by} $<$ExprArith$>$ \\
+                $[49]$ & & $\rightarrow$ $\epsilon$ \\
+                $[50]$ & $<$Print$>$ & $\rightarrow$
+                \texttt{print}([VarName]) \\
+                $[51]$ & $<$Read$>$ & $\rightarrow$ \texttt{read}([VarName]) \\
+
+
+
+            \end{tabular}
+
+    \end{center}
+    \caption{Complete transformed CFG}
+    \label{fig:fullcfg}
+\end{figure}
+
+\section{LL(1)}
+
+\subsection{First and Follow}
 
 \end{document}
