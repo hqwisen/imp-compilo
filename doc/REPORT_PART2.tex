@@ -316,14 +316,14 @@ We have the following new rules:
                 $[1]$ & $<$Program$>$ & $\rightarrow$ begin $<$Code$>$
                 \texttt{end} \\
 
-                $[2]$ & $<$Code$>$ & $\rightarrow$ $\epsilon$ \\
-                $[3]$ &            & $\rightarrow$ $<$InstList$>$ \\
+                $[2]$ & $<$Code$>$ & $\rightarrow$ $<$InstList$>$ \\
+                $[3]$ & & $\rightarrow$ $\epsilon$ \\
 
                 $[4]$ & $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$
                 $<$InstListSeq$>$ \\
 
-                $[5]$ & $<$InstListSeq$>$ & $\rightarrow$ $\epsilon$ \\
-                $[6]$ &                   & $\rightarrow$ ; $<$InstList$>$ \\
+                $[5]$ & $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$ \\
+                $[6]$ & & $\rightarrow$ $\epsilon$ \\
 
                 $[7]$ & $<$Instruction$>$ & $\rightarrow$ $<$Assign$>$ \\
                 $[8]$ &                   & $\rightarrow$ $<$If$>$ \\
@@ -345,9 +345,9 @@ We have the following new rules:
                 $[17]$ & $<$ExprProd$>$ & $\rightarrow$
                 $<$Atom$>$ $<$ExprProdPrime$>$ \\
 
-                $[18]$ & $<$ExprProdPrime$>$ & $\rightarrow$ $\epsilon$ \\
-                $[19]$ & & $\rightarrow$
+                $[18]$ & $<$ExprProdPrime$>$ & $\rightarrow$
                 $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$ \\
+                $[19]$ & & $\rightarrow$ $\epsilon$ \\
 
                 $[20]$ & $<$SumSubOp$>$ & $\rightarrow$ $+$ \\
                 $[21]$ & & $\rightarrow$ $-$ \\
@@ -373,7 +373,7 @@ We have the following new rules:
                 $[34]$ & $<$ConjCond$>$ & $\rightarrow$
                 $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
                 $[35]$ & $<$ConjCondPrime$>$ & $\rightarrow$
-                \textt{and} $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+                \texttt{and} $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
                 $[36]$ & & $\rightarrow$ $\epsilon$ \\
                 $[37]$ & $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$ \\
                 $[38]$ & & $\rightarrow$ \texttt{not} $<$SimpleCond$>$ \\
@@ -408,7 +408,7 @@ We have the following new rules:
             \end{tabular}
 
     \end{center}
-    \caption{Complete transformed CFG}
+    \caption{Transformed Grammar}
     \label{fig:fullcfg}
 \end{figure}
 
