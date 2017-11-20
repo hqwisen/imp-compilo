@@ -340,7 +340,7 @@ We have the following new rules:
 \begin{figure}
     \begin{center}
             \begin{tabular}{r l l}
-                $[1]$ & $<$Program$>$ & $\rightarrow$ begin $<$Code$>$
+                $[1]$ & $<$Program$>$ & $\rightarrow$ \texttt{begin} $<$Code$>$
                 \texttt{end} \\
 
                 $[2]$ & $<$Code$>$ & $\rightarrow$ $<$InstList$>$ \\
@@ -442,5 +442,74 @@ We have the following new rules:
 \section{LL(1)}
 
 \subsection{First and Follow}
+\begin{center}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{r | c | c}
+        & First$^1$ & Follow$^1$ \\
+        \hline
+        Program & begin & \\
+        \hline
+        Code & [VarName] if while for print read $\epsilon$ &
+        end else endif done \\
+        \hline
+        InstList & [VarName] if while for print read &
+        end else endif done \\
+        \hline
+        InstListSeq & ; $\epsilon$ &
+        end else endif done \\
+        \hline
+        Instruction & [VarName] if while for print read &
+        ; end else endif done \\
+        \hline
+        Assign & [VarName] &
+        ; end else endif done \\
+        \hline
+        ExprArith & [VarName] [Number] - ( &
+        ; end else endif done ) \\
+        & & $=$ $>=$ $>$ $<=$ $<$ $<>$ \\
+        % & & or then do \\
+        \hline
+        ExprArithPrime & & \\
+        \hline
+        ExprProd & [VarName] [Number] - ( & \\
+        \hline
+        ExprProdPrime & * / $\epsilon$ & \\
+        \hline
+        SumSubOp & + - & \\
+        \hline
+        ProdOp & * / & \\
+        \hline
+        If & if & \\
+        \hline
+        Atom & [VarName] [Number] - ( & \\
+        \hline
+        IfSeq & endif else & \\
+        \hline
+        Cond & [VarName] [Number] - ( not & \\
+        \hline
+        CondPrime & or $\epsilon$ & \\
+        \hline
+        ConjCond & [VarName] [Number] - ( not & \\
+        \hline
+        ConjCondPrime & and $\epsilon$ & \\
+        \hline
+        AtomCond & [VarName] [Number] - ( not & \\
+        \hline
+        SimpleCond & [VarName] [Number] - ( & \\
+        \hline
+        Comp & $=$ $>=$ $>$ $<=$ $<$ $<>$ & \\
+        \hline
+        While & while & \\
+        \hline
+        For & for & \\
+        \hline
+        ForOp & by $\epsilon$ & \\
+        \hline
+        Print & print & \\
+        \hline
+        Read & read & \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \end{document}
