@@ -110,15 +110,15 @@ following P\&A:
     \begin{center}
             \begin{tabular}{l l}
                 $<$ExprArith$>$ &$\rightarrow$ [VarName] \\
-                $<$ExprArith$>$ &$\rightarrow$ [Number] \\
-                $<$ExprArith$>$ &$\rightarrow$ ($<$ExprArith$>$) \\
-                $<$ExprArith$>$ &$\rightarrow$ - $<$ExprArith$>$ \\
-                $<$ExprArith$>$ &$\rightarrow$
+                 &$\rightarrow$ [Number] \\
+                 &$\rightarrow$ ($<$ExprArith$>$) \\
+                 &$\rightarrow$ - $<$ExprArith$>$ \\
+                 &$\rightarrow$
                 $<$ExprArith$>$ $<$Op$>$ $<$ExprArith$>$ \\
                 $<$Op$>$ &$\rightarrow$ $+$ \\
-                $<$Op$>$ &$\rightarrow$ $-$ \\
-                $<$Op$>$ &$\rightarrow$ $*$ \\
-                $<$Op$>$ &$\rightarrow$ $/$ \\
+                 &$\rightarrow$ $-$ \\
+                 &$\rightarrow$ $*$ \\
+                 &$\rightarrow$ $/$ \\
             \end{tabular}
     \end{center}
 
@@ -139,21 +139,23 @@ We have the following grammar results:
 
     \begin{center}
             \begin{tabular}{l l}
-                $<$ExprArith$>$ &$\rightarrow$ $<$ExprArith$>$ $<$SumSubOp$>$ $<$ExprProd$>$ \\
-                $<$ExprArith$>$ &$\rightarrow$ $<$ExprProd$>$ \\
-                $<$ExprProd$>$ &$\rightarrow$ $<$ExprProd$>$ $<$ProdOp$>$ $<$Atom$>$ \\
-                $<$ExprProd$>$ &$\rightarrow$ $<$Atom$>$ \\
+                $<$ExprArith$>$ &$\rightarrow$
+                $<$ExprArith$>$ $<$SumSubOp$>$ $<$ExprProd$>$ \\
+                 &$\rightarrow$ $<$ExprProd$>$ \\
+                $<$ExprProd$>$ &$\rightarrow$
+                $<$ExprProd$>$ $<$ProdOp$>$ $<$Atom$>$ \\
+                 &$\rightarrow$ $<$Atom$>$ \\
 
                 $<$SumSubOp$>$ &$\rightarrow$ + \\
-                $<$SumSubOp$>$ &$\rightarrow$ - \\
+                 &$\rightarrow$ - \\
 
                 $<$ProdOp$>$ &$\rightarrow$ * \\
-                $<$ProdOp$>$ &$\rightarrow$ / \\
+                 &$\rightarrow$ / \\
 
                 $<$Atom$>$ &$\rightarrow$ [VarName] \\
-                $<$Atom$>$ &$\rightarrow$ [Number] \\
-                $<$Atom$>$ &$\rightarrow$ - $<$Atom$>$ \\
-                $<$Atom$>$ &$\rightarrow$ ($<$ExprArith$>$) \\
+                 &$\rightarrow$ [Number] \\
+                 &$\rightarrow$ - $<$Atom$>$ \\
+                 &$\rightarrow$ ($<$ExprArith$>$) \\
 
             \end{tabular}
     \end{center}
@@ -182,107 +184,123 @@ For boolean expressions we have the following P\&A:
 
 And the following grammar:
 
-\begin{lstlisting}
-<Cond> -> <Cond> <BinOp> <Cond>
-<Cond> -> not <SimpleCond>
-<Cond> -> <SimpleCond>
-<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
-<BinOp> -> and
-<BinOp> -> or
-<Comp> -> =
-<Comp> -> >=
-<Comp> -> >
-<Comp> -> <=
-<Comp> -> <
-<Comp> -> <>
-\end{lstlisting}
+\begin{center}
+        \begin{tabular}{l l}
+            $<$Cond$>$ & $\rightarrow$ $<$Cond$>$ $<$BinOp$>$ $<$Cond$>$ \\
+             & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
+             & $\rightarrow$ $<$SimpleCond$>$\\
+            $<$SimpleCond$>$ & $\rightarrow$
+            $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
+            $<$BinOp$>$ & $\rightarrow$ \texttt{and}\\
+             & $\rightarrow$ \texttt{or}\\
+            $<$Comp$>$ & $\rightarrow$ $=$\\
+             & $\rightarrow$ $>=$\\
+             & $\rightarrow$ $>$\\
+             & $\rightarrow$ $<=$\\
+             & $\rightarrow$ $<$\\
+             & $\rightarrow$ $<>$\\
+        \end{tabular}
+\end{center}
 
 Following the same principe as for AE, we have here
 \textit{disjonction of conjonctions of comparaisons}. By using the same
 mechanics as above, we have this grammar:
 
 
-\begin{lstlisting}
-<Cond> -> <Cond> or <ConjCond>
-<Cond> -> <ConjCond>
+\begin{center}
+        \begin{tabular}{l l}
+            $<$Cond$>$ & $\rightarrow$ $<$Cond$>$ \texttt{or} $<$ConjCond$>$ \\
+             & $\rightarrow$ $<$ConjCond$>$\\
 
-<ConjCond> -> <ConjCond> and <AtomCond>
-<ConjCond> -> <AtomCond>
+            $<$ConjCond$>$ & $\rightarrow$
+            $<$ConjCond$>$ \texttt{and} $<$AtomCond$>$\\
+             & $\rightarrow$ $<$AtomCond$>$\\
 
-<AtomCond> -> <SimpleCond>
-<AtomCond> -> not <SimpleCond>
+            $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$\\
+             & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
 
-<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
+            $<$SimpleCond$>$ & $\rightarrow$
+            $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$\\
 
-<Comp> -> =
-<Comp> -> >=
-<Comp> -> >
-<Comp> -> <=
-<Comp> -> <
-<Comp> -> <>
-
-\end{lstlisting}
+            $<$Comp$>$ & $\rightarrow$ $=$\\
+             & $\rightarrow$ $>=$\\
+             & $\rightarrow$ $>$\\
+             & $\rightarrow$ $<=$\\
+             & $\rightarrow$ $<$\\
+             & $\rightarrow$ $<>$\\
+        \end{tabular}
+\end{center}
 
 \subsection{Removing left recusion}
 
 For the new AE:
 
-\begin{lstlisting}
 
-<ExprArith> -> <ExprProd> <ExprArithPrime>
+\begin{center}
+        \begin{tabular}{l l}
+            $<$ExprArith$>$ & $\rightarrow$
+            $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
 
-<ExprArithPrime> -> <SumSubOp> <ExprProd> <ExprArithPrime>
-<ExprArithPrime> -> \epsilon
-
-
-<ExprProd> -> <Atom> <ExprProdPrime>
-
-<ExprProdPrime> -> <ProdOp> <Atom> <ExprProdPrime>
-<ExprProdPrime> -> \epsilon
+            $<$ExprArithPrime$>$ & $\rightarrow$
+            $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+             & $\rightarrow$ $\epsilon$\\
 
 
-<SumSubOp> -> +
-<SumSubOp> -> -
+            $<$ExprProd$>$ & $\rightarrow$ $<$Atom$>$ $<$ExprProdPrime$>$\\
 
-<ProdOp> -> *
-<ProdOp> -> /
+            $<$ExprProdPrime$>$ & $\rightarrow$
+            $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$\\
+             & $\rightarrow$ $\epsilon$\\
 
-<Atom> -> [VarName]
-<Atom> -> [Number]
-<Atom> -> - <Atom>
-<Atom> -> (<ExprArith>)
 
-\end{lstlisting}
+            $<$SumSubOp$>$ & $\rightarrow$ $+$\\
+             & $\rightarrow$ $-$\\
 
+            $<$ProdOp$>$ & $\rightarrow$ $*$\\
+             & $\rightarrow$ $/$\\
+
+            $<$Atom$>$ & $\rightarrow$ [VarName]\\
+             & $\rightarrow$ [Number]\\
+             & $\rightarrow$ - $<$Atom$>$\\
+             & $\rightarrow$ ($<$ExprArith$>$)\\
+
+        \end{tabular}
+\end{center}
 
 For the new BE:
 
-\begin{lstlisting}
-<Cond> -> <ConjCond> <CondPrime>
+
+\begin{center}
+        \begin{tabular}{l l}
+            $<$Cond$>$ & $\rightarrow$ $<$ConjCond$>$ $<$CondPrime$>$ \\
 
 
-<CondPrime> -> or <ConjCond> <CondPrime>
-<CondPrime> -> \epsilon
+            $<$CondPrime$>$ & $\rightarrow$
+            \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
+             & $\rightarrow$ $\epsilon$ \\
 
-<ConjCond> -> <AtomCond> <ConjCondPrime>
+            $<$ConjCond$>$ & $\rightarrow$ $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
 
 
-<ConjCondPrime> -> and <AtomCond> <ConjCondPrime>
-<ConjCondPrime> -> \epsilon
+            $<$ConjCondPrime$>$ & $\rightarrow$
+            and $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+             & $\rightarrow$ $\epsilon$\\
 
-<AtomCond> -> <SimpleCond>
-<AtomCond> -> not <SimpleCond>
+            $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$\\
+             & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
 
-<SimpleCond> -> <ExprArith> <Comp> <ExprArith>
+            $<$SimpleCond$>$ & $\rightarrow$
+            $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$\\
 
-<Comp> -> =
-<Comp> -> >=
-<Comp> -> >
-<Comp> -> <=
-<Comp> -> <
-<Comp> -> <>
+            $<$Comp$>$ & $\rightarrow$ =\\
+             & $\rightarrow$ $>=$\\
+             & $\rightarrow$ $>$\\
+             & $\rightarrow$ $<=$\\
+             & $\rightarrow$ $<$\\
+             & $\rightarrow$ $<>$\\
 
-\end{lstlisting}
+        \end{tabular}
+\end{center}
 
 Those are the only rules where left-recusion appears, all the other rules
 are right-recusion or no recursion at all.
@@ -293,21 +311,29 @@ We can only factorize the following set of rules: $<InstList>$, $<If>$, $<For>$.
 
 We have the following new rules:
 
-\begin{lstlisting}
-<InstList> -> <Instruction> <InstListSeq>
-<InstListSeq> -> ; <InstList>
-<InstListSeq> -> \epsilon
+\begin{center}
+        \begin{tabular}{l l}
+            $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$ $<$InstListSeq$>$\\
+            $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$\\
+             & $\rightarrow$ $\epsilon$\\
 
-<If> -> if <Cond> then <Code> <IfSeq>
-<IfSeq> -> endif
-<IfSeq> -> else <Code> endif
+            $<$If$>$ & $\rightarrow$
+            \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$\\
+            $<$IfSeq$>$ & $\rightarrow$ \texttt{endif}\\
+             & $\rightarrow$
+             \texttt{else} $<$Code$>$ \texttt{endif}\\
 
-<For> -> for [VarName] from <ExprArith> <ForOp> to <ExprArith> do <Code> done
+            $<$For$>$ & $\rightarrow$
+            \texttt{for} [VarName] \texttt{from}
+            $<$ExprArith$>$ $<$ForOp$>$ \\
+            &$\quad$\texttt{to}
+            $<$ExprArith$>$ \texttt{do} $<$Code$>$ \texttt{done}\\
 
-<ForOp> -> by <ExprArith>
-<ForOp> -> \epsilon
+            $<$ForOp$>$ & $\rightarrow$ \texttt{by} $<$ExprArith$>$\\
+             & $\rightarrow$ $\epsilon$\\
 
-\end{lstlisting}
+        \end{tabular}
+\end{center}
 
 \subsection{Transformed Grammar}
 
