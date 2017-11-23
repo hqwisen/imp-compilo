@@ -20,6 +20,14 @@
 \usepackage{array}
 \usepackage{mathpazo}
 \usepackage{float}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
 
 
 % ------ HEADERS AND FOOTERS -----------
@@ -445,12 +453,13 @@ We have the following new rules:
 
 \section{LL(1)}
 
-\subsection{First and Follow}
+\subsection{First$^1(\cdot)$ and Follow$^1(\cdot)$}
 \begin{center}
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{| r || c | c |}
         \hline
-        \textbf{Variables} & \textbf{First$^1$} & \textbf{Follow$^1$} \\
+        \textbf{Variables} & \textbf{First$^1(\cdot)$}
+        & \textbf{Follow$^1(\cdot)$} \\
         \hline
         \hline
         Program & begin & \\
@@ -473,47 +482,57 @@ We have the following new rules:
         ExprArith & [VarName] [Number] - ( &
         ; end else endif done ) \\
         & & $=$ $>=$ $>$ $<=$ $<$ $<>$ \\
+        & & and or then do \\
+        & &  by to do\\
         % & & or then do \\
         \hline
-        ExprArithPrime & & \\
+        ExprArithPrime & + - $\epsilon$ &
+        Follow$^1$($<$ExprArith$>$) \\
         \hline
-        ExprProd & [VarName] [Number] - ( & \\
+        ExprProd & [VarName] [Number] - ( &
+        + - Follow$^1$($<$ExprArith$>$) \\
         \hline
-        ExprProdPrime & * / $\epsilon$ & \\
+        ExprProdPrime & * / $\epsilon$ &
+        + - Follow$^1$($<$ExprArith$>$) \\
         \hline
-        SumSubOp & + - & \\
+        SumSubOp & + - & [VarName] [Number] - ( \\
         \hline
-        ProdOp & * / & \\
+        ProdOp & * / & [VarName] [Number] - ( \\
         \hline
-        If & if & \\
+        If & if & ; end else endif done \\
         \hline
-        Atom & [VarName] [Number] - ( & \\
+        Atom & [VarName] [Number] - ( &
+        * / + - Follow$^1$($<$ExprArith$>$) \\
         \hline
-        IfSeq & endif else & \\
+        IfSeq & endif else & ; end else endif done \\
         \hline
-        Cond & [VarName] [Number] - ( not & \\
+        Cond & [VarName] [Number] - ( not & then do \\
         \hline
-        CondPrime & or $\epsilon$ & \\
+        CondPrime & or $\epsilon$ & then do \\
         \hline
-        ConjCond & [VarName] [Number] - ( not & \\
+        ConjCond & [VarName] [Number] - ( not &
+        or then do  \\
         \hline
-        ConjCondPrime & and $\epsilon$ & \\
+        ConjCondPrime & and $\epsilon$ & or then do\\
         \hline
-        AtomCond & [VarName] [Number] - ( not & \\
+        AtomCond & [VarName] [Number] - ( not &
+        and or then do \\
         \hline
-        SimpleCond & [VarName] [Number] - ( & \\
+        SimpleCond & [VarName] [Number] - ( &
+        and or then do \\
         \hline
-        Comp & $=$ $>=$ $>$ $<=$ $<$ $<>$ & \\
+        Comp & $=$ $>=$ $>$ $<=$ $<$ $<>$ &
+        [VarName] [Number] - ( \\
         \hline
-        While & while & \\
+        While & while & ; end else endif done \\
         \hline
-        For & for & \\
+        For & for & ; end else endif done \\
         \hline
-        ForOp & by $\epsilon$ & \\
+        ForOp & by $\epsilon$ & to \\
         \hline
-        Print & print & \\
+        Print & print & ; end else endif done \\
         \hline
-        Read & read & \\
+        Read & read & ; end else endif done \\
         \hline
     \end{tabular}
 \end{center}
