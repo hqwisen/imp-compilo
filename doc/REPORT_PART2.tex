@@ -1,8 +1,7 @@
 \documentclass[letterpaper]{article}
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
-%\usepackage[margin=1in]{geometry}
-\usepackage{geometry}
+\usepackage[margin=3cm]{geometry}
 \usepackage{listings}
 \usepackage{adjustbox}
 \usepackage{xcolor}
@@ -19,13 +18,16 @@
 \usepackage{multirow}
 \usepackage{amsmath}
 \usepackage{array}
+\usepackage{mathpazo}
+\usepackage{float}
+
 
 % ------ HEADERS AND FOOTERS -----------
 % \lhead{INFO-F403}
 % \rhead{Project Report - Part 1}
 \pagestyle{fancy}
-\rfoot{\thepage}
-\cfoot{}
+% \rfoot{\thepage}
+%\cfoot{}
 %\lfoot{Academic Year 2017-18}
 
 \begin{document}
@@ -44,9 +46,10 @@
 \\[0.3cm]}
 % Title
 % \HRule \\[0.4cm]
+
 { \huge \bfseries Project Report – Part 2  \\[0.4cm] }
 
-%\HRule \\[1.5cm]
+% \HRule \\[1.5cm]
 
 % Author and supervisor
 \noindent
@@ -74,7 +77,6 @@ Gilles \textsc{Geeraerts}\\
 \newpage
 
 \section{Grammar}
-
 \subsection{Unproductive and unreachable symbols (a)}
 
 In the given grammar, there is no unproductive and/or unreachable symbols.
@@ -337,7 +339,9 @@ We have the following new rules:
 
 \subsection{Transformed Grammar}
 
-\begin{figure}
+\begin{figure}[H]
+    \thispagestyle{empty}
+
     \begin{center}
             \begin{tabular}{r l l}
                 $[1]$ & $<$Program$>$ & $\rightarrow$ \texttt{begin} $<$Code$>$
@@ -444,8 +448,10 @@ We have the following new rules:
 \subsection{First and Follow}
 \begin{center}
     \renewcommand{\arraystretch}{1.5}
-    \begin{tabular}{r | c | c}
-        & First$^1$ & Follow$^1$ \\
+    \begin{tabular}{| r || c | c |}
+        \hline
+        \textbf{Variables} & \textbf{First$^1$} & \textbf{Follow$^1$} \\
+        \hline
         \hline
         Program & begin & \\
         \hline
