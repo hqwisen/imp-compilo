@@ -17,14 +17,13 @@ sourceSets {
     }
 }
 
-task scanJar(type: Jar) {
-    from(sourceSets.main.output)
+jar {
     manifest {
-        attributes 'Implementation-Title': 'ImpCompilo Scanner',
+        attributes 'Implementation-Title': 'ImpCompilo',
                    'Implementation-Version': '',
                    'Main-Class': 'Main'
     }
-    baseName 'scanner'
+    baseName 'imp-compilo'
     destinationDir file('dist/')
 }
 
@@ -35,13 +34,13 @@ task generateMain {
     }
 }
 
-task generateScanJar (dependsOn: [generateMain, scanJar])
+task generateJar (dependsOn: [generateMain, jar])
 
-task scan (dependsOn: generateScanJar) {
+task scan (dependsOn: generateJar) {
   doLast{
       javaexec {
           main='-jar';
-          args = ['dist/scanner.jar', project.input]
+          args = ['dist/imp-compilo.jar', project.input]
       }
   }
 }

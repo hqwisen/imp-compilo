@@ -138,4 +138,10 @@ public abstract class ImpCompilo {
      * @param state new state
      */
     public abstract void changeState(int state);
+
+
+    public static void main(String[] args){
+        System.out.println("Hello I'm a compilator:");
+        log.fine("Can you log this please ? thank you!");
+    }
 }
