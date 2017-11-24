@@ -14,10 +14,8 @@ class BasicElement:
     def __repr__(self):
         return str(self)
 
-
-
 class V(BasicElement):
-    
+
     def __str__(self):
         return '<%s>' % str(self.name)
 

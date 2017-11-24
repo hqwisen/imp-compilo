@@ -5,6 +5,7 @@ from config import V, T
 import logging
 
 log = logging.getLogger(__name__)
+logging.basicConfig(level = logging.DEBUG)
 
 class GrammarException(Exception):
     pass
@@ -85,7 +86,47 @@ class GrammarParser:
         return {'variables': self.variables, 'terminals': self.terminals}
 
 
+# Algo 6 from the Lecture Notes and Exercices Session 6
+def first_k(grammar, variables, terminals, epsilon, k = 1):
+    first = {}
+    first[epsilon] = [epsilon]
+    rule_processed = {}
+    for a in terminals:
+        first[str(a)] = [a]
+    for A in variables:
+        first[str(A)] = None
+    for left in grammar:
+        rule_processed[left] = False
+    stable = False
+    while not stable:
+        for A in grammar:
+            X = str(grammar[A][0])
+            if first[X] is not None and not rule_processed[A]:
+                log.debug("Adding first of %s in %s" % (X, str(A)))
+                log.debug("Which is %s\n" % first[X])
+                if first[str(A)] is None:
+                    first[str(A)] = []
+                first[str(A)].extend(first[X])
+                rule_processed[A] = True
+        stable = True
+        for A in rule_processed:
+            stable = stable & rule_processed[A]
+        # first(A) = first(A) + directsum1(grammar[X], first)
+        # first(A) | directsum1(grammar[A], first, k)
+    return first
 
+# def directsum1(righside, first):
+#     results = []
+#     for X in rightside:
+#         if len()
+#         if len(result) < k:
+#             first(X)
+
+
+
+
+# def export_table_template(variables, terminals):
+#     for
 
 
 if __name__ == "__main__":
@@ -96,3 +137,8 @@ if __name__ == "__main__":
     print()
     data = parser.parse()
     print(data)
+    print()
+    first = first_k(config['grammar'], data['variables'], data['terminals'],
+                  config['epsilon'])
+    for i in first:
+        print("%20s → %s" % (i, first[i]))
