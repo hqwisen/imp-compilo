@@ -137,16 +137,35 @@ def export_table_template(variables, terminals, csvfile):
         writer = csv.writer(output, lineterminator='\n')
         writer.writerows(content)
 
-def manual_LL1:
+def export_grammar_csv(grammar, variable, terminals, csvfile):
+    content = []
+    content = [[], []] # First row are variables, second row terminals
+    for v in variables:
+        content[0].append(v)
+    for t in terminals:
+        content[1].append(t)
+    for left in grammar:
+        line = []
+        line.append(left)
+        for X in grammar[left]:
+            line.append(X)
+        content.append(line)
+    with open(csvfile, "w") as output:
+        writer = csv.writer(output, lineterminator='\n')
+        writer.writerows(content)
+
+def manual_LL1():
     pass
 
 if __name__ == "__main__":
     config = get_grammar_config()
+    grammar = config['grammar']
     parser = GrammarParser(config['grammar'], config['epsilon'])
     print()
     parser.print_rules()
     print()
     data = parser.parse()
+    variables, terminals = data['variables'], data['terminals']
     print(data)
     print()
     # first = first_k(config['grammar'], data['variables'], data['terminals'],
@@ -154,4 +173,5 @@ if __name__ == "__main__":
     # for i in first:
     #     print("%20s → %s" % (i, first[i]))
     print()
-    export_table_template(data['variables'], data['terminals'], "LL1.csv")
+    export_grammar_csv(grammar, variables, terminals, "grammar.csv")
+    # export_table_template(data['variables'], data['terminals'], "LL1.csv")
