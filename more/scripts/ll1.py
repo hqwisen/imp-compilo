@@ -3,6 +3,7 @@
 from config import V, T
 
 import logging
+import csv
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level = logging.DEBUG)
@@ -125,9 +126,19 @@ def first_k(grammar, variables, terminals, epsilon, k = 1):
 
 
 
-# def export_table_template(variables, terminals):
-#     for
+def export_table_template(variables, terminals, csvfile):
+    content = [['']]
+    for terminal in terminals:
+        content[0].append(str(terminal))
 
+    for variable in variables:
+        content.append([str(variable)])
+    with open(csvfile, "w") as output:
+        writer = csv.writer(output, lineterminator='\n')
+        writer.writerows(content)
+
+def manual_LL1:
+    pass
 
 if __name__ == "__main__":
     config = get_grammar_config()
@@ -138,7 +149,9 @@ if __name__ == "__main__":
     data = parser.parse()
     print(data)
     print()
-    first = first_k(config['grammar'], data['variables'], data['terminals'],
-                  config['epsilon'])
-    for i in first:
-        print("%20s → %s" % (i, first[i]))
+    # first = first_k(config['grammar'], data['variables'], data['terminals'],
+    #               config['epsilon'])
+    # for i in first:
+    #     print("%20s → %s" % (i, first[i]))
+    print()
+    export_table_template(data['variables'], data['terminals'], "LL1.csv")
