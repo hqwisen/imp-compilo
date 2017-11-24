@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public abstract class ImpCompilo {
+public abstract class AbstractScanner {
 
     private static Logger log;
     private HashMap<String, Integer> identifiers;
@@ -19,7 +19,7 @@ public abstract class ImpCompilo {
         log.setLevel(Level.OFF);
     }
 
-    public ImpCompilo() {
+    public AbstractScanner() {
         this.identifiers = new HashMap<>();
         this.symbols = new ArrayList<>();
     }

@@ -17,27 +17,27 @@ sourceSets {
     }
 }
 
-task scanJar(type: Jar) {
+task scannerJar(type: Jar) {
     from(sourceSets.main.output)
     manifest {
         attributes 'Implementation-Title': 'ImpCompilo Scanner',
                    'Implementation-Version': '',
-                   'Main-Class': 'Main'
+                   'Main-Class': 'GeneratedScanner'
     }
     baseName 'scanner'
     destinationDir file('dist/')
 }
 
-task generateMain {
+task generateScanner {
     javaexec {
         main='-jar';
         args = ['dist/lib/jflex.jar', 'more/src/LexicalAnalyzer.flex']
     }
 }
 
-task generateScanJar (dependsOn: [generateMain, scanJar])
+task generateScannerJar (dependsOn: [generateScanner, scannerJar])
 
-task scan (dependsOn: generateScanJar) {
+task scan (dependsOn: generateScannerJar) {
   doLast{
       javaexec {
           main='-jar';

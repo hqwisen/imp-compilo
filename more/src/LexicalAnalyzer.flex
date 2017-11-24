@@ -2,9 +2,9 @@
 
 %% // Options of the scanner
 
-%class Main
+%class GeneratedScanner
 %public
-%extends ImpCompilo
+%extends AbstractScanner
 %unicode
 %line
 %column
