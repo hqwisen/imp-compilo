@@ -4,7 +4,7 @@
 
 %class GeneratedScanner
 %public
-%extends AbstractScanner
+%extends Scanner
 %unicode
 %line
 %column
@@ -33,6 +33,14 @@
     public void changeState(int state){
         yybegin(state);
     }
+
+    public boolean atEOF(){
+        return this.zzAtEOF;
+    }
+
+    public Symbol lex() throws java.io.IOException{
+        return this.yylex();
+    }
 %}
 
 %init{
@@ -45,7 +53,6 @@
 
 
 %eofval{
-  postScan();
   return new Symbol(LexicalUnit.EOS, yyline, yycolumn);
 %eofval}
 

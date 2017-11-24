@@ -22,7 +22,7 @@ task scannerJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'ImpCompilo Scanner',
                    'Implementation-Version': '',
-                   'Main-Class': 'GeneratedScanner'
+                   'Main-Class': 'Scanner'
     }
     baseName 'scanner'
     destinationDir file('dist/')
