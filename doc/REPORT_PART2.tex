@@ -451,7 +451,7 @@ We have the following new rules:
     \label{fig:fullcfg}
 \end{figure}
 
-\section{LL(1)}
+\section{LL(1) parser}
 
 \subsection{First$^1(\cdot)$ and Follow$^1(\cdot)$}
 \begin{center}
@@ -536,5 +536,32 @@ We have the following new rules:
         \hline
     \end{tabular}
 \end{center}
+
+\subsection{Action table}
+\begin{center}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{| r || c | c |}
+        \hline
+        \textbf{}
+        & \texttt{begin}
+        & \texttt{end}
+        ;
+        [VarName]
+        :=
+        [Number]
+        
+        & \texttt{if}
+
+
+         \\
+        \hline
+        \hline
+        Program & begin & \\
+        \hline
+        Code & [VarName] if while for print read $\epsilon$ &
+
+    \end{tabular}
+\end{center}
+
 
 \end{document}
