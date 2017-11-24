@@ -21,10 +21,21 @@ task scannerJar(type: Jar) {
     from(sourceSets.main.output)
     manifest {
         attributes 'Implementation-Title': 'ImpCompilo Scanner',
-                   'Implementation-Version': '',
-                   'Main-Class': 'Scanner'
+                'Implementation-Version': '',
+                'Main-Class': 'Scanner'
     }
     baseName 'scanner'
+    destinationDir file('dist/')
+}
+
+task parserJar(type: Jar) {
+    from(sourceSets.main.output)
+    manifest {
+        attributes 'Implementation-Title': 'ImpCompilo Parser',
+                'Implementation-Version': '',
+                'Main-Class': 'LL1Parser'
+    }
+    baseName 'parser'
     destinationDir file('dist/')
 }
 
@@ -37,13 +48,24 @@ task generateScanner {
 
 task generateScannerJar (dependsOn: [generateScanner, scannerJar])
 
-task scan (dependsOn: generateScannerJar) {
-  doLast{
-      javaexec {
-          main='-jar';
-          args = ['dist/scanner.jar', project.input]
-      }
-  }
+task generateParserJar (dependsOn: [generateScanner, parserJar])
+
+task scanner (dependsOn: generateScannerJar) {
+    doLast{
+        javaexec {
+            main='-jar';
+            args = ['dist/scanner.jar', project.input]
+        }
+    }
+}
+
+task parser (dependsOn: generateParserJar) {
+    doLast{
+        javaexec {
+            main='-jar';
+            args = ['dist/parser.jar', project.input]
+        }
+    }
 }
 
 task generateDoc (type: Javadoc){
