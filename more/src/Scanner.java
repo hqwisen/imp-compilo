@@ -129,14 +129,13 @@ public abstract class Scanner {
      * Run the lexer and return the next token
      * @return the next token
      */
-    public Symbol scan(){
+    public void scan(){
         try{
             while(!atEOF()) lex();
         }catch(IOException e){
             System.err.println("An error occured while running the scanner.");
             System.exit(1);
         }
-        return null; // Should never happened
     }
 
     /**
