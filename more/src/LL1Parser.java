@@ -21,6 +21,7 @@ public class LL1Parser {
     private final static int ACCEPT = -1;
     private final static int MATCH = -2;
 
+    private final static String EPISLON = "epsilon";
 
     private final static String JAR = "dist/parser.jar";
 
@@ -34,6 +35,8 @@ public class LL1Parser {
     private Integer tokenIndex;
     private Symbol token;
     private List<Symbol> scannedTokens;
+    private boolean parsing;
+
     /**
      * Set up a scanner. grammarFile and tableFile should be csv file
      * available in the resources directory.
@@ -44,7 +47,8 @@ public class LL1Parser {
      * The tableFile should only contain the variables as row key,
      * the bottom of the table (with the match and accepted) will be
      * implicitly implemented.
-     *
+     * We suppose that the grammarFile contains per rule, at least
+     * the left side and one element on the right side (even epsilon).
      * @param sourceFile  IMP source file
      * @param grammarFile csv file containing the grammar
      * @param tableFile   csv file containing the action file
@@ -62,6 +66,7 @@ public class LL1Parser {
         this.tokenIndex = -1;
         this.token = null;
         this.scannedTokens = null;
+        this.parsing = false;
     }
 
     /**
@@ -82,6 +87,9 @@ public class LL1Parser {
      * with the rule number as the key.
      * Since it is a Context Free Grammar, the first element of the list of
      * a rule is the left side, and the following elements is the right side.
+     * If the right side if @{@link LL1Parser#EPISLON}, then only
+     * the left side is set. This will avoid to push epsilon on the stack
+     * when parsing.
      */
     private void buildGrammar() {
         Scanner.log.info("Building grammar from '" + this.grammarFile + "'");
@@ -96,17 +104,23 @@ public class LL1Parser {
                 line = readLine.split(",");
                 // First index of line is the left side
                 // the following values are the tokens of the right side
-
                 this.rules.put(ruleNumber, new ArrayList<String>());
-                for (int i = 0; i < line.length; i++) {
-                    this.rules.get(ruleNumber).add(line[i]);
+                if(line[1].equals(EPISLON)){
+                    // add only left-side, since epsilon is empty word
+                    this.rules.get(ruleNumber).add(line[0]);
+                }else{
+                    for (int i = 0; i < line.length; i++) {
+                        this.rules.get(ruleNumber).add(line[i]);
+                    }
                 }
-                Scanner.log.fine(ruleNumber + " → " + this.rules.get(ruleNumber).toString());
+                Scanner.log.fine(ruleNumber + " → " +
+                        this.rules.get(ruleNumber).toString());
                 readLine = reader.readLine();
                 ruleNumber++;
             }
         } catch (IOException e) {
-            Scanner.log.severe("An error occured while reading " + this.grammarFile);
+            Scanner.log.severe("An error occured while reading "
+                    + this.grammarFile);
             e.printStackTrace();
         }
     }
@@ -151,7 +165,8 @@ public class LL1Parser {
                 line = readLine.split(",");
                 // First element is the variable
                 // The other value are the rule number
-                // If there is no rule number it is not necessary to add it to actionTable
+                // If there is no rule number it is not necessary
+                // to add it to actionTable
                 String variable = line[0];
                 for (int i = 1; i < line.length; i++) {
                     if (line[i].length() > 0) {
@@ -162,7 +177,8 @@ public class LL1Parser {
                 readLine = reader.readLine();
             }
         } catch (IOException e) {
-            Scanner.log.severe("An error occured while reading " + this.tableFile);
+            Scanner.log.severe("An error occured while reading "
+                    + this.tableFile);
             e.printStackTrace();
         }
 
@@ -183,23 +199,24 @@ public class LL1Parser {
 
     public Integer M(String a, String l) {
         // TODO instead of those conditions, make a table
-        Integer ruleNumber = null;
+        Integer action = null;
         if(isVariable(a)){
-            ruleNumber = this.actionTable.get(a).get(l);
+            action = this.actionTable.get(a).get(l);
         }
         // ruleNumber is null if a is terminal or a and l are variables
-        if (ruleNumber == null) {
+        if (action == null) {
             if (isTerminal(a) && isTerminal(l) && a.equals(l)) {
                 if(a.equals(LexicalUnit.END.getValue())){
-                    return ACCEPT;
+                    action = ACCEPT;
                 }else{
-                    return MATCH;
+                    action = MATCH;
                 }
             }else{
-                return SYNTAX_ERROR;
+                action = SYNTAX_ERROR;
             }
         }
-        return ruleNumber;
+        Scanner.log.info("Action for M(" + a + ", " + l + ") is " + action);
+        return action;
     }
 
     /**
@@ -259,33 +276,47 @@ public class LL1Parser {
         }else{
             token = null;
         }
+        Scanner.log.info("Next token is " + token.getValue());
         return token;
     }
 
     private void accept(Symbol symbol){
-
+        Scanner.log.info("Accept(" + symbol.getValue() + ")");
+        parsing = false;
     }
 
     private void match(Symbol symbol){
-
-    }
-
-    private void produce(Symbol symbol){
-
+        Scanner.log.info("Match(" + symbol.getValue() + ")");
+        stack.pop();
+        nextToken();
     }
 
     private void syntaxError(Symbol symbol){
+        Scanner.log.info("SyntaxError(" + symbol.getValue() + ")");
+        parsing = false;
+    }
 
+    private void pushRule(Integer ruleNumber){
+        List<String> elems = rules.get(ruleNumber);
+        for(int i = elems.size() - 1; i > 0; i--){
+            stack.push(elems.get(i));
+        }
+    }
+
+    private void produce(Symbol symbol, Integer ruleNumber){
+        Scanner.log.info("Produce(" + symbol.getValue() + ", "
+                         + ruleNumber.toString() + ")");
+        stack.pop();
+        pushRule(ruleNumber);
     }
 
     public void parse() {
         stack.push(getStartSymbol());
         scannedTokens = scanner.scan();
-        boolean parsing = true;
         nextToken();
+        parsing = token != null;
         while(parsing) {
             Integer ruleNumber = M(stack.peek(), lexicalUnitOf(token));
-            parsing = false;
             switch(ruleNumber){
                 case ACCEPT: accept(token);
                     break;
@@ -293,10 +324,12 @@ public class LL1Parser {
                     break;
                 case SYNTAX_ERROR: syntaxError(token);
                     break;
-                default: produce(token);
+                default: produce(token, ruleNumber);
                     break;
             }
+            Scanner.log.info("Stack: " + stack);
         }
+        Scanner.log.info("Parsing finished.");
     }
 
     public static void main(String[] args) {
@@ -308,7 +341,8 @@ public class LL1Parser {
         if (source == null) {
             System.out.println("File '" + args[0] + "' was not found");
         } else {
-            LL1Parser parser = new LL1Parser(source, "grammar.csv", "actionTable.csv");
+            LL1Parser parser = new LL1Parser(source, "grammar.csv",
+                    "actionTable.csv");
             parser.parse();
         }
     }
