@@ -1,0 +1,11 @@
+(* This is an useless comment *)
+begin
+    x := 0;
+    for i from 0 by 1 to 10 do
+        x := x + 2
+    done;
+    print(x);
+    if not 3 = 3 then
+        read(x)
+    endif
+end
