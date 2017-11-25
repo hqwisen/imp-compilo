@@ -17,6 +17,7 @@ public class LL1Parser {
     private Scanner scanner;
     private List<String> variables, terminals;
     private Map<String, List<String>> rules;
+    private Map<String, Map<String, Integer>> actionTable;
 
     /**
      * Set up a scanner. grammarFile and tableFile should be csv file
@@ -38,7 +39,9 @@ public class LL1Parser {
         this.tableFile = tableFile;
         this.scanner = new GeneratedScanner(this.source);
         this.rules = new HashMap<>();
+        this.actionTable = new HashMap<>();
         buildGrammar();
+        buildActionTable();
     }
 
     /**
@@ -54,7 +57,7 @@ public class LL1Parser {
     /**
      * Set up the grammar variables, terminals and rules from the grammarFile.
      */
-    public void buildGrammar(){
+    private void buildGrammar(){
         Scanner.log.info("Building grammar from '" + this.grammarFile + "'");
         BufferedReader reader = getResourceReader(this.grammarFile);
         try {
@@ -64,17 +67,77 @@ public class LL1Parser {
             String readLine = reader.readLine();
             while (readLine != null) {
                 line = readLine.split(",");
+                // First index of line is the left side
+                // the following values are the tokens of the right side
                 this.rules.put(line[0], new ArrayList<String>());
-                readLine = reader.readLine();
                 for(int i = 1; i < line.length; i++){
                     this.rules.get(line[0]).add(line[i]);
                 }
                 Scanner.log.fine(line[0] + " → " + this.rules.get(line[0]).toString());
+                readLine = reader.readLine();
             }
         } catch (IOException e) {
             Scanner.log.severe("An error occured while reading " + this.grammarFile);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Initial the action table with the variables as the
+     * keys of the first dimension, and the terminals
+     * as the keys of the second dimension of the maps.
+     * Initialization should be run after the grammar
+     * as been build. The initial values of the
+     * action table are 0. Note that the value 0
+     * will be used as a detection of a syntax error.
+     */
+    private void initActionTable(){
+        for(String variable: this.variables){
+            this.actionTable.put(variable, new HashMap<>());
+            for(String terminal : this.terminals){
+                this.actionTable.get(variable).put(terminal, 0);
+            }
+        }
+    }
+
+    /**
+     * Set up the action table from the tableFile.
+     * The action table is accessed by a variable as
+     * the first key, and a terminal as the second key.
+     * It returns the rule to be processed by the LL1Parser.
+     * If there is no rule to process, i.e. a syntax error,
+     * the value is set to 0.
+     */
+    private void buildActionTable(){
+        initActionTable();
+        Scanner.log.info("Building action table from '" + this.tableFile + "'");
+        BufferedReader reader = getResourceReader(this.tableFile);
+        try {
+            String[] line = null;
+            // First row is the columns i.e. the terminals
+            // The are needed to be able to index the values correctly
+            String[] terminals = reader.readLine().split(",");
+            String readLine = reader.readLine();
+            while (readLine != null) {
+                line = readLine.split(",");
+                // First element is the variable
+                // The other value are the rule number
+                // If there is no rule number it is not necessary to add it to actionTable
+                String variable = line[0];
+                for(int i = 1; i < line.length; i++){
+                    if(line[i].length() > 0) {
+                        Integer value = Integer.parseInt(line[i]);
+                        this.actionTable.get(variable).put(terminals[i], value);
+                    }
+                }
+                readLine = reader.readLine();
+            }
+            System.out.println(this.actionTable);
+        } catch (IOException e) {
+            Scanner.log.severe("An error occured while reading " + this.tableFile);
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) {
