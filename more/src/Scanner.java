@@ -18,7 +18,7 @@ public abstract class Scanner {
     public static Logger log;
 
     static {
-        log = Logger.getLogger("ImpCompilo");
+        log = Logger.getLogger("Scanner");
         log.setLevel(Level.ALL);
     }
 
@@ -48,10 +48,10 @@ public abstract class Scanner {
 
     /**
      * Create a new symbol based on the current state (text, line, column).
-     * The symbols is added to {@link ImpCompilo#symbols} list.
+     * The symbols is added to {@link Scanner#symbols} list.
      * If the lexical unit is {@link LexicalUnit#VARNAME},
      * and the VarName is encountered for the first time, the value
-     * and the line of the symbol are added to {@link ImpCompilo#identifiers}
+     * and the line of the symbol are added to {@link Scanner#identifiers}
      *
      * @param lexicalUnit lexical unit associated to the symbol to create
      * @return the created symbol object
@@ -69,7 +69,7 @@ public abstract class Scanner {
     /**
      * Check if an identifier had already been encountered during the scan.
      * @param identifier key (identifier) to test
-     * @return true if identifier is in {@link ImpCompilo#identifiers},
+     * @return true if identifier is in {@link Scanner#identifiers},
      * false otherwise.
      */
     public boolean idAlreadyScan(String identifier) {
@@ -77,9 +77,9 @@ public abstract class Scanner {
     }
 
     /**
-     * Add key: identifier, value: idLine to {@link ImpCompilo#identifiers}.
-     * idLine is incremented before adding the {@link ImpCompilo#identifiers}.
-     * @param identifier
+     * Add key: identifier, value: idLine to {@link Scanner#identifiers}.
+     * idLine is incremented before adding the {@link Scanner#identifiers}.
+     * @param identifier identifier to add
      * @param idLine     line where the identifier was encountered.
      */
     public void addIdentifier(String identifier, int idLine) {
@@ -141,7 +141,7 @@ public abstract class Scanner {
 
     /**
      * Return the list of scanned symbols.
-     * @return {@link ImpCompilo#symbols} list.
+     * @return {@link Scanner#symbols} list.
      */
     public List<Symbol> getSymbols() {
         return this.symbols;
@@ -166,8 +166,8 @@ public abstract class Scanner {
     public abstract int column();
 
     /**
-     * Return the length of the current {@link ImpCompilo#text}.
-     * @return {@link ImpCompilo#text} size.
+     * Return the length of the current {@link Scanner#text}.
+     * @return {@link Scanner#text} size.
      */
     public abstract int length();
 
@@ -188,6 +188,7 @@ public abstract class Scanner {
      * the end of input is encountered or an I/O-Error occurs.
      * This based should use the yylex method of the generated scanner by JFlex.
      * @return  the next token
+     * @throws IOException if there is an error while reading next token.
      */
     public abstract Symbol lex() throws IOException;
 
