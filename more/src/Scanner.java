@@ -15,11 +15,11 @@ public abstract class Scanner {
 
     private final static String JAR = "dist/scanner.jar";
 
-    private static Logger log;
+    public static Logger log;
 
     static {
         log = Logger.getLogger("ImpCompilo");
-        log.setLevel(Level.FINE);
+        log.setLevel(Level.ALL);
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class Scanner {
      */
     public void addIdentifier(String identifier, int idLine) {
         if (!idAlreadyScan(identifier)) {
-            log.info("Adding identifier: " + identifier + " line " + idLine);
+            log.fine("Adding identifier: " + identifier + " line " + idLine);
             identifiers.put(identifier, idLine + 1);
         } else {
             log.fine("The identifier " + identifier +
