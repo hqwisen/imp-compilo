@@ -70,10 +70,11 @@ public class LL1Parser {
 
     /**
      * Set up the grammar variables, terminals and rules from the grammarFile.
-     * variables and terminals are only lists with the respective elements of the grammar.
-     * The rules map contains the left side and right side, with the rule number as the key.
-     * Since it is a Context Free Grammar, the first element of the list of a rule
-     * is the left side, and the following elements is the right side.
+     * variables and terminals are only lists with the respective elements
+     * of the grammar. The rules map contains the left side and right side,
+     * with the rule number as the key.
+     * Since it is a Context Free Grammar, the first element of the list of
+     * a rule is the left side, and the following elements is the right side.
      */
     private void buildGrammar() {
         Scanner.log.info("Building grammar from '" + this.grammarFile + "'");
@@ -172,10 +173,16 @@ public class LL1Parser {
      * - SYNTAX_ERROR for all other cases
      * @return the action to make while parsing
      */
+
     public Integer M(String a, String l) {
-        Integer ruleNumber = this.actionTable.get(a).get(l);
+        // TODO instead of those conditions, make a table
+        Integer ruleNumber = null;
+        if(isVariable(a)){
+            ruleNumber = this.actionTable.get(a).get(l);
+        }
+        // ruleNumber is null if a is terminal or a and l are variables
         if (ruleNumber == null) {
-            if (a.equals(l) && isTerminal(a)) {
+            if (isTerminal(a) && isTerminal(l) && a.equals(l)) {
                 if(a.equals(LexicalUnit.END.getValue())){
                     return ACCEPT;
                 }else{
@@ -193,8 +200,6 @@ public class LL1Parser {
      * Note that the value is considered terminal, only
      * if it is in {@link LL1Parser#terminals} list.
      * It doesn't check any regexp.
-     * if
-     *
      * @return true if value is a terminal, false otherwise
      */
     public boolean isTerminal(String value) {
@@ -202,12 +207,24 @@ public class LL1Parser {
     }
 
     /**
+     * Return true if value is a variable, false otherwise.
+     * Note that the value is considered variable, only
+     * if it is in {@link LL1Parser#variables} list.
+     * @return true if value is a terminal, false otherwise
+     */
+    public boolean isVariable(String value) {
+        return variables.contains(value);
+    }
+
+    /**
      * Return the start symbol of the grammar, extracted from the rules.
-     *
+     * start symbol is the left side of first rule
+     * It is logical that the grammar as at least one rule
+     * If not it will raise a NullPointerException.
+     * @throws NullPointerException if there is no rules
      * @return start symbol of the grammar
      */
     public String getStartSymbol() {
-        // start symbol is the left side of first rule
         return this.rules.get(1).get(0);
     }
 
