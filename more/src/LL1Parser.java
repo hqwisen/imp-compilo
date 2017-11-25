@@ -31,6 +31,7 @@ public class LL1Parser {
     private Map<Integer, List<String>> rules;
     private Map<String, Map<String, Integer>> actionTable;
     private Stack<String> stack;
+    private List<Integer> leftMostDerivation;
     // Following vars are used during the parsing
     private Integer tokenIndex;
     private Symbol token;
@@ -60,6 +61,7 @@ public class LL1Parser {
         this.rules = new HashMap<>();
         this.actionTable = new HashMap<>();
         this.stack = new Stack<>();
+        this.leftMostDerivation = new ArrayList<>();
         buildGrammar();
         buildActionTable();
         // Parsing state variables
@@ -308,6 +310,14 @@ public class LL1Parser {
                          + ruleNumber.toString() + ")");
         stack.pop();
         pushRule(ruleNumber);
+        leftMostDerivation.add(ruleNumber);
+    }
+
+    public void printLeftMostDerivation(){
+        for(Integer rule : leftMostDerivation){
+            System.out.print(rule + " ");
+        }
+        System.out.println();
     }
 
     public void parse() {
@@ -344,6 +354,7 @@ public class LL1Parser {
             LL1Parser parser = new LL1Parser(source, "grammar.csv",
                     "actionTable.csv");
             parser.parse();
+            parser.printLeftMostDerivation();
         }
     }
 
