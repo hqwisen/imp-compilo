@@ -30,7 +30,10 @@ public class LL1Parser {
     private Map<Integer, List<String>> rules;
     private Map<String, Map<String, Integer>> actionTable;
     private Stack<String> stack;
-
+    // Following vars are used during the parsing
+    private Integer tokenIndex;
+    private Symbol token;
+    private List<Symbol> scannedTokens;
     /**
      * Set up a scanner. grammarFile and tableFile should be csv file
      * available in the resources directory.
@@ -55,6 +58,10 @@ public class LL1Parser {
         this.stack = new Stack<>();
         buildGrammar();
         buildActionTable();
+        // Parsing state variables
+        this.tokenIndex = -1;
+        this.token = null;
+        this.scannedTokens = null;
     }
 
     /**
@@ -239,16 +246,55 @@ public class LL1Parser {
         return symbol.getType().getValue();
     }
 
+    /**
+     * Set the next token to parse in {@link LL1Parser#token}.
+     * It also returns it.
+     * If no more token available, null is set.
+     * @return the next token to parse, null otherwise.
+     */
+    private Symbol nextToken(){
+        tokenIndex++;
+        if(tokenIndex < scannedTokens.size()){
+            token = scannedTokens.get(tokenIndex);
+        }else{
+            token = null;
+        }
+        return token;
+    }
+
+    private void accept(Symbol symbol){
+
+    }
+
+    private void match(Symbol symbol){
+
+    }
+
+    private void produce(Symbol symbol){
+
+    }
+
+    private void syntaxError(Symbol symbol){
+
+    }
+
     public void parse() {
         stack.push(getStartSymbol());
-        scanner.scan();
-        List<Symbol> symbols = scanner.getSymbols();
-        for (Symbol symbol : symbols) {
-            Integer ruleNumber = M(stack.peek(), lexicalUnitOf(symbol));
-            if (ruleNumber != SYNTAX_ERROR) {
-
-            } else {
-                // SyntaxError
+        scannedTokens = scanner.scan();
+        boolean parsing = true;
+        nextToken();
+        while(parsing) {
+            Integer ruleNumber = M(stack.peek(), lexicalUnitOf(token));
+            parsing = false;
+            switch(ruleNumber){
+                case ACCEPT: accept(token);
+                    break;
+                case MATCH: match(token);
+                    break;
+                case SYNTAX_ERROR: syntaxError(token);
+                    break;
+                default: produce(token);
+                    break;
             }
         }
     }
