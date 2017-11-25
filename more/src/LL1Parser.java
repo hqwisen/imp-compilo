@@ -16,7 +16,7 @@ public class LL1Parser {
     private FileReader source;
     private Scanner scanner;
     private List<String> variables, terminals;
-    private Map<String, List<String>> rules;
+    private Map<Integer, List<String>> rules;
     private Map<String, Map<String, Integer>> actionTable;
 
     /**
@@ -42,6 +42,9 @@ public class LL1Parser {
         this.actionTable = new HashMap<>();
         buildGrammar();
         buildActionTable();
+        System.out.println(this.actionTable);
+        System.out.println();
+        System.out.println(this.rules);
     }
 
     /**
@@ -56,6 +59,10 @@ public class LL1Parser {
 
     /**
      * Set up the grammar variables, terminals and rules from the grammarFile.
+     * variables and terminals are only lists with the respective elements of the grammar.
+     * The rules map contains the left side and right side, with the rule number as the key.
+     * Since it is a Context Free Grammar, the first element of the list of a rule
+     * is the left side, and the following elements is the right side.
      */
     private void buildGrammar(){
         Scanner.log.info("Building grammar from '" + this.grammarFile + "'");
@@ -65,16 +72,19 @@ public class LL1Parser {
             this.terminals = Arrays.asList(reader.readLine().split(","));
             String[] line = null;
             String readLine = reader.readLine();
+            Integer ruleNumber = 1; // First rule is 1; 0 is syntax error
             while (readLine != null) {
                 line = readLine.split(",");
                 // First index of line is the left side
                 // the following values are the tokens of the right side
-                this.rules.put(line[0], new ArrayList<String>());
-                for(int i = 1; i < line.length; i++){
-                    this.rules.get(line[0]).add(line[i]);
+
+                this.rules.put(ruleNumber, new ArrayList<String>());
+                for(int i = 0; i < line.length; i++){
+                    this.rules.get(ruleNumber).add(line[i]);
                 }
-                Scanner.log.fine(line[0] + " → " + this.rules.get(line[0]).toString());
+                Scanner.log.fine(ruleNumber + " → " + this.rules.get(ruleNumber).toString());
                 readLine = reader.readLine();
+                ruleNumber++;
             }
         } catch (IOException e) {
             Scanner.log.severe("An error occured while reading " + this.grammarFile);
@@ -132,7 +142,6 @@ public class LL1Parser {
                 }
                 readLine = reader.readLine();
             }
-            System.out.println(this.actionTable);
         } catch (IOException e) {
             Scanner.log.severe("An error occured while reading " + this.tableFile);
             e.printStackTrace();
