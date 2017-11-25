@@ -18,8 +18,8 @@ public abstract class Scanner {
     public static Logger log;
 
     static {
-        log = Logger.getLogger("Scanner");
-        log.setLevel(Level.ALL);
+        log = Logger.getLogger("ImpCompilo LOGGER");
+        log.setLevel(Level.OFF);
     }
 
     /**

@@ -32,6 +32,7 @@ public class LL1Parser {
     private Map<String, Map<String, Integer>> actionTable;
     private Stack<String> stack;
     private List<Integer> leftMostDerivation;
+    private TreeNode<String> derivationTree;
     // Following vars are used during the parsing
     private Integer tokenIndex;
     private Symbol token;
@@ -50,6 +51,7 @@ public class LL1Parser {
      * implicitly implemented.
      * We suppose that the grammarFile contains per rule, at least
      * the left side and one element on the right side (even epsilon).
+     *
      * @param sourceFile  IMP source file
      * @param grammarFile csv file containing the grammar
      * @param tableFile   csv file containing the action file
@@ -62,6 +64,8 @@ public class LL1Parser {
         this.actionTable = new HashMap<>();
         this.stack = new Stack<>();
         this.leftMostDerivation = new ArrayList<>();
+        // this.derivationTree = new TreeNode("");
+        this.derivationTree = null;
         buildGrammar();
         buildActionTable();
         // Parsing state variables
@@ -107,10 +111,10 @@ public class LL1Parser {
                 // First index of line is the left side
                 // the following values are the tokens of the right side
                 this.rules.put(ruleNumber, new ArrayList<String>());
-                if(line[1].equals(EPISLON)){
+                if (line[1].equals(EPISLON)) {
                     // add only left-side, since epsilon is empty word
                     this.rules.get(ruleNumber).add(line[0]);
-                }else{
+                } else {
                     for (int i = 0; i < line.length; i++) {
                         this.rules.get(ruleNumber).add(line[i]);
                     }
@@ -196,24 +200,25 @@ public class LL1Parser {
      * - MATCH if a & l are terminal and the same
      * - ACCEPT if a & l are both the terminal LexicalUnit.END
      * - SYNTAX_ERROR for all other cases
+     *
      * @return the action to make while parsing
      */
 
     public Integer M(String a, String l) {
         // TODO instead of those conditions, make a table
         Integer action = null;
-        if(isVariable(a)){
+        if (isVariable(a)) {
             action = this.actionTable.get(a).get(l);
         }
         // ruleNumber is null if a is terminal or a and l are variables
         if (action == null) {
             if (isTerminal(a) && isTerminal(l) && a.equals(l)) {
-                if(a.equals(LexicalUnit.END.getValue())){
+                if (a.equals(LexicalUnit.END.getValue())) {
                     action = ACCEPT;
-                }else{
+                } else {
                     action = MATCH;
                 }
-            }else{
+            } else {
                 action = SYNTAX_ERROR;
             }
         }
@@ -226,6 +231,7 @@ public class LL1Parser {
      * Note that the value is considered terminal, only
      * if it is in {@link LL1Parser#terminals} list.
      * It doesn't check any regexp.
+     *
      * @return true if value is a terminal, false otherwise
      */
     public boolean isTerminal(String value) {
@@ -236,6 +242,7 @@ public class LL1Parser {
      * Return true if value is a variable, false otherwise.
      * Note that the value is considered variable, only
      * if it is in {@link LL1Parser#variables} list.
+     *
      * @return true if value is a terminal, false otherwise
      */
     public boolean isVariable(String value) {
@@ -247,8 +254,9 @@ public class LL1Parser {
      * start symbol is the left side of first rule
      * It is logical that the grammar as at least one rule
      * If not it will raise a NullPointerException.
-     * @throws NullPointerException if there is no rules
+     *
      * @return start symbol of the grammar
+     * @throws NullPointerException if there is no rules
      */
     public String getStartSymbol() {
         return this.rules.get(1).get(0);
@@ -269,55 +277,49 @@ public class LL1Parser {
      * Set the next token to parse in {@link LL1Parser#token}.
      * It also returns it.
      * If no more token available, null is set.
+     *
      * @return the next token to parse, null otherwise.
      */
-    private Symbol nextToken(){
+    private Symbol nextToken() {
         tokenIndex++;
-        if(tokenIndex < scannedTokens.size()){
+        if (tokenIndex < scannedTokens.size()) {
             token = scannedTokens.get(tokenIndex);
-        }else{
+        } else {
             token = null;
         }
         Scanner.log.info("Next token is " + token.getValue());
         return token;
     }
 
-    private void accept(Symbol symbol){
+    private void accept(Symbol symbol) {
         Scanner.log.info("Accept(" + symbol.getValue() + ")");
         parsing = false;
     }
 
-    private void match(Symbol symbol){
+    private void match(Symbol symbol) {
         Scanner.log.info("Match(" + symbol.getValue() + ")");
         stack.pop();
         nextToken();
     }
 
-    private void syntaxError(Symbol symbol){
+    private void syntaxError(Symbol symbol) {
         Scanner.log.info("SyntaxError(" + symbol.getValue() + ")");
         parsing = false;
     }
 
-    private void pushRule(Integer ruleNumber){
+    private void pushRule(Integer ruleNumber) {
         List<String> elems = rules.get(ruleNumber);
-        for(int i = elems.size() - 1; i > 0; i--){
+        for (int i = elems.size() - 1; i > 0; i--) {
             stack.push(elems.get(i));
         }
     }
 
-    private void produce(Symbol symbol, Integer ruleNumber){
+    private void produce(Symbol symbol, Integer ruleNumber) {
         Scanner.log.info("Produce(" + symbol.getValue() + ", "
-                         + ruleNumber.toString() + ")");
+                + ruleNumber.toString() + ")");
         stack.pop();
         pushRule(ruleNumber);
         leftMostDerivation.add(ruleNumber);
-    }
-
-    public void printLeftMostDerivation(){
-        for(Integer rule : leftMostDerivation){
-            System.out.print(rule + " ");
-        }
-        System.out.println();
     }
 
     public void parse() {
@@ -325,21 +327,98 @@ public class LL1Parser {
         scannedTokens = scanner.scan();
         nextToken();
         parsing = token != null;
-        while(parsing) {
+        while (parsing) {
             Integer ruleNumber = M(stack.peek(), lexicalUnitOf(token));
-            switch(ruleNumber){
-                case ACCEPT: accept(token);
+            switch (ruleNumber) {
+                case ACCEPT:
+                    accept(token);
                     break;
-                case MATCH: match(token);
+                case MATCH:
+                    match(token);
                     break;
-                case SYNTAX_ERROR: syntaxError(token);
+                case SYNTAX_ERROR:
+                    syntaxError(token);
                     break;
-                default: produce(token, ruleNumber);
+                default:
+                    produce(token, ruleNumber);
                     break;
             }
             Scanner.log.info("Stack: " + stack);
         }
         Scanner.log.info("Parsing finished.");
+    }
+
+    public void printLeftMostDerivation() {
+        for (Integer rule : leftMostDerivation) {
+            System.out.print(rule + " ");
+        }
+        System.out.println();
+    }
+
+
+    public int countVariables(List<String> list) {
+        int count = 0;
+        for (String value : list) {
+            if (isVariable(value)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Build the derivation based on the left most derivation.
+     * Since it is a one-on-one relation, there is
+     * only one tree that it is possible to generate per
+     * left most derivation.
+     */
+    private void buildDerivationTree() {
+        List<TreeNode<String>> subTrees = new ArrayList<>();
+        for(Integer ruleNumber : leftMostDerivation){
+            List<String> rule = rules.get(ruleNumber);
+            String value = rule.isEmpty() ? "" : rule.get(0);
+            TreeNode<String> subTree = new TreeNode<>(rule.get(0), ruleNumber);
+            for(int i = 1; i < rule.size(); i++){
+                subTree.addChild(rule.get(i));
+            }
+            subTrees.add(subTree);
+        }
+
+         derivationTree = subTrees.get(0);
+         subTrees.remove(0);
+         buildDerivationTreeRec(subTrees, derivationTree);
+    }
+
+    private void buildDerivationTreeRec(List<TreeNode<String>> subTrees,
+                                        TreeNode<String> parent){
+        List<String> rule = rules.get(parent.getRule());
+        int count = countVariables(rule);
+        count--;
+        int i = 0;
+        for(TreeNode<String> child : parent.getChildren()){
+            if(isVariable(child.getValue())){
+                TreeNode<String> subTree = subTrees.get(i);
+                for(TreeNode<String> subChild : subTree.getChildren()){
+                    child.addChild(subChild.getValue());
+                }
+                // child.setChildren(subTrees.get(i));
+                child.setRule(subTree.getRule());
+                i++;
+            }
+        }
+        for(int j = 0; j < count; j++){
+            subTrees.remove(0);
+        }
+        for(TreeNode<String> child : parent.getChildren()){
+            if(isVariable(child.getValue())){
+                buildDerivationTreeRec(subTrees, child);
+            }
+        }
+
+    }
+
+    public void printDerivationTree() {
+        derivationTree.print();
     }
 
     public static void main(String[] args) {
@@ -355,6 +434,11 @@ public class LL1Parser {
                     "actionTable.csv");
             parser.parse();
             parser.printLeftMostDerivation();
+            parser.buildDerivationTree();
+            parser.printDerivationTree();
+            //parser.printDerivationTree();
+//            TreeNode tree = new TreeNode("Test");
+//            tree.print();
         }
     }
 
