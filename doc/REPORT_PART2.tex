@@ -19,6 +19,7 @@
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{mathpazo}
+\usepackage{subcaption}
 \usepackage{float}
 \usepackage{hyperref}
 \hypersetup{
@@ -85,368 +86,397 @@ Gilles \textsc{Geeraerts}\\
 \newpage
 
 \section{Grammar}
-\subsection{Unproductive and unreachable symbols (a)}
+\paragraph{Unproductive/unreachable symbols}
 
 In the given grammar, there is no unproductive and/or unreachable symbols.
 
-\subsection{Priority and associativity of the operators (b)}
+\subsection{Priority and associativity of the operators}
 
-\paragraph{Note} In this section, P\&A refers to priority and associativity
+\paragraph{Notation} In this section, P\&A refers to priority and associativity
 of the operators, AE to arithmetic expression and BE to boolean expression.
+
+\paragraph{}
+
+An AE must always be \textit{processed}
+before being compared
+to another AE in a BE. Logically, we will consider first to unambiguous
+the arithmetic expressions and then the boolean expressions.
 
 \subsubsection{Arithmetic expressions}
 
 \paragraph{}
 
-Since an arithmetic expression must always be process first before bing compared
-to another one in a boolean expression, we will consider those two separatly.
+Let's consider the P\&A of arithmetic expressions in Figure \ref{fig:AE-pa}
+and the initial grammar in Figure \ref{fig:AE-initial}.
 
-\paragraph{}
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Operators & Associativity \\
+        \hline
+        \hline
+        - & right \\
+        \hline
+        *, / & left \\
+        \hline
+        +, - & left \\
+        \hline
+    \end{tabular}
+    \caption{Priority and associativity of AE}
+    \label{fig:AE-pa}
+\end{figure}
 
-First let's consider the P\&A of the arithmetic expressions. We have the
-following P\&A:
-
-\begin{tabular}{|c|c|}
-    \hline
-    - & right \\
-    \hline
-    *, / & left \\
-    \hline
-    +, - & left \\
-    \hline
-\end{tabular}
-
- And the following grammar:
-    \begin{center}
-            \begin{tabular}{l l}
-                $<$ExprArith$>$ &$\rightarrow$ [VarName] \\
-                 &$\rightarrow$ [Number] \\
-                 &$\rightarrow$ ($<$ExprArith$>$) \\
-                 &$\rightarrow$ - $<$ExprArith$>$ \\
-                 &$\rightarrow$
-                $<$ExprArith$>$ $<$Op$>$ $<$ExprArith$>$ \\
-                $<$Op$>$ &$\rightarrow$ $+$ \\
-                 &$\rightarrow$ $-$ \\
-                 &$\rightarrow$ $*$ \\
-                 &$\rightarrow$ $/$ \\
-            \end{tabular}
-    \end{center}
-
+\begin{figure}[H]
+        \centering
+        \begin{tabular}{l l}
+            $<$ExprArith$>$ &$\rightarrow$ [VarName] \\
+             &$\rightarrow$ [Number] \\
+             &$\rightarrow$ ($<$ExprArith$>$) \\
+             &$\rightarrow$ - $<$ExprArith$>$ \\
+             &$\rightarrow$
+            $<$ExprArith$>$ $<$Op$>$ $<$ExprArith$>$ \\
+            $<$Op$>$ &$\rightarrow$ $+$ \\
+             &$\rightarrow$ $-$ \\
+             &$\rightarrow$ $*$ \\
+             &$\rightarrow$ $/$ \\
+        \end{tabular}
+        \caption{Initial grammar of AE}
+        \label{fig:AE-initial}
+\end{figure}
 
 As mention in the course page 111, an AE must be a \textit{sum of products},
 more specifically in our case a \textit{\{sum, substraction\}
-of \{produts, division\}}. We will use the same atom definition in the course,
-with \texttt{Number} as the constant rule and \texttt{VarName} as the id rule.
-The minus operator as a right associativity, meaning that it is always linked
-to the atom next to the operator, so we will set this operator directly as
+of \{produts, division\}}. We will use the same atom definition
+ as in the course,
+with \texttt{[Number]} as the constant rule and \texttt{[VarName]}
+as the id rule.
+The minus operator as a right associativity means that it is always linked
+to the atom next to it, so we will set this operator directly as
 an atom rule.
-
-Same thing goes for the parenthesis. The must be handled without considering
+Same thing goes for the parenthesis, it should be handled without considering
 the operators outside the parenthesis, so as an atom.
+Figure \ref{fig:AE-unambi} show the unambiguous grammar of AE.
 
-We have the following grammar results:
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{l l}
+        $<$ExprArith$>$ &$\rightarrow$
+        $<$ExprArith$>$ $<$SumSubOp$>$ $<$ExprProd$>$ \\
+         &$\rightarrow$ $<$ExprProd$>$ \\
+        $<$ExprProd$>$ &$\rightarrow$
+        $<$ExprProd$>$ $<$ProdOp$>$ $<$Atom$>$ \\
+         &$\rightarrow$ $<$Atom$>$ \\
 
+        $<$SumSubOp$>$ &$\rightarrow$ + \\
+         &$\rightarrow$ - \\
 
-    \begin{center}
-            \begin{tabular}{l l}
-                $<$ExprArith$>$ &$\rightarrow$
-                $<$ExprArith$>$ $<$SumSubOp$>$ $<$ExprProd$>$ \\
-                 &$\rightarrow$ $<$ExprProd$>$ \\
-                $<$ExprProd$>$ &$\rightarrow$
-                $<$ExprProd$>$ $<$ProdOp$>$ $<$Atom$>$ \\
-                 &$\rightarrow$ $<$Atom$>$ \\
+        $<$ProdOp$>$ &$\rightarrow$ * \\
+         &$\rightarrow$ / \\
 
-                $<$SumSubOp$>$ &$\rightarrow$ + \\
-                 &$\rightarrow$ - \\
-
-                $<$ProdOp$>$ &$\rightarrow$ * \\
-                 &$\rightarrow$ / \\
-
-                $<$Atom$>$ &$\rightarrow$ [VarName] \\
-                 &$\rightarrow$ [Number] \\
-                 &$\rightarrow$ - $<$Atom$>$ \\
-                 &$\rightarrow$ ($<$ExprArith$>$) \\
-
-            \end{tabular}
-    \end{center}
-
-
-\begin{lstlisting}
-\end{lstlisting}
+        $<$Atom$>$ &$\rightarrow$ [VarName] \\
+         &$\rightarrow$ [Number] \\
+         &$\rightarrow$ - $<$Atom$>$ \\
+         &$\rightarrow$ ($<$ExprArith$>$) \\
+    \end{tabular}
+    \caption{Unambiguous grammar of AE}
+    \label{fig:AE-unambi}
+\end{figure}
 
 
 \subsubsection{Boolean expressions}
 
-For boolean expressions we have the following P\&A:
+Let's consider the P\&A of boolean expressions in Figure \ref{fig:BE-pa}
+and the initial grammar in Figure \ref{fig:BE-initial}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Operators & Associativity \\
+        \hline
+        \hline
+        not & right \\
+        \hline
+        $>$, $<$, $>=$, $<=$, $=$, $<>$ / & left \\
+        \hline
+        and & left \\
+        \hline
+        or & left \\
+        \hline
+    \end{tabular}
+    \caption{Priority and associativity of BE}
+    \label{fig:BE-pa}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{l l}
+        $<$Cond$>$ & $\rightarrow$ $<$Cond$>$ $<$BinOp$>$ $<$Cond$>$ \\
+         & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
+         & $\rightarrow$ $<$SimpleCond$>$\\
+        $<$SimpleCond$>$ & $\rightarrow$
+        $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
+        $<$BinOp$>$ & $\rightarrow$ \texttt{and}\\
+         & $\rightarrow$ \texttt{or}\\
+        $<$Comp$>$ & $\rightarrow$ $=$\\
+         & $\rightarrow$ $>=$\\
+         & $\rightarrow$ $>$\\
+         & $\rightarrow$ $<=$\\
+         & $\rightarrow$ $<$\\
+         & $\rightarrow$ $<>$\\
+    \end{tabular}
+    \caption{Initial grammar of BE}
+    \label{fig:BE-initial}
+
+\end{figure}
+
+Following the same principle as for AE, we have here
+\textit{disjonction of conjonctions}. Figure \ref{fig:BE-unambi}
+shows the unambiguous grammar of BE.
 
 
-\begin{tabular}{|c|c|}
-    \hline
-    not & right \\
-    \hline
-    $>$, $<$, $>=$, $<=$, $=$, $<>$ / & left \\
-    \hline
-    and & left \\
-    \hline
-    or & left \\
-    \hline
-\end{tabular}
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{l l}
+        $<$Cond$>$ & $\rightarrow$ $<$Cond$>$ \texttt{or} $<$ConjCond$>$ \\
+         & $\rightarrow$ $<$ConjCond$>$\\
 
-And the following grammar:
+        $<$ConjCond$>$ & $\rightarrow$
+        $<$ConjCond$>$ \texttt{and} $<$AtomCond$>$\\
+         & $\rightarrow$ $<$AtomCond$>$\\
 
-\begin{center}
-        \begin{tabular}{l l}
-            $<$Cond$>$ & $\rightarrow$ $<$Cond$>$ $<$BinOp$>$ $<$Cond$>$ \\
-             & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
-             & $\rightarrow$ $<$SimpleCond$>$\\
-            $<$SimpleCond$>$ & $\rightarrow$
-            $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
-            $<$BinOp$>$ & $\rightarrow$ \texttt{and}\\
-             & $\rightarrow$ \texttt{or}\\
-            $<$Comp$>$ & $\rightarrow$ $=$\\
-             & $\rightarrow$ $>=$\\
-             & $\rightarrow$ $>$\\
-             & $\rightarrow$ $<=$\\
-             & $\rightarrow$ $<$\\
-             & $\rightarrow$ $<>$\\
-        \end{tabular}
-\end{center}
+        $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$\\
+         & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
 
-Following the same principe as for AE, we have here
-\textit{disjonction of conjonctions of comparaisons}. By using the same
-mechanics as above, we have this grammar:
+        $<$SimpleCond$>$ & $\rightarrow$
+        $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$\\
 
+        $<$Comp$>$ & $\rightarrow$ $=$\\
+         & $\rightarrow$ $>=$\\
+         & $\rightarrow$ $>$\\
+         & $\rightarrow$ $<=$\\
+         & $\rightarrow$ $<$\\
+         & $\rightarrow$ $<>$\\
+    \end{tabular}
+    \caption{Unambiguous grammar of BE}
+    \label{fig:BE-unambi}
 
-\begin{center}
-        \begin{tabular}{l l}
-            $<$Cond$>$ & $\rightarrow$ $<$Cond$>$ \texttt{or} $<$ConjCond$>$ \\
-             & $\rightarrow$ $<$ConjCond$>$\\
+\end{figure}
 
-            $<$ConjCond$>$ & $\rightarrow$
-            $<$ConjCond$>$ \texttt{and} $<$AtomCond$>$\\
-             & $\rightarrow$ $<$AtomCond$>$\\
-
-            $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$\\
-             & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
-
-            $<$SimpleCond$>$ & $\rightarrow$
-            $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$\\
-
-            $<$Comp$>$ & $\rightarrow$ $=$\\
-             & $\rightarrow$ $>=$\\
-             & $\rightarrow$ $>$\\
-             & $\rightarrow$ $<=$\\
-             & $\rightarrow$ $<$\\
-             & $\rightarrow$ $<>$\\
-        \end{tabular}
-\end{center}
 
 \subsection{Removing left recusion}
 
-For the new AE:
+The only rules where left-recursion appears with \texttt{$<$ExprArith$>$}
+and \texttt{$<$Cond$>$}.
+variables. We have to remove the left-recursion for the unambiguous grammar
+in Figure \ref{fig:AE-unambi} and \ref{fig:BE-unambi}. The transformed
+grammars are shown in Figure \ref{fig:AE-noleft} and \ref{fig:BE-noleft}.
+To enhance readability of new introduced rules,
+we used the word \textit{Prime} instead of the character itself.
 
-
-\begin{center}
-        \begin{tabular}{l l}
-            $<$ExprArith$>$ & $\rightarrow$
-            $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
-
-            $<$ExprArithPrime$>$ & $\rightarrow$
-            $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
-             & $\rightarrow$ $\epsilon$\\
-
-
-            $<$ExprProd$>$ & $\rightarrow$ $<$Atom$>$ $<$ExprProdPrime$>$\\
-
-            $<$ExprProdPrime$>$ & $\rightarrow$
-            $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$\\
-             & $\rightarrow$ $\epsilon$\\
-
-
-            $<$SumSubOp$>$ & $\rightarrow$ $+$\\
-             & $\rightarrow$ $-$\\
-
-            $<$ProdOp$>$ & $\rightarrow$ $*$\\
-             & $\rightarrow$ $/$\\
-
-            $<$Atom$>$ & $\rightarrow$ [VarName]\\
-             & $\rightarrow$ [Number]\\
-             & $\rightarrow$ - $<$Atom$>$\\
-             & $\rightarrow$ ($<$ExprArith$>$)\\
-
-        \end{tabular}
-\end{center}
-
-For the new BE:
-
-
-\begin{center}
-        \begin{tabular}{l l}
-            $<$Cond$>$ & $\rightarrow$ $<$ConjCond$>$ $<$CondPrime$>$ \\
-
-
-            $<$CondPrime$>$ & $\rightarrow$
-            \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
-             & $\rightarrow$ $\epsilon$ \\
-
-            $<$ConjCond$>$ & $\rightarrow$ $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
-
-
-            $<$ConjCondPrime$>$ & $\rightarrow$
-            and $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
-             & $\rightarrow$ $\epsilon$\\
-
-            $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$\\
-             & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
-
-            $<$SimpleCond$>$ & $\rightarrow$
-            $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$\\
-
-            $<$Comp$>$ & $\rightarrow$ =\\
-             & $\rightarrow$ $>=$\\
-             & $\rightarrow$ $>$\\
-             & $\rightarrow$ $<=$\\
-             & $\rightarrow$ $<$\\
-             & $\rightarrow$ $<>$\\
-
-        \end{tabular}
-\end{center}
-
-Those are the only rules where left-recusion appears, all the other rules
+Those are the only rules where left-recusion appears (including indirect
+left-recursion), all the other rules
 are right-recusion or no recursion at all.
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{l l}
+        $<$ExprArith$>$ & $\rightarrow$
+        $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+
+        $<$ExprArithPrime$>$ & $\rightarrow$
+        $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+         & $\rightarrow$ $\epsilon$\\
+
+
+        $<$ExprProd$>$ & $\rightarrow$ $<$Atom$>$ $<$ExprProdPrime$>$\\
+
+        $<$ExprProdPrime$>$ & $\rightarrow$
+        $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$\\
+         & $\rightarrow$ $\epsilon$\\
+
+
+        $<$SumSubOp$>$ & $\rightarrow$ $+$\\
+         & $\rightarrow$ $-$\\
+
+        $<$ProdOp$>$ & $\rightarrow$ $*$\\
+         & $\rightarrow$ $/$\\
+
+        $<$Atom$>$ & $\rightarrow$ [VarName]\\
+         & $\rightarrow$ [Number]\\
+         & $\rightarrow$ - $<$Atom$>$\\
+         & $\rightarrow$ ($<$ExprArith$>$)\\
+
+    \end{tabular}
+    \caption{Left-recursion removed for AE grammar}
+    \label{fig:AE-noleft}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{l l}
+        $<$Cond$>$ & $\rightarrow$ $<$ConjCond$>$ $<$CondPrime$>$ \\
+
+
+        $<$CondPrime$>$ & $\rightarrow$
+        \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
+         & $\rightarrow$ $\epsilon$ \\
+
+        $<$ConjCond$>$ & $\rightarrow$ $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+
+
+        $<$ConjCondPrime$>$ & $\rightarrow$
+        and $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+         & $\rightarrow$ $\epsilon$\\
+
+        $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$\\
+         & $\rightarrow$ \texttt{not} $<$SimpleCond$>$\\
+
+        $<$SimpleCond$>$ & $\rightarrow$
+        $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$\\
+
+        $<$Comp$>$ & $\rightarrow$ =\\
+         & $\rightarrow$ $>=$\\
+         & $\rightarrow$ $>$\\
+         & $\rightarrow$ $<=$\\
+         & $\rightarrow$ $<$\\
+         & $\rightarrow$ $<>$\\
+
+    \end{tabular}
+    \caption{Left-recursion removed for BE grammar}
+    \label{fig:BE-noleft}
+\end{figure}
 
 \subsection{Factorisation}
 
-We can only factorize the following set of rules: $<InstList>$, $<If>$, $<For>$.
+\paragraph{}
 
-We have the following new rules:
+We can only factorize the following variables:
+\texttt{$<$InstList$>$}, \texttt{$<$If$>$} and \texttt{$<$For$>$}.
+Figure \ref{fig:facto} shows the factorized rules.
 
-\begin{center}
-        \begin{tabular}{l l}
-            $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$ $<$InstListSeq$>$\\
-            $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$\\
-             & $\rightarrow$ $\epsilon$\\
+\begin{figure}[H]
+    \centering
+    \begin{tabular}{l l}
+        $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$ $<$InstListSeq$>$\\
+        $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$\\
+         & $\rightarrow$ $\epsilon$\\
 
-            $<$If$>$ & $\rightarrow$
-            \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$\\
-            $<$IfSeq$>$ & $\rightarrow$ \texttt{endif}\\
-             & $\rightarrow$
-             \texttt{else} $<$Code$>$ \texttt{endif}\\
+        $<$If$>$ & $\rightarrow$
+        \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$\\
+        $<$IfSeq$>$ & $\rightarrow$ \texttt{endif}\\
+         & $\rightarrow$
+         \texttt{else} $<$Code$>$ \texttt{endif}\\
 
-            $<$For$>$ & $\rightarrow$
-            \texttt{for} [VarName] \texttt{from}
-            $<$ExprArith$>$ $<$ForOp$>$ \\
-            &$\quad$\texttt{to}
-            $<$ExprArith$>$ \texttt{do} $<$Code$>$ \texttt{done}\\
+        $<$For$>$ & $\rightarrow$
+        \texttt{for} [VarName] \texttt{from}
+        $<$ExprArith$>$ $<$ForOp$>$ \\
+        &$\quad$\texttt{to}
+        $<$ExprArith$>$ \texttt{do} $<$Code$>$ \texttt{done}\\
 
-            $<$ForOp$>$ & $\rightarrow$ \texttt{by} $<$ExprArith$>$\\
-             & $\rightarrow$ $\epsilon$\\
+        $<$ForOp$>$ & $\rightarrow$ \texttt{by} $<$ExprArith$>$\\
+         & $\rightarrow$ $\epsilon$\\
 
-        \end{tabular}
-\end{center}
+    \end{tabular}
+    \caption{Factorized rules}
+    \label{fig:facto}
+\end{figure}
 
 \subsection{Transformed Grammar}
 
 \begin{figure}[H]
-    \thispagestyle{empty}
+    \centering
+    \begin{tabular}{r l l}
+        $[1]$ & $<$Program$>$ & $\rightarrow$ \texttt{begin} $<$Code$>$
+        \texttt{end} \\
 
-    \begin{center}
-            \begin{tabular}{r l l}
-                $[1]$ & $<$Program$>$ & $\rightarrow$ \texttt{begin} $<$Code$>$
-                \texttt{end} \\
+        $[2]$ & $<$Code$>$ & $\rightarrow$ $<$InstList$>$ \\
+        $[3]$ & & $\rightarrow$ $\epsilon$ \\
 
-                $[2]$ & $<$Code$>$ & $\rightarrow$ $<$InstList$>$ \\
-                $[3]$ & & $\rightarrow$ $\epsilon$ \\
+        $[4]$ & $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$
+        $<$InstListSeq$>$ \\
 
-                $[4]$ & $<$InstList$>$ & $\rightarrow$ $<$Instruction$>$
-                $<$InstListSeq$>$ \\
+        $[5]$ & $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$ \\
+        $[6]$ & & $\rightarrow$ $\epsilon$ \\
 
-                $[5]$ & $<$InstListSeq$>$ & $\rightarrow$ ; $<$InstList$>$ \\
-                $[6]$ & & $\rightarrow$ $\epsilon$ \\
+        $[7]$ & $<$Instruction$>$ & $\rightarrow$ $<$Assign$>$ \\
+        $[8]$ &                   & $\rightarrow$ $<$If$>$ \\
+        $[9]$ &                   & $\rightarrow$ $<$While$>$ \\
+        $[10]$ &                   & $\rightarrow$ $<$For$>$ \\
+        $[11]$ &                   & $\rightarrow$ $<$Print$>$ \\
+        $[12]$ &                   & $\rightarrow$ $<$Read$>$ \\
 
-                $[7]$ & $<$Instruction$>$ & $\rightarrow$ $<$Assign$>$ \\
-                $[8]$ &                   & $\rightarrow$ $<$If$>$ \\
-                $[9]$ &                   & $\rightarrow$ $<$While$>$ \\
-                $[10]$ &                   & $\rightarrow$ $<$For$>$ \\
-                $[11]$ &                   & $\rightarrow$ $<$Print$>$ \\
-                $[12]$ &                   & $\rightarrow$ $<$Read$>$ \\
+        $[13]$ & $<$Assign$>$ & $\rightarrow$
+         [VarName] := $<$ExprArith$>$  \\
 
-                $[13]$ & $<$Assign$>$ & $\rightarrow$
-                 [VarName] := $<$ExprArith$>$  \\
+        $[14]$ & $<$ExprArith$>$ & $\rightarrow$
+        $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
 
-                $[14]$ & $<$ExprArith$>$ & $\rightarrow$
-                $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+        $[15]$ & $<$ExprArithPrime$>$ & $\rightarrow$
+        $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
+        $[16]$ & & $\rightarrow$ $\epsilon$ \\
 
-                $[15]$ & $<$ExprArithPrime$>$ & $\rightarrow$
-                $<$SumSubOp$>$ $<$ExprProd$>$ $<$ExprArithPrime$>$ \\
-                $[16]$ & & $\rightarrow$ $\epsilon$ \\
+        $[17]$ & $<$ExprProd$>$ & $\rightarrow$
+        $<$Atom$>$ $<$ExprProdPrime$>$ \\
 
-                $[17]$ & $<$ExprProd$>$ & $\rightarrow$
-                $<$Atom$>$ $<$ExprProdPrime$>$ \\
+        $[18]$ & $<$ExprProdPrime$>$ & $\rightarrow$
+        $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$ \\
+        $[19]$ & & $\rightarrow$ $\epsilon$ \\
 
-                $[18]$ & $<$ExprProdPrime$>$ & $\rightarrow$
-                $<$ProdOp$>$ $<$Atom$>$ $<$ExprProdPrime$>$ \\
-                $[19]$ & & $\rightarrow$ $\epsilon$ \\
+        $[20]$ & $<$SumSubOp$>$ & $\rightarrow$ $+$ \\
+        $[21]$ & & $\rightarrow$ $-$ \\
+        $[22]$ & $<$ProdOp$>$ & $\rightarrow$ $*$ \\
+        $[23]$ & & $\rightarrow$ $/$ \\
+        $[24]$ & $<$Atom$>$ & $\rightarrow$ [VarName] \\
+        $[25]$ & & $\rightarrow$ [Number] \\
+        $[26]$ & & $\rightarrow$ - $<$Atom$>$ \\
+        $[27]$ & & $\rightarrow$ ($<$ExprArith$>$) \\
 
-                $[20]$ & $<$SumSubOp$>$ & $\rightarrow$ $+$ \\
-                $[21]$ & & $\rightarrow$ $-$ \\
-                $[22]$ & $<$ProdOp$>$ & $\rightarrow$ $*$ \\
-                $[23]$ & & $\rightarrow$ $/$ \\
-                $[24]$ & $<$Atom$>$ & $\rightarrow$ [VarName] \\
-                $[25]$ & & $\rightarrow$ [Number] \\
-                $[26]$ & & $\rightarrow$ - $<$Atom$>$ \\
-                $[27]$ & & $\rightarrow$ ($<$ExprArith$>$) \\
+        $[28]$ & $<$If$>$ & $\rightarrow$
+        \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$ \\
+        $[29]$ & $<$IfSeq$>$ & $\rightarrow$
+        \texttt{endif} \\
+        $[30]$ & & $\rightarrow$
+        \texttt{else} $<$Code$>$ \texttt{endif} \\
 
-                $[28]$ & $<$If$>$ & $\rightarrow$
-                \texttt{if} $<$Cond$>$ \texttt{then} $<$Code$>$ $<$IfSeq$>$ \\
-                $[29]$ & $<$IfSeq$>$ & $\rightarrow$
-                \texttt{endif} \\
-                $[30]$ & & $\rightarrow$
-                \texttt{else} $<$Code$>$ \texttt{endif} \\
+        $[31]$ & $<$Cond$>$ & $\rightarrow$
+        $<$ConjCond$>$ $<$CondPrime$>$ \\
+        $[32]$ & $<$CondPrime$>$ & $\rightarrow$
+        \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
+        $[33]$ & & $\rightarrow$ $\epsilon$ \\
+        $[34]$ & $<$ConjCond$>$ & $\rightarrow$
+        $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+        $[35]$ & $<$ConjCondPrime$>$ & $\rightarrow$
+        \texttt{and} $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
+        $[36]$ & & $\rightarrow$ $\epsilon$ \\
+        $[37]$ & $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$ \\
+        $[38]$ & & $\rightarrow$ \texttt{not} $<$SimpleCond$>$ \\
 
-                $[31]$ & $<$Cond$>$ & $\rightarrow$
-                $<$ConjCond$>$ $<$CondPrime$>$ \\
-                $[32]$ & $<$CondPrime$>$ & $\rightarrow$
-                \texttt{or} $<$ConjCond$>$ $<$CondPrime$>$ \\
-                $[33]$ & & $\rightarrow$ $\epsilon$ \\
-                $[34]$ & $<$ConjCond$>$ & $\rightarrow$
-                $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
-                $[35]$ & $<$ConjCondPrime$>$ & $\rightarrow$
-                \texttt{and} $<$AtomCond$>$ $<$ConjCondPrime$>$ \\
-                $[36]$ & & $\rightarrow$ $\epsilon$ \\
-                $[37]$ & $<$AtomCond$>$ & $\rightarrow$ $<$SimpleCond$>$ \\
-                $[38]$ & & $\rightarrow$ \texttt{not} $<$SimpleCond$>$ \\
+        $[39]$ & $<$SimpleCond$>$ & $\rightarrow$
+        $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
+        $[40]$ & $<$Comp$>$ & $\rightarrow$ $=$ \\
+        $[41]$ & & $\rightarrow$ $>=$ \\
+        $[42]$ & & $\rightarrow$ $>$ \\
+        $[43]$ & & $\rightarrow$ $<=$ \\
+        $[44]$ & & $\rightarrow$ $<$ \\
+        $[45]$ & & $\rightarrow$ $<>$ \\
 
-                $[39]$ & $<$SimpleCond$>$ & $\rightarrow$
-                $<$ExprArith$>$ $<$Comp$>$ $<$ExprArith$>$ \\
-                $[40]$ & $<$Comp$>$ & $\rightarrow$ $=$ \\
-                $[41]$ & & $\rightarrow$ $>=$ \\
-                $[42]$ & & $\rightarrow$ $>$ \\
-                $[43]$ & & $\rightarrow$ $<=$ \\
-                $[44]$ & & $\rightarrow$ $<$ \\
-                $[45]$ & & $\rightarrow$ $<>$ \\
-
-                $[46]$ & $<$While$>$ & $\rightarrow$
-                \texttt{while} $<$Cond$>$ \texttt{do}
-                $<$Code$>$ \texttt{done} \\
-                $[47]$ & $<$For$>$ & $\rightarrow$
-                \texttt{for} [VarName] \texttt{from}
-                $<$ExprArith$>$ $<$ForOp$>$ \\
-                & &
-                $\quad$ \texttt{to} $<$ExprArith$>$
-                \texttt{do} $<$Code$>$ \texttt{done} \\
-                $[48]$ & $<$ForOp$>$ & $\rightarrow$
-                \texttt{by} $<$ExprArith$>$ \\
-                $[49]$ & & $\rightarrow$ $\epsilon$ \\
-                $[50]$ & $<$Print$>$ & $\rightarrow$
-                \texttt{print}([VarName]) \\
-                $[51]$ & $<$Read$>$ & $\rightarrow$ \texttt{read}([VarName]) \\
-
-
-
-            \end{tabular}
-
-    \end{center}
+        $[46]$ & $<$While$>$ & $\rightarrow$
+        \texttt{while} $<$Cond$>$ \texttt{do}
+        $<$Code$>$ \texttt{done} \\
+        $[47]$ & $<$For$>$ & $\rightarrow$
+        \texttt{for} [VarName] \texttt{from}
+        $<$ExprArith$>$ $<$ForOp$>$ \\
+        & &
+        $\quad$ \texttt{to} $<$ExprArith$>$
+        \texttt{do} $<$Code$>$ \texttt{done} \\
+        $[48]$ & $<$ForOp$>$ & $\rightarrow$
+        \texttt{by} $<$ExprArith$>$ \\
+        $[49]$ & & $\rightarrow$ $\epsilon$ \\
+        $[50]$ & $<$Print$>$ & $\rightarrow$
+        \texttt{print}([VarName]) \\
+        $[51]$ & $<$Read$>$ & $\rightarrow$ \texttt{read}([VarName]) \\
+    \end{tabular}
     \caption{Transformed Grammar}
     \label{fig:fullcfg}
 \end{figure}
@@ -454,6 +484,11 @@ We have the following new rules:
 \section{LL(1) parser}
 
 \subsection{First$^1(\cdot)$ and Follow$^1(\cdot)$}
+To be able to generate the action table of our LL(1) parser, it is necessary
+to show the results of the First$^1(\cdot)$ and Follow$^1(\cdot)$
+computation of each variables
+belonging to the grammar.
+
 \begin{center}
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{| r || c | c |}
@@ -538,30 +573,5 @@ We have the following new rules:
 \end{center}
 
 \subsection{Action table}
-\begin{center}
-    \renewcommand{\arraystretch}{1.5}
-    \begin{tabular}{| r || c | c |}
-        \hline
-        \textbf{}
-        & \texttt{begin}
-        & \texttt{end}
-        ;
-        [VarName]
-        :=
-        [Number]
-
-        & \texttt{if}
-
-
-         \\
-        \hline
-        \hline
-        Program & begin & \\
-        \hline
-        Code & [VarName] if while for print read $\epsilon$ &
-
-    \end{tabular}
-\end{center}
-
 
 \end{document}
