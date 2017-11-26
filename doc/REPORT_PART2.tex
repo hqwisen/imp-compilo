@@ -1,7 +1,7 @@
 \documentclass[letterpaper]{article}
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=3cm]{geometry}
+\usepackage[margin=3.5cm]{geometry}
 \usepackage{listings}
 \usepackage{adjustbox}
 \usepackage{xcolor}
@@ -21,6 +21,11 @@
 \usepackage{mathpazo}
 \usepackage{subcaption}
 \usepackage{float}
+\usepackage{csvsimple}
+\usepackage{filecontents}
+\usepackage{lscape}
+\usepackage{afterpage}
+
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -34,7 +39,7 @@
 % ------ HEADERS AND FOOTERS -----------
 % \lhead{INFO-F403}
 % \rhead{Project Report - Part 1}
-\pagestyle{fancy}
+%\pagestyle{fancy}
 % \rfoot{\thepage}
 %\cfoot{}
 %\lfoot{Academic Year 2017-18}
@@ -266,6 +271,7 @@ shows the unambiguous grammar of BE.
 
 
 \subsection{Removing left recusion}
+\paragraph{}
 
 The only rules where left-recursion appears with \texttt{$<$ExprArith$>$}
 and \texttt{$<$Cond$>$}.
@@ -383,7 +389,8 @@ Figure \ref{fig:facto} shows the factorized rules.
 \end{figure}
 
 \subsection{Transformed Grammar}
-
+\afterpage{
+\newgeometry{margin=2.5cm}
 \begin{figure}[H]
     \centering
     \begin{tabular}{r l l}
@@ -480,16 +487,17 @@ Figure \ref{fig:facto} shows the factorized rules.
     \caption{Transformed Grammar}
     \label{fig:fullcfg}
 \end{figure}
+\clearpage
+\restoregeometry
+}
 
 \section{LL(1) parser}
 
 \subsection{First$^1(\cdot)$ and Follow$^1(\cdot)$}
-To be able to generate the action table of our LL(1) parser, it is necessary
-to show the results of the First$^1(\cdot)$ and Follow$^1(\cdot)$
-computation of each variables
-belonging to the grammar.
-
-\begin{center}
+\afterpage{
+\newgeometry{margin=3cm}
+\begin{figure}[H]
+    \centering
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{| r || c | c |}
         \hline
@@ -570,8 +578,33 @@ belonging to the grammar.
         Read & read & ; end else endif done \\
         \hline
     \end{tabular}
-\end{center}
+    \caption{First$^1$ and Follow$^1$ results}
+    \label{fig:firstfollow}
+\end{figure}
+\clearpage
+\restoregeometry
+}
+
+\paragraph{}
+
+To be able to generate the action table of our LL(1) parser, it is necessary
+to show the results of the First$^1(\cdot)$ and Follow$^1(\cdot)$
+computation of each variables
+belonging to the grammar. The results are show in Figure \ref{fig:firstfollow}.
 
 \subsection{Action table}
+
+\paragraph{}
+
+The action table is available as a comma separated \texttt{.csv} file in
+\textbf{doc/actionTable.csv}. This file only contains the
+\textit{produce} rules.
+It is not necessary to include the table that matches terminals together
+since the only results possible is the action \textit{match}
+for terminals that are the same.
+In the case of the \texttt{end} terminal, the action is \textit{accept}.
+An empty cell in the table induce a syntax error.
+Section \ref{implactiontable} discuss in more details the implementation
+of the action table.
 
 \end{document}
