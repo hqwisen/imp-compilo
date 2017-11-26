@@ -126,10 +126,11 @@ Blank          = \s+
     {Number}       {return symbol(LexicalUnit.NUMBER);}
 
     {Blank}        {} // Blank (space and new lines) are ignored
-    .              {System.out.println("Unknown token: '" + text() + "'");}
+    [^]            {throw new UnknownTokenException("Unknown token: '" + text() +
+                    "' in line " + (line() + 1));}
 }
 
 <COMMENT>{
     "*)"    {changeState(YYINITIAL);}
-    .|{Blank}       {} // Ignoring all characters
+    [^]|{Blank}       {} // Ignoring all characters
 }

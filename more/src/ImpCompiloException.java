@@ -1,6 +1,7 @@
-public class ImpCompiloException extends RuntimeException{
+public class ImpCompiloException extends RuntimeException {
 
-    public ImpCompiloException(String message){
+    public ImpCompiloException(String message) {
         super(message);
     }
+
 }
