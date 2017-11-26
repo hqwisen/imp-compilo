@@ -634,6 +634,22 @@ An empty cell in the table induce a syntax error.
 Section \ref{implactiontable} discuss in more details the implementation
 of the action table.
 
+Let $G<V, T, P, S>$ our transformed grammar.
+Let the action table be $M(v, t)$ where
+$v \in V$, and $t \in T$.
+
+$M$ is filled in as follow:
+\begin{itemize}
+    \item $\forall v \in V$ and $\forall t \in$ First$^1(v)$,
+    then set $M(v, t)$ as the rule number where $t$ is first.
+    \item $\forall v \in V$ if $\epsilon \in $ First$^1(v)$ then
+    $\forall t \in$ Follow$^1(v)$ set $M(v, t)$ as the rule number
+    where $v \rightarrow \epsilon$.
+\end{itemize}
+
+We will explain in more details the results of other possible results
+of the action table $M$ in section \ref{implactiontable}.
+
 \section{Implementation}
 
 \subsubsection{Scanner improvements}
@@ -670,6 +686,12 @@ a unrecognize symbol is detected, the scanner throw a
 \texttt{UnknownTokenException} which logically stops the scan.
 
 
+
+\subsection{Parser}
+
+\subsubsection{Action table $M$}
+
+\label{implactiontable}
 
 \section{HowTo}
 
