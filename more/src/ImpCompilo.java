@@ -39,7 +39,7 @@ public class ImpCompilo {
      */
     public static void error(String message){
         ImpCompilo.log.severe(message);
-        System.err.println("Error: " + message);
+        System.err.println(message);
         System.exit(1);
     }
 

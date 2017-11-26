@@ -227,6 +227,22 @@ public class LL1Parser {
     }
 
     /**
+     * Return the list of expected symbols of the
+     * current top of {@link ImpCompilo#stack}.
+     * @return list of expected symbols
+     */
+    public List<String> expectedSymbols(){
+        String top = stack.peek();
+        List<String> expected = new ArrayList<>();
+        for(String terminal : terminals){
+            if(M(top, terminal) > SYNTAX_ERROR){
+                expected.add(terminal);
+            }
+        }
+        return expected;
+    }
+
+    /**
      * Return true if value is terminal, false otherwise.
      * Note that the value is considered terminal, only
      * if it is in {@link LL1Parser#terminals} list.
@@ -304,7 +320,14 @@ public class LL1Parser {
 
     private void syntaxError(Symbol symbol) {
         ImpCompilo.log.info("SyntaxError(" + symbol.getValue() + ")");
-        parsing = false;
+        String message = "Syntax Error: unexpected symbol '" +
+                symbol.getValue() + "' in line " +
+                symbol.getLine() + ".";
+        message += " Was expecting: ";
+        for(String expected : expectedSymbols()){
+            message += "'" + expected + "' ";
+        }
+        throw new SyntaxError(message);
     }
 
     private void pushRule(Integer ruleNumber) {
@@ -337,6 +360,7 @@ public class LL1Parser {
                     match(token);
                     break;
                 case SYNTAX_ERROR:
+                    // SyntaxError stops the parsing
                     syntaxError(token);
                     break;
                 default:
@@ -432,7 +456,11 @@ public class LL1Parser {
         FileReader source = ImpCompilo.file(args[0]);
         LL1Parser parser = new LL1Parser(source, "grammar.csv",
                 "actionTable.csv");
-        parser.parse();
+        try{
+            parser.parse();
+        }catch(ImpCompiloException e){
+            ImpCompilo.error(e);
+        }
         parser.printLeftMostDerivation();
         // parser.printDerivationTree();
     }

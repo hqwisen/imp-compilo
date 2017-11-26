@@ -126,7 +126,7 @@ Blank          = \s+
     {Number}       {return symbol(LexicalUnit.NUMBER);}
 
     {Blank}        {} // Blank (space and new lines) are ignored
-    [^]            {throw new UnknownTokenException("Unknown token: '" + text() +
+    [^]            {throw new UnknownTokenException("Error: Unknown token '" + text() +
                     "' in line " + (line() + 1));}
 }
 
