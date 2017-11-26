@@ -15,29 +15,6 @@ public abstract class Scanner {
 
     private final static String JAR = "dist/scanner.jar";
 
-    public static Logger log;
-
-    static {
-        log = Logger.getLogger("ImpCompilo LOGGER");
-        log.setLevel(Level.OFF);
-    }
-
-    /**
-     * Return a FileReader based on the filename given.
-     * @param filename file to read
-     * @return the FileReader of the file, null if the file doesn't exist
-     */
-    public static FileReader file(String filename){
-        FileReader source = null;
-        try {
-            source = new FileReader(filename);
-        } catch (FileNotFoundException e) {
-            log.severe("File " + filename + " not found.");
-            // System.err.println("File " + filename + " not found.");
-        }
-        return source;
-    }
-
     private HashMap<String, Integer> identifiers;
     private List<Symbol> symbols;
 
@@ -68,6 +45,7 @@ public abstract class Scanner {
 
     /**
      * Check if an identifier had already been encountered during the scan.
+     *
      * @param identifier key (identifier) to test
      * @return true if identifier is in {@link Scanner#identifiers},
      * false otherwise.
@@ -79,16 +57,17 @@ public abstract class Scanner {
     /**
      * Add key: identifier, value: idLine to {@link Scanner#identifiers}.
      * idLine is incremented before adding the {@link Scanner#identifiers}.
+     *
      * @param identifier identifier to add
      * @param idLine     line where the identifier was encountered.
      */
     public void addIdentifier(String identifier, int idLine) {
         if (!idAlreadyScan(identifier)) {
-            log.fine("Adding identifier: " + identifier + " line " + idLine);
+            ImpCompilo.log.fine("Adding identifier: " + identifier + " line " + idLine);
             identifiers.put(identifier, idLine + 1);
         } else {
-            log.fine("The identifier " + identifier +
-            " has already been added.");
+            ImpCompilo.log.fine("The identifier " + identifier +
+                    " has already been added.");
         }
     }
 
@@ -99,10 +78,10 @@ public abstract class Scanner {
      * - a new line
      * - 'Identifiers' line to separate from the tokens
      * - and a line per identifier with the corresponding
-     *  first-encountering line.
+     * first-encountering line.
      */
     public void postScan() {
-        for(Symbol symbol: symbols){
+        for (Symbol symbol : symbols) {
             System.out.println(symbol.toString());
         }
         System.out.println();
@@ -115,6 +94,7 @@ public abstract class Scanner {
     /**
      * Sort the identifiers alphabetically, and return an array
      * of String identifiers.
+     *
      * @return an array of String of encountered identifiers,
      * sorted alphabetically.
      */
@@ -127,12 +107,13 @@ public abstract class Scanner {
 
     /**
      * Run the lexer and return the next token
+     *
      * @return The list of symbols/tokens scanned.
      */
-    public List<Symbol> scan(){
-        try{
-            while(!atEOF()) lex();
-        }catch(IOException e){
+    public List<Symbol> scan() {
+        try {
+            while (!atEOF()) lex();
+        } catch (IOException e) {
             System.err.println("An error occured while running the scanner.");
             System.exit(1);
         }
@@ -141,6 +122,7 @@ public abstract class Scanner {
 
     /**
      * Return the list of scanned symbols.
+     *
      * @return {@link Scanner#symbols} list.
      */
     public List<Symbol> getSymbols() {
@@ -149,36 +131,42 @@ public abstract class Scanner {
 
     /**
      * Return the current match ERE value.
+     *
      * @return the current match text string.
      */
     public abstract String text();
 
     /**
      * Return the current scanned line, starting at 0.
+     *
      * @return the line number
      */
     public abstract int line();
 
     /**
      * Return the current scanned column, starting at 0.
+     *
      * @return the column number
      */
     public abstract int column();
 
     /**
      * Return the length of the current {@link Scanner#text}.
+     *
      * @return {@link Scanner#text} size.
      */
     public abstract int length();
 
     /**
      * Change the current state of the lexer to state.
+     *
      * @param state new state
      */
     public abstract void changeState(int state);
 
     /**
      * Return true if the scanner is at EOF
+     *
      * @return true if at EOF, false otherwise
      */
     public abstract boolean atEOF();
@@ -187,7 +175,8 @@ public abstract class Scanner {
      * Resumes scanning until the next regular expression is matched,
      * the end of input is encountered or an I/O-Error occurs.
      * This based should use the yylex method of the generated scanner by JFlex.
-     * @return  the next token
+     *
+     * @return the next token
      * @throws IOException if there is an error while reading next token.
      */
     public abstract Symbol lex() throws IOException;
@@ -198,15 +187,10 @@ public abstract class Scanner {
             System.out.println("Usage:  java -jar " + JAR + " file.imp\n");
             System.exit(0);
         }
-        FileReader source = Scanner.file(args[0]);
+        FileReader source = ImpCompilo.file(args[0]);
         // The lexer generated by JFlex
-        if(source == null) {
-            System.out.println("File '" + args[0] + "' was not found");
-        }else{
-            final Scanner scanner = new GeneratedScanner(source);
-            scanner.scan();
-            scanner.postScan();
-
-        }
+        final Scanner scanner = new GeneratedScanner(source);
+        scanner.scan();
+        scanner.postScan();
     }
 }

@@ -98,7 +98,7 @@ public class LL1Parser {
      * when parsing.
      */
     private void buildGrammar() {
-        Scanner.log.info("Building grammar from '" + this.grammarFile + "'");
+        ImpCompilo.log.info("Building grammar from '" + this.grammarFile + "'");
         BufferedReader reader = getResourceReader(this.grammarFile);
         try {
             this.variables = Arrays.asList(reader.readLine().split(","));
@@ -119,13 +119,13 @@ public class LL1Parser {
                         this.rules.get(ruleNumber).add(line[i]);
                     }
                 }
-                Scanner.log.fine(ruleNumber + " → " +
+                ImpCompilo.log.fine(ruleNumber + " → " +
                         this.rules.get(ruleNumber).toString());
                 readLine = reader.readLine();
                 ruleNumber++;
             }
         } catch (IOException e) {
-            Scanner.log.severe("An error occured while reading "
+            ImpCompilo.log.severe("An error occured while reading "
                     + this.grammarFile);
             e.printStackTrace();
         }
@@ -159,7 +159,7 @@ public class LL1Parser {
      */
     private void buildActionTable() {
         initActionTable();
-        Scanner.log.info("Building action table from '" + this.tableFile + "'");
+        ImpCompilo.log.info("Building action table from '" + this.tableFile + "'");
         BufferedReader reader = getResourceReader(this.tableFile);
         try {
             String[] line = null;
@@ -183,7 +183,7 @@ public class LL1Parser {
                 readLine = reader.readLine();
             }
         } catch (IOException e) {
-            Scanner.log.severe("An error occured while reading "
+            ImpCompilo.log.severe("An error occured while reading "
                     + this.tableFile);
             e.printStackTrace();
         }
@@ -222,7 +222,7 @@ public class LL1Parser {
                 action = SYNTAX_ERROR;
             }
         }
-        Scanner.log.info("Action for M(" + a + ", " + l + ") is " + action);
+        ImpCompilo.log.info("Action for M(" + a + ", " + l + ") is " + action);
         return action;
     }
 
@@ -287,23 +287,23 @@ public class LL1Parser {
         } else {
             token = null;
         }
-        Scanner.log.info("Next token is " + token.getValue());
+        ImpCompilo.log.info("Next token is " + token.getValue());
         return token;
     }
 
     private void accept(Symbol symbol) {
-        Scanner.log.info("Accept(" + symbol.getValue() + ")");
+        ImpCompilo.log.info("Accept(" + symbol.getValue() + ")");
         parsing = false;
     }
 
     private void match(Symbol symbol) {
-        Scanner.log.info("Match(" + symbol.getValue() + ")");
+        ImpCompilo.log.info("Match(" + symbol.getValue() + ")");
         stack.pop();
         nextToken();
     }
 
     private void syntaxError(Symbol symbol) {
-        Scanner.log.info("SyntaxError(" + symbol.getValue() + ")");
+        ImpCompilo.log.info("SyntaxError(" + symbol.getValue() + ")");
         parsing = false;
     }
 
@@ -315,7 +315,7 @@ public class LL1Parser {
     }
 
     private void produce(Symbol symbol, Integer ruleNumber) {
-        Scanner.log.info("Produce(" + symbol.getValue() + ", "
+        ImpCompilo.log.info("Produce(" + symbol.getValue() + ", "
                 + ruleNumber.toString() + ")");
         stack.pop();
         pushRule(ruleNumber);
@@ -343,9 +343,9 @@ public class LL1Parser {
                     produce(token, ruleNumber);
                     break;
             }
-            Scanner.log.info("Stack: " + stack);
+            ImpCompilo.log.info("Stack: " + stack);
         }
-        Scanner.log.info("Parsing finished.");
+        ImpCompilo.log.info("Parsing finished.");
     }
 
     public void printLeftMostDerivation() {
@@ -374,31 +374,31 @@ public class LL1Parser {
      */
     private void buildDerivationTree() {
         List<TreeNode<String>> subTrees = new ArrayList<>();
-        for(Integer ruleNumber : leftMostDerivation){
+        for (Integer ruleNumber : leftMostDerivation) {
             List<String> rule = rules.get(ruleNumber);
             String value = rule.isEmpty() ? "" : rule.get(0);
             TreeNode<String> subTree = new TreeNode<>(rule.get(0), ruleNumber);
-            for(int i = 1; i < rule.size(); i++){
+            for (int i = 1; i < rule.size(); i++) {
                 subTree.addChild(rule.get(i));
             }
             subTrees.add(subTree);
         }
 
-         derivationTree = subTrees.get(0);
-         subTrees.remove(0);
-         buildDerivationTreeRec(subTrees, derivationTree);
+        derivationTree = subTrees.get(0);
+        subTrees.remove(0);
+        buildDerivationTreeRec(subTrees, derivationTree);
     }
 
     private void buildDerivationTreeRec(List<TreeNode<String>> subTrees,
-                                        TreeNode<String> parent){
+                                        TreeNode<String> parent) {
         List<String> rule = rules.get(parent.getRule());
         int count = countVariables(rule);
         count--;
         int i = 0;
-        for(TreeNode<String> child : parent.getChildren()){
-            if(isVariable(child.getValue())){
+        for (TreeNode<String> child : parent.getChildren()) {
+            if (isVariable(child.getValue())) {
                 TreeNode<String> subTree = subTrees.get(i);
-                for(TreeNode<String> subChild : subTree.getChildren()){
+                for (TreeNode<String> subChild : subTree.getChildren()) {
                     child.addChild(subChild.getValue());
                 }
                 // child.setChildren(subTrees.get(i));
@@ -406,11 +406,11 @@ public class LL1Parser {
                 i++;
             }
         }
-        for(int j = 0; j < count; j++){
+        for (int j = 0; j < count; j++) {
             subTrees.remove(0);
         }
-        for(TreeNode<String> child : parent.getChildren()){
-            if(isVariable(child.getValue())){
+        for (TreeNode<String> child : parent.getChildren()) {
+            if (isVariable(child.getValue())) {
                 buildDerivationTreeRec(subTrees, child);
             }
         }
@@ -418,6 +418,9 @@ public class LL1Parser {
     }
 
     public void printDerivationTree() {
+        if (derivationTree == null) {
+            buildDerivationTree();
+        }
         derivationTree.print();
     }
 
@@ -426,20 +429,12 @@ public class LL1Parser {
             System.out.println("Usage:  java -jar " + JAR + " file.imp\n");
             System.exit(0);
         }
-        FileReader source = Scanner.file(args[0]);
-        if (source == null) {
-            System.out.println("File '" + args[0] + "' was not found");
-        } else {
-            LL1Parser parser = new LL1Parser(source, "grammar.csv",
-                    "actionTable.csv");
-            parser.parse();
-            parser.printLeftMostDerivation();
-            parser.buildDerivationTree();
-            parser.printDerivationTree();
-            //parser.printDerivationTree();
-//            TreeNode tree = new TreeNode("Test");
-//            tree.print();
-        }
+        FileReader source = ImpCompilo.file(args[0]);
+        LL1Parser parser = new LL1Parser(source, "grammar.csv",
+                "actionTable.csv");
+        parser.parse();
+        parser.printLeftMostDerivation();
+        // parser.printDerivationTree();
     }
 
 }
