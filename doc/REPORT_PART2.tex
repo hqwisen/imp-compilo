@@ -8,13 +8,10 @@
 \usepackage{verbatim}
 \usepackage{graphicx}%images
 \usepackage{fancyhdr}%for headers and footers
-
-\usepackage{xcolor}
 \usepackage{adjustbox}
 \usepackage{verbatim}
 \usepackage{listings}
 \usepackage{fancyhdr}
-
 \usepackage{multirow}
 \usepackage{amsmath}
 \usepackage{array}
@@ -25,8 +22,31 @@
 \usepackage{filecontents}
 \usepackage{lscape}
 \usepackage{afterpage}
-
 \usepackage{hyperref}
+\usepackage{inconsolata}
+\usepackage{color}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  basicstyle=\ttfamily,
+  moredelim=[il][\textcolor{pgrey}]{$ $},
+  moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
+
+
 \hypersetup{
     colorlinks,
     citecolor=black,
@@ -273,9 +293,11 @@ shows the unambiguous grammar of BE.
 \subsection{Removing left recusion}
 \paragraph{}
 
-The only rules where left-recursion appears with \texttt{$<$ExprArith$>$}
-and \texttt{$<$Cond$>$}.
-variables. We have to remove the left-recursion for the unambiguous grammar
+The only rules where left-recursion appears with \texttt{$<$ExprArith$>$},
+\texttt{$<$ExprProd$>$}, \texttt{$<$Cond$>$} and \texttt{$<$ConjCond$>$}
+variables
+that are in the unambiguous grammar.
+We have to remove the left-recursion for the unambiguous grammar
 in Figure \ref{fig:AE-unambi} and \ref{fig:BE-unambi}. The transformed
 grammars are shown in Figure \ref{fig:AE-noleft} and \ref{fig:BE-noleft}.
 To enhance readability of new introduced rules,
@@ -389,6 +411,11 @@ Figure \ref{fig:facto} shows the factorized rules.
 \end{figure}
 
 \subsection{Transformed Grammar}
+
+\paragraph{}
+
+The complete transformed grammar is shown in Figure \ref{fig:fullcfg}.
+
 \afterpage{
 \newgeometry{margin=2.5cm}
 \begin{figure}[H]
@@ -590,7 +617,7 @@ Figure \ref{fig:facto} shows the factorized rules.
 To be able to generate the action table of our LL(1) parser, it is necessary
 to show the results of the First$^1(\cdot)$ and Follow$^1(\cdot)$
 computation of each variables
-belonging to the grammar. The results are show in Figure \ref{fig:firstfollow}.
+belonging to the grammar. The results are shown in Figure \ref{fig:firstfollow}.
 
 \subsection{Action table}
 
@@ -606,5 +633,46 @@ In the case of the \texttt{end} terminal, the action is \textit{accept}.
 An empty cell in the table induce a syntax error.
 Section \ref{implactiontable} discuss in more details the implementation
 of the action table.
+
+\section{Implementation}
+
+\subsubsection{Scanner improvements}
+
+\paragraph{Read input}
+In the first part of the project we were asked to implement a scanner.
+To be able to use the scanner within the parser, we modified some part of the
+scanner. The scanner is implemented in the abstract class \texttt{Scanner}.
+The lexer generated class is named \texttt{GeneratedScanner} and will
+implement the \texttt{Scanner}. To be able to read the input, \textit{i.e.}
+the tokens, the method \texttt{Scanner.scan()} must be called, and
+will return a list of \texttt{Symbol}. It is still possible to run the scanner
+as a standalone application, see section \ref{howto}.
+Figure \ref{fig:scannercall} shows an example of use of the scanner.
+
+\begin{figure}[H]
+    \begin{lstlisting}
+    Scanner scanner = new GeneratedScanner(source);
+    List<Symbol> symbols = scanner.scan();
+    \end{lstlisting}
+    \caption{Call the scanner to read the tokens from a source file}
+    \label{fig:scannercall}
+\end{figure}
+
+\paragraph{Lexer improvements}
+
+Two improvements were made in the lexer. (1) We modified the any ASCII
+characters
+regex \texttt{.} (dot) to regex that matches the complement of the
+empty set \texttt{[\textasciicircum]}.
+(2) Instead of printing \texttt{"Unkown symbol"}
+and continue the scan when
+a unrecognize symbol is detected, the scanner throw a
+\texttt{UnknownTokenException} which logically stops the scan.
+
+
+
+\section{HowTo}
+
+\label{howto}
 
 \end{document}

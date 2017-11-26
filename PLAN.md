@@ -4,7 +4,7 @@ GRAMMAR
 
 Explain Grammar Transformation (each step) (a) (b) (c)
     - How it is reachable ? check algo p 108
-    - Improved explaination of disjonction and conjonction explaination
+//    - Improved explaination of disjonction and conjonction explaination
     - Explain that arith are separated from boolean
 
 Explain First and Follow and how it is used for action table
@@ -16,9 +16,9 @@ IMPLEMENTATION
 
 Introduce improvements made in the scanner
 
- - UnknownTokenException
- - . vs [^]
- - Instead of running Generated, we created a method scan to call the
+// - UnknownTokenException
+// - . vs [^]
+// - Instead of running Generated, we created a method scan to call the
  scanner in the parser
  - Update of LexicalUnit
 
