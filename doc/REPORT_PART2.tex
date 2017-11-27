@@ -293,7 +293,7 @@ shows the unambiguous grammar of BE.
 \subsection{Removing left recusion}
 \paragraph{}
 
-The only rules where left-recursion appears with \texttt{$<$ExprArith$>$},
+The only rules where left-recursion appears are \texttt{$<$ExprArith$>$},
 \texttt{$<$ExprProd$>$}, \texttt{$<$Cond$>$} and \texttt{$<$ConjCond$>$}
 variables
 that are in the unambiguous grammar.
@@ -301,7 +301,7 @@ We have to remove the left-recursion for the unambiguous grammar
 in Figure \ref{fig:AE-unambi} and \ref{fig:BE-unambi}. The transformed
 grammars are shown in Figure \ref{fig:AE-noleft} and \ref{fig:BE-noleft}.
 To enhance readability of new introduced rules,
-we used the word \textit{Prime} instead of the character itself.
+we used the word \textit{Prime} instead of the punctuation mark.
 
 Those are the only rules where left-recusion appears (including indirect
 left-recursion), all the other rules
@@ -639,7 +639,8 @@ $M$ is filled in as follow:
     \item All others cell should remain empty.
 \end{itemize}
 
-The action table is available as a comma separated \texttt{.csv} file in
+The action table is available as a
+\textit{comma separated} \texttt{.csv} file in
 \textbf{doc/actionTable.csv}. This file only contains the
 \textit{produce} rules.
 It is not necessary to include the table that matches terminals together
@@ -702,7 +703,7 @@ regex \texttt{.} (dot) to regex that matches the complement of the
 empty set \texttt{[\textasciicircum]}.
 (2) Instead of printing \texttt{"Unkown symbol"}
 and continue the scan when
-a unrecognize symbol is detected, the scanner throw a
+a unrecognize symbol is detected, the scanner throws a
 \texttt{UnknownTokenException} which logically stops the scan.
 
 
@@ -749,7 +750,7 @@ The method \texttt{LL1Parser.buildGrammar()} will read the file to create
 a map that matches a rule number to a list
 of \textit{\{terminals, variables\}}
 \textit{i.e.} \texttt{Map<Integer, List<String>>}.
-A list could have be used, but a map was prefered since the first rule
+A list could have been used, but a map was prefered since the first rule
 is numeroted as 1.
 
 
@@ -767,11 +768,11 @@ This method of implementation of the grammar and the action table is very
 interesting, since it allows to use the LL(1) parser for any LL(1) grammar,
 by just changing the \texttt{csv} files.
 
-\subsubsection{Action dectection}
+\subsubsection{Complete action table}
 
 \paragraph{}
 
-The parser in addition to the rule number of the
+The action table of an LL(1) parser in addition to the rule number of the
 \textit{produce} action that is provided in the \texttt{csv} file must
 also be able to provide the \textit{match} and \textit{accept} actions. It
 is also necessary to provide a way to return a \textit{syntax error}
