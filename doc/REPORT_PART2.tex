@@ -660,6 +660,7 @@ of the action table.
 
 \section{Scanner improvements}
 
+\label{scanimprovements}
 \paragraph{Read input}
 In the first part of the project we were asked to implement a scanner.
 To be able to use the scanner within the parser, we modified some part of the
@@ -892,7 +893,7 @@ in Figure \ref{fig:actionsmethod}.
     \label{fig:actionsmethod}
 \end{figure}
 
-\section{Project structure}
+\section{Project details}
 
 \label{howto}
 
@@ -913,6 +914,31 @@ The implementation of our compiler is divided in 4 parts:
     files, log informations or exit safely the compiler.
     \item A set of exceptions to be thrown by the scanner/parser.
 \end{enumerate}
+
+\paragraph{Javadoc} The JavaDoc is available in \textbf{doc/javadoc}.
+The documentation for \texttt{Scanner.java} is \textbf{Scanner.html},
+this document the scanner of part 1, including the improvements made
+in section \ref{scanimprovements}.
+The documentation for the parser
+\texttt{LL1parser.java} is in
+\textbf{LL1Parser.html}
+
+\subsection{How to run}
+
+\paragraph{}
+
+\begin{itemize}
+    \item To run the parser use the following command: \\
+    \begin{lstlisting}
+        java -jar dist/part2.jar file.imp
+    \end{lstlisting}
+    This command will output the \textit{left-most derivation}.
+    \item It is also possible to output the \textit{derivation tree}:
+    \begin{lstlisting}
+        java -jar dist/part2.jar file.imp tree
+    \end{lstlisting}
+\end{itemize}
+
 
 \section{Conclusion}
 

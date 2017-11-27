@@ -55,4 +55,11 @@ How to run the parser - leftmost
 
 How to run the parser - derivation tree
 
+generate javadoc
+
 TEST THE PARSER!
+
+
+RELEASE TEST:
+
+test that dist/part2.jar and dist/part2.jar tree

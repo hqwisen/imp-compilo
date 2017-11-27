@@ -1,26 +1,36 @@
 # imp-compilo
 
-Tested with Java 8 (JDK) and JFlex 1.6.1.
+Compiler for IMP, a simple imperative language. Written in Java.
 
 ## How to **java**
+
+Tested with Java 9 (JDK) and JFlex 1.6.1.
+
 ```bash
-java -jar dist/imp-compilo.jar <input>
+java -jar dist/scanner.jar <input>
+java -jar dist/parser.jar <input>
 ```
 
 ## How to **gradle**
 
-Run scanner
+Run the scanner or parser
+
 ```bash
-gradle scan -Pinput=<input>
+gradle scanner -Pinput=<input>
+gradle parser  -Pinput=<input>
 ```
-Run scanner with j
-Generate **more/src/Main.java** from LexicalAnalyzer.flex
+
+Generate **more/src/GeneratedScanner.java** from LexicalAnalyzer.flex
+
 ```bash
-gradle generateMain
+gradle generateScanner
 ```
-Generate jar **dist/imp-compilo.jar**
+
+Generate jar **dist/scanner.jar** or **dist/parser.jar**
+
 ```bash
-gradle generateJar
+gradle generateScannerJar
+gradle generateParserJar
 ```
 
 Generate JavaDoc in **doc/javadoc**
