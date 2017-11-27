@@ -237,7 +237,7 @@ public class LL1Parser {
         String top = stack.peek();
         List<String> expected = new ArrayList<>();
         for (String terminal : terminals) {
-            if (M(top, terminal) > SYNTAX_ERROR) {
+            if (M(top, terminal) != SYNTAX_ERROR) {
                 expected.add(terminal);
             }
         }
