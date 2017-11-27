@@ -962,4 +962,13 @@ The documentation for the parser
 
 \section{Conclusion}
 
+\paragraph{}
+
+The important part of the parsing is transforming the grammar into an
+LL(1) grammar. After the computation of the First and Follow sets and the
+action table, it was trivial to implement the parser using the stack
+implementation. As it is now, the compiler
+will not produce any executable of an IMP source file, but only provide
+a way to verify that the source file respect the language syntax.
+
 \end{document}
