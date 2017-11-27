@@ -660,9 +660,10 @@ $M$ is filled in as follow:
     \item All others cell should remain empty.
 \end{itemize}
 
-The action table is available as a
-\textit{comma separated} \texttt{.csv} file in
-\textbf{doc/actionTable.csv}. This file only contains the
+The action table is available as a pdf in
+\textbf{doc/actionTable.pdf}
+\footnote{It is also available as a csv file in \textit{more/src/resources}}.
+This file only contains the
 \textit{produce} rules.
 It is not necessary to include the table that matches terminals together
 since the only results possible is the action \textit{match}
@@ -723,7 +724,7 @@ as resources in
 To be able to run the parser it is required to be able to access
 the action table to implement
 the recursive descent LL(1) parser.
-As mention in section \ref{explainactiontable}, the action table is stored
+The action table is stored
 in a \texttt{csv} file \textbf{actionTable.csv}.
 The first line of this file contains the
 terminals, and all the other lines contains in the first column a variable
