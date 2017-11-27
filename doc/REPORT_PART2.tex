@@ -64,6 +64,8 @@
 %\cfoot{}
 %\lfoot{Academic Year 2017-18}
 
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} %newcommand for cover page
+
 \begin{document}
 \begin{titlepage}
 \begin{center}
@@ -74,28 +76,30 @@
 
 % Upper part of the page. The '~' is needed because \\
 % only works if a paragraph has started.
-\includegraphics[width=0.2\textwidth]{image/ulblogo.jpg}~\\[1cm]
+\includegraphics[width=0.3\textwidth]{image/ulblogo.jpg}~\\[1cm]
 
-\textsc{\Large INFO-F403 - Introduction to language theory and compiling
-\\[0.3cm]}
+\textsc{
+\large INFO-F403 \\
+\Large  Introduction to language theory and compiling
+ \\[1cm]}
 % Title
-% \HRule \\[0.4cm]
+\HRule \\[0.7cm]
 
-{ \huge \bfseries Project Report – Part 2  \\[0.4cm] }
+{ \huge \bfseries Project Report – Part 2  \\[0.7cm] }
 
-% \HRule \\[1.5cm]
+\HRule \\[2cm]
 
 % Author and supervisor
 \noindent
 \begin{center} \large
 
 \emph{Author:}\\
-Hakim \textsc{Boulahya}\\
+\Large Hakim \textsc{Boulahya}\\
 \end{center}
 \begin{center} \large
 
-\emph{Professor:} \\
-Gilles \textsc{Geeraerts}\\
+% \emph{Professor:} \\
+% Gilles \textsc{Geeraerts}\\
 
 \end{center}
 
@@ -110,7 +114,10 @@ Gilles \textsc{Geeraerts}\\
 \tableofcontents
 \newpage
 
+\section{Introduction}
+
 \section{Grammar}
+
 \paragraph{Unproductive/unreachable symbols}
 
 In the given grammar, there is no unproductive and/or unreachable symbols.
@@ -651,28 +658,7 @@ An empty cell in the table induce a syntax error.
 Section \ref{implactiontable} discuss in more details the implementation
 of the action table.
 
-\section{Implementation}
-
-
-\paragraph{Files} Java source files are in \textbf{more/src} directory.
-The implementation of our compiler is divided in 4 major
-parts:
-\begin{enumerate}
-    \item Files that composes the scanner: \texttt{Scanner} abstract
-    class and the \texttt{LexicalAnalyzer.lex} that is used to generate
-    the \texttt{GeneratedScanner} class, and
-    the provided \texttt{Symbol} and \texttt{LexicalUnit} classes.
-    \item Files that composes the parser: \texttt{LL1Parser}
-    and the \texttt{TreeNode}, that is used to generate and print
-    the derivation tree, classes.
-    \item Utilities methods in \texttt{ImpCompilo} classes
-    used by the scanner and the parser to read
-    files, log informations or exit safely the compiler.
-    \item A set of exceptions to be thrown by the scanner/parser (see section
-    \ref{exceptionhandling}).
-\end{enumerate}
-
-\subsection{Scanner improvements}
+\section{Scanner improvements}
 
 \paragraph{Read input}
 In the first part of the project we were asked to implement a scanner.
@@ -687,9 +673,9 @@ Figure \ref{fig:scannercall} shows an example of use of the scanner.
 
 \begin{figure}[H]
     \begin{lstlisting}
-    FileReader source = ImpCompilo.file("file.imp");
-    Scanner scanner = new GeneratedScanner(source);
-    List<Symbol> symbols = scanner.scan();
+            FileReader source = ImpCompilo.file("file.imp");
+            Scanner scanner = new GeneratedScanner(source);
+            List<Symbol> symbols = scanner.scan();
     \end{lstlisting}
     \caption{Scanner call to read the tokens from a source file}
     \label{fig:scannercall}
@@ -708,15 +694,15 @@ a unrecognize symbol is detected, the scanner throws a
 
 
 
-\subsection{LL(1) Parser implementation}
+\section{LL(1) Parser implementation}
 
-\subsubsection{Grammar and action table files}
+\subsection{Grammar and action table files}
 
 \paragraph{Location of files}
 The grammar and the action table \texttt{csv} files are stored
 as resources in
 \textbf{more/src/resources} directory.
-Note that the csv file are \textit{comma separated}.
+\footnote{The csv file are \textit{comma separated}}.
 
 \paragraph{Action table parsing}
 To be able to run the parser it is required to be able to access
@@ -768,7 +754,7 @@ This method of implementation of the grammar and the action table is very
 interesting, since it allows to use the LL(1) parser for any LL(1) grammar,
 by just changing the \texttt{csv} files.
 
-\subsubsection{Complete action table}
+\subsection{Complete action table}
 
 \paragraph{}
 
@@ -777,6 +763,7 @@ The action table of an LL(1) parser in addition to the rule number of the
 also be able to provide the \textit{match} and \textit{accept} actions. It
 is also necessary to provide a way to return a \textit{syntax error}
 if none of these actions are possible. The method \texttt{LL1Parser.M(a, l)}
+\footnote{The function name is taken from the Lecture Notes (p135)}
 will return an \texttt{Integer} value, based on the parameters \texttt{a} and
 \texttt{l},
  that is corresponding to either:
@@ -784,24 +771,24 @@ will return an \texttt{Integer} value, based on the parameters \texttt{a} and
     \item A rule number from the \texttt{csv} file if $a \in V \wedge l \in T$.
     If cell is empty in the file, then it returns the constant
     \texttt{SYNTAX\_ERROR}
-    \item The constant \texttt{MATCH} if $a, l \in T$
+    \item The constant \texttt{MATCH} if $(a, l \in T) \wedge (a = l)$
     \item The constant \texttt{ACCEPT} if $(a = l) \wedge (a =$ \texttt{end}$)$
     \item The constant \texttt{SYNTAX\_ERROR} for all other cases
 \end{itemize}
 
 \label{implactiontable}
 
-\subsubsection{Explicit Stack}
+\subsection{Explicit Stack}
 
 \label{implstack}
 
 \paragraph{PDA}
 
 
-The implementation of the LL(1) parser is by using a pushdown automaton.
+The implementation of the LL(1) parser is done by using a pushdown automaton.
 We can actually avoid implementing any automaton states and only use
-an explicit stack only, since the LL(1) parse is a PDA with a single state
-\footnote{Mention in the course page 135}.
+an explicit stack, since the LL(1) parse is a PDA with a single state
+\footnote{Mention in the Lecture Notes page 135}.
 
 \paragraph{Recursive descent}
 
@@ -836,46 +823,97 @@ token or on the parsing process:
 \end{itemize}
 
 The implementation of the \texttt{parse}
-method is shown in Figure \ref{fig:parsemethod} and the actions shown
+method is in Figure \ref{fig:parsemethod} and the actions
 in Figure \ref{fig:actionsmethod}.
 
 \begin{figure}[H]
-    \centering
+    \begin{center}
     \begin{lstlisting}
-    public void parse() {
-         stack.push(getStartSymbol());
-         scannedTokens = scanner.scan();
-         nextToken();
-         parsing = token != null;
-         while (parsing) {
-             Integer ruleNumber = M(stack.peek(), lexicalUnitOf(token));
-             switch (ruleNumber) {
-                 case ACCEPT:
-                     accept(token);
-                     break;
-                 case MATCH:
-                     match(token);
-                     break;
-                 case SYNTAX_ERROR:
-                     syntaxError(token);
-                     break;
-                 default:
-                     produce(token, ruleNumber);
-                     break;
-             }
-         }
-     }
-    \end{lstlisting}
-    \caption{\texttt{LL1PArser.parse()} method}
+                stack.push(getStartSymbol());
+                scannedTokens = scanner.scan();
+                nextToken();
+                parsing = token != null;
+                while (parsing) {
+                    Integer ruleNumber = M(stack.peek(), lexicalUnitOf(token));
+                    switch (ruleNumber) {
+                        case ACCEPT:
+                            accept(token);
+                            break;
+                        case MATCH:
+                            match(token);
+                            break;
+                        case SYNTAX_ERROR:
+                            syntaxError(token);
+                            break;
+                        default:
+                            produce(token, ruleNumber);
+                            break;
+                    }
+                 }
+\end{lstlisting}
+    \end{center}
+    \caption{\texttt{LL1Parser.parse()} method}
     \label{fig:parsemethod}
 \end{figure}
 
-\subsection{Exceptions}
+\begin{figure}[H]
+    \begin{subfigure}{.5\textwidth}
+\begin{lstlisting}
+        parsing = false;
+\end{lstlisting}
+        \caption{\textit{accept}}
+        \label{fig:acceptaction}
+    \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
+\begin{lstlisting}
+            stack.pop();
+            nextToken();
+\end{lstlisting}
+        \caption{\textit{match}}
+        \label{fig:matchaction}
+    \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
+\begin{lstlisting}
+        stack.pop();
+        pushRule(ruleNumber);
+ \end{lstlisting}
+        \caption{\textit{produce}}
+        \label{fig:produceaction}
+    \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
 
-\label{exceptionhandling}
+\begin{lstlisting}
+            throw new SyntaxError(message);
+\end{lstlisting}
+        \caption{\textit{syntax error}}
+        \label{fig:syntaxerroraction}
+    \end{subfigure}
+    \caption{Actions method}
+    \label{fig:actionsmethod}
+\end{figure}
 
-\section{HowTo}
+\section{Project structure}
 
 \label{howto}
+
+\subsection{Project files}
+
+\paragraph{Files} Java source files are in \textbf{more/src} directory.
+The implementation of our compiler is divided in 4 parts:
+\begin{enumerate}
+    \item Files that composes the scanner: \texttt{Scanner.java} abstract
+    class and the \texttt{LexicalAnalyzer.lex} that is used to generate
+    the \texttt{GeneratedScanner.java} class, and
+    the provided \texttt{Symbol.java} and \texttt{LexicalUnit.java} classes.
+    \item Files that composes the parser: \texttt{LL1Parser.java}
+    and the \texttt{TreeNode.java}, that is used to generate and print
+    the derivation tree, classes.
+    \item Utilities methods in \texttt{ImpCompilo.java} classes
+    used by the scanner and the parser to read
+    files, log informations or exit safely the compiler.
+    \item A set of exceptions to be thrown by the scanner/parser.
+\end{enumerate}
+
+\section{Conclusion}
 
 \end{document}

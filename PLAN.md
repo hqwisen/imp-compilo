@@ -9,7 +9,7 @@ Explain Grammar Transformation (each step) (a) (b) (c)
 
 // Explain First and Follow and how it is used for action table
 
-Give the Action Table: explain produce, accept, match, error
+// Give the Action Table: explain produce, accept, match, error
 
 
 IMPLEMENTATION
@@ -47,8 +47,12 @@ HOW TO
 
 Where are the files, specifically the javadoc
 
+confusion between doc/actiontable and more/src/resource action table
+
 How to run the scanner
 
 How to run the parser - leftmost
 
 How to run the parser - derivation tree
+
+TEST THE PARSER!
