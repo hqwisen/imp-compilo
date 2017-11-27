@@ -230,13 +230,14 @@ public class LL1Parser {
     /**
      * Return the list of expected symbols of the
      * current top of {@link ImpCompilo#stack}.
+     *
      * @return list of expected symbols
      */
-    public List<String> expectedSymbols(){
+    public List<String> expectedSymbols() {
         String top = stack.peek();
         List<String> expected = new ArrayList<>();
-        for(String terminal : terminals){
-            if(M(top, terminal) > SYNTAX_ERROR){
+        for (String terminal : terminals) {
+            if (M(top, terminal) > SYNTAX_ERROR) {
                 expected.add(terminal);
             }
         }
@@ -265,7 +266,7 @@ public class LL1Parser {
     public boolean isVariable(String value) {
         return variables.contains(value);
     }
-                 // SyntaxError stops the parsing
+    // SyntaxError stops the parsing
 
     /**
      * Return the start symbol of the grammar, extracted from the rules.
@@ -312,6 +313,7 @@ public class LL1Parser {
     /**
      * Run the accept action:
      * It actually stops the parsing.
+     *
      * @param symbol
      */
     private void accept(Symbol symbol) {
@@ -323,6 +325,7 @@ public class LL1Parser {
      * Run the match action:
      * - pop the terminal from top of the stack
      * - token is set the the next token from the input
+     *
      * @param symbol
      */
     private void match(Symbol symbol) {
@@ -336,8 +339,9 @@ public class LL1Parser {
      * - the unexpected symbol
      * - list of expected symbols
      * Throws a SyntaxError exception
-     * @throws SyntaxError
+     *
      * @param symbol the unexpected symbol
+     * @throws SyntaxError
      */
     private void syntaxError(Symbol symbol) {
         ImpCompilo.log.info("SyntaxError(" + symbol.getValue() + ")");
@@ -345,7 +349,7 @@ public class LL1Parser {
                 symbol.getValue() + "' in line " +
                 symbol.getLine() + ".";
         message += " Was expecting: ";
-        for(String expected : expectedSymbols()){
+        for (String expected : expectedSymbols()) {
             message += "'" + expected + "' ";
         }
         throw new SyntaxError(message);
@@ -354,6 +358,7 @@ public class LL1Parser {
     /**
      * Push the right-hand side of the rule on top of the stack
      * from left to right. (the left of the right-hand is on top of stack).
+     *
      * @param ruleNumber
      */
     private void pushRule(Integer ruleNumber) {
@@ -367,7 +372,8 @@ public class LL1Parser {
      * Run the produce action:
      * - Replace the top of stack by the right-hand side of the rule
      * - add the rule to the left most derivation
-     * @param symbol symbol actually parsing
+     *
+     * @param symbol     symbol actually parsing
      * @param ruleNumber rule to produce
      */
     private void produce(Symbol symbol, Integer ruleNumber) {
@@ -384,7 +390,8 @@ public class LL1Parser {
      * Will get the list of symbols from the scanner,
      * and start the parsing by reading the action table,
      * and run the corresponding action
-     * @throws SyntaxError if syntax error detected in the action table
+     *
+     * @throws SyntaxError           if syntax error detected in the action table
      * @throws UnknownTokenException if the scanner throws it
      */
     public void parse() {
@@ -491,20 +498,23 @@ public class LL1Parser {
     }
 
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage:  java -jar " + JAR + " file.imp\n");
+        if (args.length == 0) {
+            System.out.println("Usage:  java -jar " + JAR + " file.imp" +
+                    " [printTree]");
             System.exit(0);
         }
         FileReader source = ImpCompilo.file(args[0]);
         LL1Parser parser = new LL1Parser(source, "grammar.csv",
                 "actionTable.csv");
-        try{
+        try {
             parser.parse();
-        }catch(ImpCompiloException e){
+        } catch (ImpCompiloException e) {
             ImpCompilo.error(e);
         }
-        parser.printLeftMostDerivation();
-        // parser.printDerivationTree();
+        if (args.length > 1 && args[1].equals("printTree")) {
+            parser.printDerivationTree();
+        } else {
+            parser.printLeftMostDerivation();
+        }
     }
-
 }
