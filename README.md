@@ -2,6 +2,8 @@
 
 Compiler for IMP, a simple imperative language. Written in Java.
 
+Project for the 'Introduction to language theory and compiling' course.
+
 ## How to **java**
 
 Tested with Java 9 (JDK) and JFlex 1.6.1.
