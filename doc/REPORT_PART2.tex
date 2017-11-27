@@ -895,8 +895,6 @@ in Figure \ref{fig:actionsmethod}.
 
 \section{Project details}
 
-\label{howto}
-
 \subsection{Project files}
 
 \paragraph{Files} Java source files are in \textbf{more/src} directory.
@@ -925,10 +923,12 @@ The documentation for the parser
 
 \subsection{How to run}
 
+\label{howto}
+
 \paragraph{}
 
 \begin{itemize}
-    \item To run the parser use the following command: \\
+    \item To run the parser use the following command:
     \begin{lstlisting}
         java -jar dist/part2.jar file.imp
     \end{lstlisting}
@@ -936,6 +936,10 @@ The documentation for the parser
     \item It is also possible to output the \textit{derivation tree}:
     \begin{lstlisting}
         java -jar dist/part2.jar file.imp printTree
+    \end{lstlisting}
+    \item It is still possible to run the scanner as a standalone appliction:
+    \begin{lstlisting}
+        java -jar dist/scanner.jar file.imp
     \end{lstlisting}
 \end{itemize}
 
