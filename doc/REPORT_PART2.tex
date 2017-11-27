@@ -116,7 +116,21 @@
 
 \section{Introduction}
 
-\section{Grammar}
+\paragraph{}
+
+As part of the course of \textit{Introduction to Language theory and Compiling}
+we were asked to
+write a compiler of the IMP language. The goal of the second part of the
+project was to implement the \textit{syntactic analysis} or \textit{parsing}.
+As it was done for the first part, the parser will be implemented in
+\texttt{Java}. It will use the scanner, that was implemented in the part 1
+of the project,
+to read the input.
+This part consits in transforming a given grammar to obtain a LL(1) grammar,
+and uses this newly transformed grammar to implement a parser for the
+IMP compiler.
+
+\section{Grammar transformation}
 
 \paragraph{Unproductive/unreachable symbols}
 
@@ -820,7 +834,8 @@ token or on the parsing process:
     \item \textit{match}: pop the stack and read next token
     \item \textit{produce}: replace the top of stack by the right-hand side
     of the rule from the action table
-    \item \textit{syntax error}: throws a \texttt{SyntaxError}
+    \item \textit{syntax error}: throws a \texttt{SyntaxError}, with
+    details about the expected tokens from the action table
 \end{itemize}
 
 The implementation of the \texttt{parse}
