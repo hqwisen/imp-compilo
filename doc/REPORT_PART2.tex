@@ -232,6 +232,8 @@ Figure \ref{fig:AE-unambi} show the unambiguous grammar of AE.
 
 \subsubsection{Boolean expressions}
 
+\paragraph{}
+
 Let's consider the P\&A of boolean expressions in Figure \ref{fig:BE-pa}
 and the initial grammar in Figure \ref{fig:BE-initial}.
 
@@ -703,7 +705,7 @@ Two improvements were made in the lexer. (1) We modified the any ASCII
 characters
 regex \texttt{.} (dot) to regex that matches the complement of the
 empty set \texttt{[\textasciicircum]}.
-(2) Instead of printing \texttt{"Unkown symbol"}
+(2) Instead of printing \texttt{"Unknown symbol"}
 and continue the scan when
 a unrecognize symbol is detected, the scanner throws a
 \texttt{UnknownTokenException} which logically stops the scan.
@@ -934,7 +936,7 @@ The documentation for \texttt{Scanner.java} is \textbf{Scanner.html},
 this document the scanner of part 1, including the improvements made
 in section \ref{scanimprovements}.
 The documentation for the parser
-\texttt{LL1parser.java} is in
+\texttt{LL1Parser.java} is in
 \textbf{LL1Parser.html}
 
 \subsection{How to run}
