@@ -740,8 +740,7 @@ the set of terminals. All the following lines are the rules.
 Since it is a \textit{Context-Free Grammar}, we know that the first element
 of a rule is the left-hand side, and all the following element are the
 the right-hand side.
-Note that
-the order of the rules is important since they will be numeroted in the parsing
+The order of the rules is important since they will be numeroted in the parsing
 order, and will be used to print the \textit{left-most derivation}.
 The grammar in \textit{grammar.csv} is the same as shown in
 Figure \ref{fig:fullcfg}.
@@ -752,6 +751,15 @@ of \textit{\{terminals, variables\}}
 \textit{i.e.} \texttt{Map<Integer, List<String>>}.
 A list could have be used, but a map was prefered since the first rule
 is numeroted as 1.
+
+
+The content of the list
+of a rule is the following: the first element is the left-hand side, and
+all the other elements are the right-hand side.
+Note that when the right-hand side is $\epsilon$, the list of element
+is just the left-hand side,
+since there will be nothing to push on the stack for such
+rules (see section \ref{implstack}).
 
 \paragraph{}
 

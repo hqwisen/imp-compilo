@@ -37,7 +37,7 @@ How error are handled (from the scanner to the parser)
 How is the parser implemented in the code:
     - Use of the stack
     - Use of scan symbols and nextToken
-    - ACCEPT, SYNTAXERROR, MATCH RULES
+    - PRODUCE? ACCEPT, SYNTAXERROR, MATCH RULES
 
 Output:
   - leftmost
