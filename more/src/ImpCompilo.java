@@ -12,7 +12,7 @@ public class ImpCompilo {
         log.setLevel(Level.OFF);
     }
     /**
-     * Return a FileReader based on the filename given.
+     * Return a {@link java.io.FileReader} based on the filename given.
      * This function stops the execution of the program!
      * @param filename file to read
      * @return the FileReader of the file, null if the file doesn't exist

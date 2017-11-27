@@ -791,14 +791,88 @@ will return an \texttt{Integer} value, based on the parameters \texttt{a} and
 
 \label{implactiontable}
 
-\subsubsection{Stack and recursive descent}
+\subsubsection{Explicit Stack}
 
 \label{implstack}
+
+\paragraph{PDA}
+
+
+The implementation of the LL(1) parser is by using a pushdown automaton.
+We can actually avoid implementing any automaton states and only use
+an explicit stack only, since the LL(1) parse is a PDA with a single state
+\footnote{Mention in the course page 135}.
+
+\paragraph{Recursive descent}
+
+The stack only
+solution is a possible implementation of a recursive descent parser. Indeed,
+by using recursion it uses the \textit{call stack} of subroutines.
+The parser doesn't use the \textit{call stack} but
+an explicit stack.
+
+\paragraph{Implementation}
+The parsing of the input is implemented in the method
+\texttt{LL1Parser.parse()}. This method uses the stack and the scanned tokens
+to run the parsing. The scanner throws a \texttt{UnknownTokenException}
+if a unexpected token is detected.
+The method also initialize the stack with the start symbol. The parsing
+consists of a loop that runs an action from the action table \textit{i.e.}
+the results of the method $M$, based on
+the current top of stack and the current parsed token. The loop stops only
+in two ways: (1) if the input is accepted \textit{i.e.} the action
+\textit{accept} is ran; (2) a \textit{syntax error} is returned from
+the action table.
+The stack is implemented using the built-in class
+\texttt{Stack} of \texttt{Java}.
+Each action performs specific changes either on the stack, on the current
+token or on the parsing process:
+\begin{itemize}
+    \item \textit{accept}: stops the parsing
+    \item \textit{match}: pop the stack and read next token
+    \item \textit{produce}: replace the top of stack by the right-hand side
+    of the rule from the action table
+    \item \textit{syntax error}: throws a \texttt{SyntaxError}
+\end{itemize}
+
+The implementation of the \texttt{parse}
+method is shown in Figure \ref{fig:parsemethod} and the actions shown
+in Figure \ref{fig:actionsmethod}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}
+    public void parse() {
+         stack.push(getStartSymbol());
+         scannedTokens = scanner.scan();
+         nextToken();
+         parsing = token != null;
+         while (parsing) {
+             Integer ruleNumber = M(stack.peek(), lexicalUnitOf(token));
+             switch (ruleNumber) {
+                 case ACCEPT:
+                     accept(token);
+                     break;
+                 case MATCH:
+                     match(token);
+                     break;
+                 case SYNTAX_ERROR:
+                     syntaxError(token);
+                     break;
+                 default:
+                     produce(token, ruleNumber);
+                     break;
+             }
+         }
+     }
+    \end{lstlisting}
+    \caption{\texttt{LL1PArser.parse()} method}
+    \label{fig:parsemethod}
+\end{figure}
 
 \subsection{Exceptions}
 
 \label{exceptionhandling}
-
 
 \section{HowTo}
 

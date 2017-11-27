@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * NOTE We sometimes refers to terminals when we should refer
+ * REMARK:
+ * We sometimes refers to terminals when we should refer
  * to LexicalUnit. Usually when terminals are being used
  * as index keys (for rules or actionTable), they are
  * actually LexicalUnits.
@@ -93,7 +94,7 @@ public class LL1Parser {
      * with the rule number as the key.
      * Since it is a Context Free Grammar, the first element of the list of
      * a rule is the left side, and the following elements is the right side.
-     * If the right side if @{@link LL1Parser#EPISLON}, then only
+     * If the right side is @{@link LL1Parser#EPISLON}, then only
      * the left side is set. This will avoid to push epsilon on the stack
      * when parsing.
      */
@@ -264,6 +265,7 @@ public class LL1Parser {
     public boolean isVariable(String value) {
         return variables.contains(value);
     }
+                 // SyntaxError stops the parsing
 
     /**
      * Return the start symbol of the grammar, extracted from the rules.
@@ -307,17 +309,36 @@ public class LL1Parser {
         return token;
     }
 
+    /**
+     * Run the accept action:
+     * It actually stops the parsing.
+     * @param symbol
+     */
     private void accept(Symbol symbol) {
         ImpCompilo.log.info("Accept(" + symbol.getValue() + ")");
         parsing = false;
     }
 
+    /**
+     * Run the match action:
+     * - pop the terminal from top of the stack
+     * - token is set the the next token from the input
+     * @param symbol
+     */
     private void match(Symbol symbol) {
         ImpCompilo.log.info("Match(" + symbol.getValue() + ")");
         stack.pop();
         nextToken();
     }
 
+    /**
+     * Prepare a SyntaxError message by showing:
+     * - the unexpected symbol
+     * - list of expected symbols
+     * Throws a SyntaxError exception
+     * @throws SyntaxError
+     * @param symbol the unexpected symbol
+     */
     private void syntaxError(Symbol symbol) {
         ImpCompilo.log.info("SyntaxError(" + symbol.getValue() + ")");
         String message = "Syntax Error: unexpected symbol '" +
@@ -330,6 +351,11 @@ public class LL1Parser {
         throw new SyntaxError(message);
     }
 
+    /**
+     * Push the right-hand side of the rule on top of the stack
+     * from left to right. (the left of the right-hand is on top of stack).
+     * @param ruleNumber
+     */
     private void pushRule(Integer ruleNumber) {
         List<String> elems = rules.get(ruleNumber);
         for (int i = elems.size() - 1; i > 0; i--) {
@@ -337,6 +363,13 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * Run the produce action:
+     * - Replace the top of stack by the right-hand side of the rule
+     * - add the rule to the left most derivation
+     * @param symbol symbol actually parsing
+     * @param ruleNumber rule to produce
+     */
     private void produce(Symbol symbol, Integer ruleNumber) {
         ImpCompilo.log.info("Produce(" + symbol.getValue() + ", "
                 + ruleNumber.toString() + ")");
@@ -345,6 +378,15 @@ public class LL1Parser {
         leftMostDerivation.add(ruleNumber);
     }
 
+    /**
+     * Main parsing method that initiate the stack with the start
+     * symbol at the begining.
+     * Will get the list of symbols from the scanner,
+     * and start the parsing by reading the action table,
+     * and run the corresponding action
+     * @throws SyntaxError if syntax error detected in the action table
+     * @throws UnknownTokenException if the scanner throws it
+     */
     public void parse() {
         stack.push(getStartSymbol());
         scannedTokens = scanner.scan();

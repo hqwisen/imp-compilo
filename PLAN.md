@@ -45,6 +45,8 @@ Output:
 
 HOW TO
 
+Where are the files, specifically the javadoc
+
 How to run the scanner
 
 How to run the parser - leftmost
