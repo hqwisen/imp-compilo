@@ -621,18 +621,9 @@ belonging to the grammar. The results are shown in Figure \ref{fig:firstfollow}.
 
 \subsection{Action table}
 
-\paragraph{}
+\label{explainactiontable}
 
-The action table is available as a comma separated \texttt{.csv} file in
-\textbf{doc/actionTable.csv}. This file only contains the
-\textit{produce} rules.
-It is not necessary to include the table that matches terminals together
-since the only results possible is the action \textit{match}
-for terminals that are the same.
-In the case of the \texttt{end} terminal, the action is \textit{accept}.
-An empty cell in the table induce a syntax error.
-Section \ref{implactiontable} discuss in more details the implementation
-of the action table.
+\paragraph{}
 
 Let $G<V, T, P, S>$ our transformed grammar.
 Let the action table be $M(v, t)$ where
@@ -645,14 +636,42 @@ $M$ is filled in as follow:
     \item $\forall v \in V$ if $\epsilon \in $ First$^1(v)$ then
     $\forall t \in$ Follow$^1(v)$ set $M(v, t)$ as the rule number
     where $v \rightarrow \epsilon$.
+    \item All others cell should remain empty.
 \end{itemize}
 
-We will explain in more details the results of other possible results
-of the action table $M$ in section \ref{implactiontable}.
+The action table is available as a comma separated \texttt{.csv} file in
+\textbf{doc/actionTable.csv}. This file only contains the
+\textit{produce} rules.
+It is not necessary to include the table that matches terminals together
+since the only results possible is the action \textit{match}
+for terminals that are the same.
+In the case of the \texttt{end} terminal, the action is \textit{accept}.
+An empty cell in the table induce a syntax error.
+Section \ref{implactiontable} discuss in more details the implementation
+of the action table.
 
 \section{Implementation}
 
-\subsubsection{Scanner improvements}
+
+\paragraph{Files} Java source files are in \textbf{more/src} directory.
+The implementation of our compiler is divided in 4 major
+parts:
+\begin{enumerate}
+    \item Files that composes the scanner: \texttt{Scanner} abstract
+    class and the \texttt{LexicalAnalyzer.lex} that is used to generate
+    the \texttt{GeneratedScanner} class, and
+    the provided \texttt{Symbol} and \texttt{LexicalUnit} classes.
+    \item Files that composes the parser: \texttt{LL1Parser}
+    and the \texttt{TreeNode}, that is used to generate and print
+    the derivation tree, classes.
+    \item Utilities methods in \texttt{ImpCompilo} classes
+    used by the scanner and the parser to read
+    files, log informations or exit safely the compiler.
+    \item A set of exceptions to be thrown by the scanner/parser (see section
+    \ref{exceptionhandling}).
+\end{enumerate}
+
+\subsection{Scanner improvements}
 
 \paragraph{Read input}
 In the first part of the project we were asked to implement a scanner.
@@ -667,10 +686,11 @@ Figure \ref{fig:scannercall} shows an example of use of the scanner.
 
 \begin{figure}[H]
     \begin{lstlisting}
+    FileReader source = ImpCompilo.file("file.imp");
     Scanner scanner = new GeneratedScanner(source);
     List<Symbol> symbols = scanner.scan();
     \end{lstlisting}
-    \caption{Call the scanner to read the tokens from a source file}
+    \caption{Scanner call to read the tokens from a source file}
     \label{fig:scannercall}
 \end{figure}
 
@@ -687,11 +707,70 @@ a unrecognize symbol is detected, the scanner throw a
 
 
 
-\subsection{Parser}
+\subsection{LL(1) Parser implementation}
+
+\subsubsection{Grammar and action table files}
+
+\paragraph{Location of files}
+The grammar and the action table \texttt{csv} files are stored
+as resources in
+\textbf{more/src/resources} directory.
+Note that the csv file are \textit{comma separated}.
+
+\paragraph{Action table parsing}
+To be able to run the parser it is required to be able to access
+the action table to implement
+the recursive descent LL(1) parser.
+As mention in section \ref{explainactiontable}, the action table is stored
+in a \texttt{csv} file \textbf{actionTable.csv}.
+The first line of this file contains the
+terminals, and all the other lines contains in the first column a variable
+and the following columns either the rules to apply for each terminal.
+If there is no rule \textit{i.e.} the cell is empty.
+
+The method \texttt{LL1Parser.buildActionTable()} will read the file
+to create a map that matches a variable and a terminal to a rule number
+\textit{i.e.} a \texttt{Map<String, Map<String, Integer>>}.
+
+\paragraph{Grammar parsing}
+It is also necessary to access to set of rules of the grammar within the
+parser. The grammar is stored in a \texttt{csv} file \textbf{grammar.csv}.
+The first line of the file is the set of variables, and the second line
+the set of terminals. All the following lines are the rules.
+Since it is a \textit{Context-Free Grammar}, we know that the first element
+of a rule is the left-hand side, and all the following element are the
+the right-hand side.
+Note that
+the order of the rules is important since they will be numeroted in the parsing
+order, and will be used to print the \textit{left-most derivation}.
+The grammar in \textit{grammar.csv} is the same as shown in
+Figure \ref{fig:fullcfg}.
+
+The method \texttt{LL1Parser.buildGrammar()} will read the file to create
+a map that matches a rule number to a list
+of \textit{\{terminals, variables\}}
+\textit{i.e.} \texttt{Map<Integer, List<String>>}.
+A list could have be used, but a map was prefered since the first rule
+is numeroted as 1.
+
+\paragraph{}
+
+This method of implementation of the grammar and the action table is very
+interesting, since it allows to use the LL(1) parser for any LL(1) grammar,
+by just changing the \texttt{csv} files.
 
 \subsubsection{Action table $M$}
 
 \label{implactiontable}
+
+\subsubsection{Stack and recursive descent}
+
+\label{implstack}
+
+\subsection{Exceptions}
+
+\label{exceptionhandling}
+
 
 \section{HowTo}
 

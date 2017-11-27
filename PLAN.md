@@ -7,7 +7,7 @@ Explain Grammar Transformation (each step) (a) (b) (c)
 //    - Improved explaination of disjonction and conjonction explaination
     - Explain that arith are separated from boolean
 
-Explain First and Follow and how it is used for action table
+// Explain First and Follow and how it is used for action table
 
 Give the Action Table: explain produce, accept, match, error
 
