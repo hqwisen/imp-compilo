@@ -53,7 +53,7 @@ public class LL1Parser {
      * We suppose that the grammarFile contains per rule, at least
      * the left side and one element on the right side (even epsilon).
      *
-     * @param sourceFile  IMP source file
+     * @param source  IMP source reader
      * @param grammarFile csv file containing the grammar
      * @param tableFile   csv file containing the action file
      */
@@ -195,11 +195,11 @@ public class LL1Parser {
      * Return the rule from the action table based on the
      * terminals/variables given as parameter.
      * We used the same notation as given in the Lecture Notes.
-     * If a & l are both terminals the action table doesn't contained anything.
+     * If a and l are both terminals the action table doesn't contained anything.
      * The methods will return:
      * - The ruleNumber to apply if a is a variable and l a terminal
-     * - MATCH if a & l are terminal and the same
-     * - ACCEPT if a & l are both the terminal LexicalUnit.END
+     * - MATCH if a and l are terminal and the same
+     * - ACCEPT if a and l are both the terminal LexicalUnit.END
      * - SYNTAX_ERROR for all other cases
      *
      * @return the action to make while parsing
@@ -229,7 +229,7 @@ public class LL1Parser {
 
     /**
      * Return the list of expected symbols of the
-     * current top of {@link ImpCompilo#stack}.
+     * current top of {@link LL1Parser#stack}.
      *
      * @return list of expected symbols
      */
