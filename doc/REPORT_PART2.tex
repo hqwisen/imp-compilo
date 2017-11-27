@@ -767,7 +767,26 @@ This method of implementation of the grammar and the action table is very
 interesting, since it allows to use the LL(1) parser for any LL(1) grammar,
 by just changing the \texttt{csv} files.
 
-\subsubsection{Action table $M$}
+\subsubsection{Action dectection}
+
+\paragraph{}
+
+The parser in addition to the rule number of the
+\textit{produce} action that is provided in the \texttt{csv} file must
+also be able to provide the \textit{match} and \textit{accept} actions. It
+is also necessary to provide a way to return a \textit{syntax error}
+if none of these actions are possible. The method \texttt{LL1Parser.M(a, l)}
+will return an \texttt{Integer} value, based on the parameters \texttt{a} and
+\texttt{l},
+ that is corresponding to either:
+\begin{itemize}
+    \item A rule number from the \texttt{csv} file if $a \in V \wedge l \in T$.
+    If cell is empty in the file, then it returns the constant
+    \texttt{SYNTAX\_ERROR}
+    \item The constant \texttt{MATCH} if $a, l \in T$
+    \item The constant \texttt{ACCEPT} if $(a = l) \wedge (a =$ \texttt{end}$)$
+    \item The constant \texttt{SYNTAX\_ERROR} for all other cases
+\end{itemize}
 
 \label{implactiontable}
 
