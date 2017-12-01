@@ -43,4 +43,10 @@ public class ImpCompilo {
         System.exit(1);
     }
 
+
+    public static void main(String[] args){
+        System.out.println("Compiling source file !");
+        
+    }
+
 }

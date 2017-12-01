@@ -1,10 +1,10 @@
 // General stuff
 import org.bytedeco.javacpp.*;
 
-// Headers required by LLVM
+// Headers required by LLVMExample
 import static org.bytedeco.javacpp.LLVM.*;
 
-public class LLVM {
+public class LLVMExample {
     public static void main (String[] args) {
         BytePointer error = new BytePointer((Pointer)null); // Used to retrieve messages from functions
         LLVMLinkInMCJIT();
