@@ -483,7 +483,7 @@ public class LL1Parser {
         }
     }
 
-    public void removeEpsilonNodes(TreeNode tree) {
+    private void removeEpsilonNodes(TreeNode tree) {
         for (Iterator<TreeNode> iter = tree.getChildren().listIterator(); iter.hasNext(); ) {
             TreeNode child = iter.next();
             if (child.getChildren().size() == 1 && isEpsilon(child.getChildValue(0))) {
@@ -494,10 +494,28 @@ public class LL1Parser {
         }
     }
 
+    private void convertExprPrime(TreeNode parent, TreeNode tree){
+        String opValue = tree.getChildValue(0);
+        tree.setValue(opValue);
+        tree.removeChild(0);
+        tree.pushLeft(parent.getChild(0));
+        parent.removeChild(0); // FIXME this will cause problem in converEpxr loop
+    }
+
+    private void convertExpr(TreeNode tree){
+        for(TreeNode child : tree.getChildren()){
+            if(isExprPrime(child)){
+                processExprPrime(tree, child);
+            }
+            convertExpr(child);
+        }
+    }
+
     public void buildAST() {
         TreeNode abstractTree = derivationTree;
         removeEpsilonNodes(abstractTree);
         removeInformativeTerminals(abstractTree);
+        convertExpr(abstractTree);
 
     }
 
