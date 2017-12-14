@@ -5,7 +5,7 @@ import java.io.FileReader;
 
 import static org.bytedeco.javacpp.LLVM.*;
 
-public class Compiler {
+public class CodeGenerator {
 
     // FIXME make sure that the jar is create
     private static final String JAR = "dist/part3.jar";

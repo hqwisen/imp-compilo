@@ -56,4 +56,9 @@ public class TreeNode {
     public String toString(){
         return "T(" + getValue() + ")";
     }
+
+    public String getChildValue(int i){
+        return children.get(i).getValue();
+    }
+
 }

@@ -1,15 +1,8 @@
-import sun.reflect.generics.tree.Tree;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * REMARK:
@@ -34,7 +27,7 @@ public class LL1Parser {
     private Map<Integer, List<String>> rules;
     private Map<String, Map<String, Integer>> actionTable;
     private Stack<String> stack;
-    private  Stack<TreeNode> treeStack;
+    private Stack<TreeNode> treeStack;
     private List<Integer> leftMostDerivation;
     private TreeNode derivationTree;
     // Following vars are used during the parsing
@@ -261,6 +254,21 @@ public class LL1Parser {
     }
 
     /**
+     * Return true if the value is a terminal and it is informative.
+     * An terminal is considered informative if it is only used to parse
+     * and has no value meaning.
+     * E.G. begin, (, ), end, endif, .. are informative terminals.
+     * E.G. +, -, [VarName], [Number], .. are NOT informative terminals.
+     *
+     * @param value a string representing a terminal
+     * @return true if value is a terminal that is informative, false otherwise
+     */
+    public boolean isInformativeTerminal(String value) {
+        return LexicalUnit.unitFromValue(value).isInformative();
+    }
+
+
+    /**
      * Return true if value is a variable, false otherwise.
      * Note that the value is considered variable, only
      * if it is in {@link LL1Parser#variables} list.
@@ -270,7 +278,10 @@ public class LL1Parser {
     public boolean isVariable(String value) {
         return variables.contains(value);
     }
-    // SyntaxError stops the parsing
+
+    public boolean isEpsilon(String value) {
+        return value.equals(EPISLON);
+    }
 
     /**
      * Return the start symbol of the grammar, extracted from the rules.
@@ -369,10 +380,10 @@ public class LL1Parser {
     private void pushRule(Integer ruleNumber, TreeNode topTree) {
         List<String> elems = rules.get(ruleNumber);
         // Add the children to the topTree (first element is the left child)
-        if(elems.size() == 1){ // Only left-hand i.e. VAR -> epsilon
+        if (elems.size() == 1) { // Only left-hand i.e. VAR -> epsilon
             topTree.addChild(EPISLON);
         }
-        for(int i = 1; i < elems.size(); i++){
+        for (int i = 1; i < elems.size(); i++) {
             topTree.addChild(elems.get(i));
         }
         List<TreeNode> children = topTree.getChildren();
@@ -460,6 +471,36 @@ public class LL1Parser {
         derivationTree.print();
     }
 
+    private void removeInformativeTerminals(TreeNode tree) {
+        for (Iterator<TreeNode> iter = tree.getChildren().listIterator(); iter.hasNext(); ) {
+            TreeNode child = iter.next();
+            String value = child.getValue();
+            if (isVariable(value)) {
+                removeInformativeTerminals(child);
+            } else if (!isEpsilon(value) && isInformativeTerminal(value)) {
+                iter.remove();
+            }
+        }
+    }
+
+    public void removeEpsilonNodes(TreeNode tree) {
+        for (Iterator<TreeNode> iter = tree.getChildren().listIterator(); iter.hasNext(); ) {
+            TreeNode child = iter.next();
+            if (child.getChildren().size() == 1 && isEpsilon(child.getChildValue(0))) {
+                iter.remove();
+            } else {
+                removeEpsilonNodes(child);
+            }
+        }
+    }
+
+    public void buildAST() {
+        TreeNode abstractTree = derivationTree;
+        removeEpsilonNodes(abstractTree);
+        removeInformativeTerminals(abstractTree);
+
+    }
+
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Usage:  java -jar " + JAR + " file.imp" +
@@ -475,6 +516,7 @@ public class LL1Parser {
             ImpCompilo.error(e);
         }
         if (args.length > 1 && args[1].equals("printTree")) {
+            parser.buildAST();
             parser.printDerivationTree();
         } else {
             parser.printLeftMostDerivation();
