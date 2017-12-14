@@ -1,0 +1,5 @@
+begin
+    a:=5;
+    read(a);
+    print(b)
+end

@@ -6,46 +6,35 @@ import java.util.List;
  * https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
  */
 
-public class TreeNode<E> {
+public class TreeNode {
 
-    private E value;
-    private List<TreeNode<E>> children;
-    private int ruleNumber;
+    private String value;
+    private List<TreeNode> children;
 
-    public TreeNode(E value, int ruleNumber) {
-        this(value, ruleNumber, new ArrayList<>());
+    public TreeNode(String value) {
+        this(value, new ArrayList<>());
     }
 
-    public TreeNode(E value, int ruleNumber, List<TreeNode<E>> children) {
+    public TreeNode(String value, List<TreeNode> children) {
         this.value = value;
         this.children = children;
-        this.ruleNumber = ruleNumber;
     }
 
-    public TreeNode<E> addChild(E value) {
-        TreeNode<E> child = new TreeNode<E>(value, 0);
+    public TreeNode addChild(String value) {
+        TreeNode child = new TreeNode(value);
         children.add(child);
         return child;
     }
 
-    public void setChildren(TreeNode<E> child) {
-        children = new ArrayList<>();
-        children.add(child);
+    public void setChildren(List<TreeNode> children) {
+        this.children = children;
     }
 
-    public int getRule() {
-        return ruleNumber;
-    }
-
-    public void setRule(int ruleNumber) {
-        this.ruleNumber = ruleNumber;
-    }
-
-    public E getValue() {
+    public String getValue() {
         return value;
     }
 
-    public List<TreeNode<E>> getChildren() {
+    public List<TreeNode> getChildren() {
         return children;
     }
 

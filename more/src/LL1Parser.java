@@ -1,3 +1,5 @@
+import sun.reflect.generics.tree.Tree;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class LL1Parser {
     private Map<String, Map<String, Integer>> actionTable;
     private Stack<String> stack;
     private List<Integer> leftMostDerivation;
-    private TreeNode<String> derivationTree;
+    private TreeNode derivationTree;
     // Following vars are used during the parsing
     private Integer tokenIndex;
     private Symbol token;
@@ -53,7 +55,7 @@ public class LL1Parser {
      * We suppose that the grammarFile contains per rule, at least
      * the left side and one element on the right side (even epsilon).
      *
-     * @param source  IMP source reader
+     * @param source      IMP source reader
      * @param grammarFile csv file containing the grammar
      * @param tableFile   csv file containing the action file
      */
@@ -439,61 +441,7 @@ public class LL1Parser {
         return count;
     }
 
-    /**
-     * Build the derivation based on the left most derivation.
-     * Since it is a one-on-one relation, there is
-     * only one tree that it is possible to generate per
-     * left most derivation.
-     */
-    private void buildDerivationTree() {
-        List<TreeNode<String>> subTrees = new ArrayList<>();
-        for (Integer ruleNumber : leftMostDerivation) {
-            List<String> rule = rules.get(ruleNumber);
-            String value = rule.isEmpty() ? "" : rule.get(0);
-            TreeNode<String> subTree = new TreeNode<>(rule.get(0), ruleNumber);
-            for (int i = 1; i < rule.size(); i++) {
-                subTree.addChild(rule.get(i));
-            }
-            subTrees.add(subTree);
-        }
-
-        derivationTree = subTrees.get(0);
-        subTrees.remove(0);
-        buildDerivationTreeRec(subTrees, derivationTree);
-    }
-
-    private void buildDerivationTreeRec(List<TreeNode<String>> subTrees,
-                                        TreeNode<String> parent) {
-        List<String> rule = rules.get(parent.getRule());
-        int count = countVariables(rule);
-        count--;
-        int i = 0;
-        for (TreeNode<String> child : parent.getChildren()) {
-            if (isVariable(child.getValue())) {
-                TreeNode<String> subTree = subTrees.get(i);
-                for (TreeNode<String> subChild : subTree.getChildren()) {
-                    child.addChild(subChild.getValue());
-                }
-                // child.setChildren(subTrees.get(i));
-                child.setRule(subTree.getRule());
-                i++;
-            }
-        }
-        for (int j = 0; j < count; j++) {
-            subTrees.remove(0);
-        }
-        for (TreeNode<String> child : parent.getChildren()) {
-            if (isVariable(child.getValue())) {
-                buildDerivationTreeRec(subTrees, child);
-            }
-        }
-
-    }
-
     public void printDerivationTree() {
-        if (derivationTree == null) {
-            buildDerivationTree();
-        }
         derivationTree.print();
     }
 

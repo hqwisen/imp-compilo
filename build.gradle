@@ -5,7 +5,7 @@ apply plugin: 'idea'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = 'LLVM'
+mainClassName = 'Compiler'
 
 sourceSets {
     main {
@@ -22,6 +22,15 @@ sourceSets {
         }
     }
 }
+
+apply plugin: 'java'
+
+task runCompiler(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    args 'test/assign.imp'
+}
+
 
 task scannerJar(type: Jar) {
     from(sourceSets.main.output)
@@ -50,62 +59,69 @@ task compilerJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'ImpCompilo Compiler',
                 'Implementation-Version': '',
-                'Main-Class': 'LLVM'
+                'Main-Class': 'Compiler'
     }
     baseName 'compiler'
     destinationDir file('dist/')
     from {
         // Include llvm libraries in compiler.jar
-        configurations.llvmLibs.collect { it.isDirectory() ? it : zipTree(it)}
+        // configurations.llvmLibs.collect { it.isDirectory() ? it : zipTree(it)}
     }
 }
 
 task generateScanner {
     javaexec {
-        main='-jar';
+        main = '-jar';
         args = ['dist/lib/jflex.jar', 'more/src/LexicalAnalyzer.flex']
     }
 }
 
-task generateScannerJar (dependsOn: [generateScanner, scannerJar])
+task generateScannerJar(dependsOn: [generateScanner, scannerJar])
 
-task generateParserJar (dependsOn: [generateScanner, parserJar])
+task generateParserJar(dependsOn: [generateScanner, parserJar])
 
-task generateCompilerJar (dependsOn: [generateScanner, compilerJar])
+task generateCompilerJar(dependsOn: [generateScanner, compilerJar])
 
-task scanner (dependsOn: generateScannerJar) {
-    doLast{
+task scanner(dependsOn: generateScannerJar) {
+    doLast {
         javaexec {
-            main='-jar';
+            main = '-jar';
             args = ['dist/scanner.jar', project.input]
         }
     }
 }
 
-task parser (dependsOn: generateParserJar) {
-    doLast{
+task parser(dependsOn: generateParserJar) {
+    doLast {
         javaexec {
-            main='-jar';
-            args = ['dist/parser.jar', project.input]
+            main = '-jar';
+            if(project.hasProperty('option') && project.hasProperty('input')){
+                args = ['dist/parser.jar', project.input, project.option]
+            }
+            else if(project.hasProperty('input')){
+                args = ['dist/parser.jar', project.input]
+            }else{
+                args = ['dist/parser.jar']
+            }
         }
     }
 }
 
-task compiler (dependsOn: generateCompilerJar) {
-    doLast{
+task compiler(dependsOn: generateCompilerJar) {
+    doLast {
         javaexec {
-            main='-jar';
+            main = '-jar';
             args = ['dist/compiler.jar', project.input]
         }
     }
 }
 
-task generateDoc (type: Javadoc){
+task generateDoc(type: Javadoc) {
     source = sourceSets.main.allJava
     destinationDir file('doc/javadoc')
 }
 
-repositories{
+repositories {
     mavenCentral()
 }
 
@@ -118,6 +134,6 @@ dependencies {
     // testCompile group: 'junit', name: 'junit', version: '4.+'
     // llvmLibs group: 'org.bytedeco', name: 'javacpp', version: '1.3.3'
     llvmLibs group: 'org.bytedeco.javacpp-presets',
-             name: 'llvm-platform', version: '3.9.0-1.3'
+            name: 'llvm-platform', version: '3.9.0-1.3'
     configurations.compile.extendsFrom(configurations.llvmLibs)
 }
