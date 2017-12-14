@@ -34,6 +34,7 @@ public class LL1Parser {
     private Map<Integer, List<String>> rules;
     private Map<String, Map<String, Integer>> actionTable;
     private Stack<String> stack;
+    private  Stack<TreeNode> treeStack;
     private List<Integer> leftMostDerivation;
     private TreeNode derivationTree;
     // Following vars are used during the parsing
@@ -66,6 +67,7 @@ public class LL1Parser {
         this.rules = new HashMap<>();
         this.actionTable = new HashMap<>();
         this.stack = new Stack<>();
+        this.treeStack = new Stack<>();
         this.leftMostDerivation = new ArrayList<>();
         // this.derivationTree = new TreeNode("");
         this.derivationTree = null;
@@ -333,6 +335,7 @@ public class LL1Parser {
     private void match(Symbol symbol) {
         ImpCompilo.log.info("Match(" + symbol.getValue() + ")");
         stack.pop();
+        treeStack.pop();
         nextToken();
     }
 
@@ -363,10 +366,20 @@ public class LL1Parser {
      *
      * @param ruleNumber
      */
-    private void pushRule(Integer ruleNumber) {
+    private void pushRule(Integer ruleNumber, TreeNode topTree) {
         List<String> elems = rules.get(ruleNumber);
+        // Add the children to the topTree (first element is the left child)
+        if(elems.size() == 1){ // Only left-hand i.e. VAR -> epsilon
+            topTree.addChild(EPISLON);
+        }
+        for(int i = 1; i < elems.size(); i++){
+            topTree.addChild(elems.get(i));
+        }
+        List<TreeNode> children = topTree.getChildren();
         for (int i = elems.size() - 1; i > 0; i--) {
             stack.push(elems.get(i));
+            // Children are pushed backward
+            treeStack.push(children.get(i - 1)); // Children doesnt contains the left-hand side
         }
     }
 
@@ -382,7 +395,7 @@ public class LL1Parser {
         ImpCompilo.log.info("Produce(" + symbol.getValue() + ", "
                 + ruleNumber.toString() + ")");
         stack.pop();
-        pushRule(ruleNumber);
+        pushRule(ruleNumber, treeStack.pop());
         leftMostDerivation.add(ruleNumber);
     }
 
@@ -398,6 +411,8 @@ public class LL1Parser {
      */
     public void parse() {
         stack.push(getStartSymbol());
+        derivationTree = new TreeNode(getStartSymbol());
+        treeStack.push(derivationTree);
         scannedTokens = scanner.scan();
         nextToken();
         parsing = token != null;

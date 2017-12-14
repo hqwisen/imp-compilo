@@ -52,4 +52,8 @@ public class TreeNode {
                     .print(prefix + (isTail ? "    " : "│   "), true);
         }
     }
+
+    public String toString(){
+        return "T(" + getValue() + ")";
+    }
 }
