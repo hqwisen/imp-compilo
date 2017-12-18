@@ -56,7 +56,7 @@ task compilerJar(type: Jar) {
     destinationDir file('dist/')
     from {
         // Include llvm libraries in compiler.jar
-        configurations.llvmLibs.collect { it.isDirectory() ? it : zipTree(it)}
+        // configurations.llvmLibs.collect { it.isDirectory() ? it : zipTree(it)}
     }
 }
 
