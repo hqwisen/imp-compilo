@@ -1,3 +1,5 @@
 begin
-    a := 1
+    a:=5;
+    read(a);
+    print(b)
 end

@@ -449,3 +449,6 @@ more/src/GeneratedScanner.java
 # Ignoring compiler.jar (too bing 50MB+), must be compiled
 # using gradle generateJar and will contain java-presets deps.
 dist/compiler.jar
+
+# LLVM
+*.bc
