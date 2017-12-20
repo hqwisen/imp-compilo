@@ -34,6 +34,10 @@ public class TreeNode {
         return value;
     }
 
+    public String setValue(String value){
+        this.value = value;
+    }
+
     public List<TreeNode> getChildren() {
         return children;
     }

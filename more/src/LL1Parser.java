@@ -494,7 +494,15 @@ public class LL1Parser {
         }
     }
 
-    private void convertExprPrime(TreeNode parent, TreeNode tree){
+    private boolean isExprPrime(TreeNode node) {
+        // FIXME avoid hardcoding exprprime
+        List<String> values = new ArrayList<>();
+        values.add("<ExprArithPrime>");
+        values.add("<ExprProdPrime>");
+        return values.contains(node.getValue());
+    }
+
+    private void convertExprPrime(TreeNode parent, TreeNode tree) {
         String opValue = tree.getChildValue(0);
         tree.setValue(opValue);
         tree.removeChild(0);
@@ -502,10 +510,11 @@ public class LL1Parser {
         parent.removeChild(0); // FIXME this will cause problem in converEpxr loop
     }
 
-    private void convertExpr(TreeNode tree){
-        for(TreeNode child : tree.getChildren()){
-            if(isExprPrime(child)){
-                processExprPrime(tree, child);
+    private void convertExpr(TreeNode tree) {
+        for (TreeNode child : tree.getChildren()) {
+            if (isExprPrime(child)) {
+                ImpCompilo.log.fine("Found ExprPrime " + tree.getValue() + " → " + child.getValue());
+                convertExprPrime(tree, child);
             }
             convertExpr(child);
         }
