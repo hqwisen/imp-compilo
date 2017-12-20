@@ -296,6 +296,10 @@ public class LL1Parser {
         return this.rules.get(1).get(0);
     }
 
+    public List<Symbol> getScannedTokens(){
+        return scannedTokens;
+    }
+
     /**
      * Return the symbol value as a String.
      * This method is implemented to avoid changing the Symbol class.
@@ -419,8 +423,9 @@ public class LL1Parser {
      *
      * @throws SyntaxError           if syntax error detected in the action table
      * @throws UnknownTokenException if the scanner throws it
+     * @return Scanned tokens.
      */
-    public void parse() {
+    public List<Symbol> parse() {
         stack.push(getStartSymbol());
         derivationTree = new TreeNode(getStartSymbol());
         treeStack.push(derivationTree);
@@ -447,6 +452,7 @@ public class LL1Parser {
             ImpCompilo.log.info("Stack: " + stack);
         }
         ImpCompilo.log.info("Parsing finished.");
+        return scannedTokens;
     }
 
     public void printLeftMostDerivation() {
