@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * REMARK:
@@ -13,11 +14,14 @@ import java.util.*;
  */
 public class LL1Parser {
 
+    private static final Logger log;
+
+
     private final static int SYNTAX_ERROR = 0;
     private final static int ACCEPT = -1;
     private final static int MATCH = -2;
 
-    private final static String EPISLON = "epsilon";
+    public final static String EPSILON = "epsilon";
 
     private final static String JAR = "dist/parser.jar";
 
@@ -35,6 +39,10 @@ public class LL1Parser {
     private Symbol token;
     private List<Symbol> scannedTokens;
     private boolean parsing;
+
+    static {
+        log = ImpCompilo.log;
+    }
 
     /**
      * Set up a scanner. grammarFile and tableFile should be csv file
@@ -91,7 +99,7 @@ public class LL1Parser {
      * with the rule number as the key.
      * Since it is a Context Free Grammar, the first element of the list of
      * a rule is the left side, and the following elements is the right side.
-     * If the right side is @{@link LL1Parser#EPISLON}, then only
+     * If the right side is @{@link LL1Parser#EPSILON}, then only
      * the left side is set. This will avoid to push epsilon on the stack
      * when parsing.
      */
@@ -109,7 +117,7 @@ public class LL1Parser {
                 // First index of line is the left side
                 // the following values are the tokens of the right side
                 this.rules.put(ruleNumber, new ArrayList<String>());
-                if (line[1].equals(EPISLON)) {
+                if (line[1].equals(EPSILON)) {
                     // add only left-side, since epsilon is empty word
                     this.rules.get(ruleNumber).add(line[0]);
                 } else {
@@ -280,7 +288,7 @@ public class LL1Parser {
     }
 
     public boolean isEpsilon(String value) {
-        return value.equals(EPISLON);
+        return value.equals(EPSILON);
     }
 
     /**
@@ -296,7 +304,7 @@ public class LL1Parser {
         return this.rules.get(1).get(0);
     }
 
-    public List<Symbol> getScannedTokens(){
+    public List<Symbol> getScannedTokens() {
         return scannedTokens;
     }
 
@@ -385,7 +393,7 @@ public class LL1Parser {
         List<String> elems = rules.get(ruleNumber);
         // Add the children to the topTree (first element is the left child)
         if (elems.size() == 1) { // Only left-hand i.e. VAR -> epsilon
-            topTree.addChild(EPISLON);
+            topTree.addChild(EPSILON);
         }
         for (int i = 1; i < elems.size(); i++) {
             topTree.addChild(elems.get(i));
@@ -421,9 +429,9 @@ public class LL1Parser {
      * and start the parsing by reading the action table,
      * and run the corresponding action
      *
+     * @return Scanned tokens.
      * @throws SyntaxError           if syntax error detected in the action table
      * @throws UnknownTokenException if the scanner throws it
-     * @return Scanned tokens.
      */
     public List<Symbol> parse() {
         stack.push(getStartSymbol());
@@ -489,6 +497,12 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * Remove EpsilonNodes. an EpsilonNode is a node
+     * that has only one child, and the value of this child is epsilon.
+     * The value of the node doesn't need to be epsilon.
+     * @param tree
+     */
     private void removeEpsilonNodes(TreeNode tree) {
         for (Iterator<TreeNode> iter = tree.getChildren().listIterator(); iter.hasNext(); ) {
             TreeNode child = iter.next();
@@ -505,21 +519,30 @@ public class LL1Parser {
         List<String> values = new ArrayList<>();
         values.add("<ExprArithPrime>");
         values.add("<ExprProdPrime>");
-        return values.contains(node.getValue());
+        boolean result = values.contains(node.getValue());
+        log.info("IsExprPrime " + node.getValue() + ": " + result);
+        return result;
     }
 
     private void convertExprPrime(TreeNode parent, TreeNode tree) {
-        String opValue = tree.getChildValue(0);
+
+        String opValue = tree.getChild(0).getChildValue(0);
+        log.info("OpValue = " + opValue);
         tree.setValue(opValue);
         tree.removeChild(0);
         tree.pushLeft(parent.getChild(0));
-        parent.removeChild(0); // FIXME this will cause problem in converEpxr loop
+        // To avoid removal of an element, we will set it as EPSILON and re-run the removeEpsilonNodes
+        parent.setEmptyChild(0);
+        tree.print();
+        System.out.println();
+        parent.print();
+        // parent.removeChild(0); // FIXME this will cause problem in converEpxr loop
     }
 
     private void convertExpr(TreeNode tree) {
         for (TreeNode child : tree.getChildren()) {
             if (isExprPrime(child)) {
-                ImpCompilo.log.fine("Found ExprPrime " + tree.getValue() + " → " + child.getValue());
+                log.info("Found ExprPrime " + tree.getValue() + " → " + child.getValue());
                 convertExprPrime(tree, child);
             }
             convertExpr(child);
@@ -527,10 +550,15 @@ public class LL1Parser {
     }
 
     public void buildAST() {
+        log.info("Building AST");
         TreeNode abstractTree = derivationTree;
         removeEpsilonNodes(abstractTree);
         removeInformativeTerminals(abstractTree);
         convertExpr(abstractTree);
+        // FIXME is it necessary to run it twice ?
+        // FIXME note that it must absolutely be ran after convertExpr, that
+        // FIXME will introduce new EpsilonNodes (because can't delete nodes during recursion)
+        removeEpsilonNodes(abstractTree);
 
     }
 

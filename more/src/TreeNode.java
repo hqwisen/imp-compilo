@@ -42,6 +42,21 @@ public class TreeNode {
         children.remove(index);
     }
 
+    /**
+     * Set a new child at the index. This will reference a new object
+     * at index, with EPSILON.
+     * The child will not be epsilon, but a child pointing to epsilon.
+     * This is implemented like this to follow the concept of the grammar,
+     * that make a variable point to epsilon.
+     * @param index
+     */
+    public void setEmptyChild(int index){
+        TreeNode child = new TreeNode(LL1Parser.EPSILON);
+        child.addChild(LL1Parser.EPSILON); // necessary, to allow LL1Parser.removeEpsilonNode
+        children.set(index, child);
+    }
+
+
 //    public TreeNode pushLeft(String value) {
 //        TreeNode child = new TreeNode(value);
 //        children.add(0, child);

@@ -22,7 +22,7 @@ public class ImpCompilo {
 
     static {
         log = Logger.getLogger("ImpCompilo Log");
-        log.setLevel(Level.OFF);
+        log.setLevel(Level.FINE);
     }
 
     /**
@@ -72,6 +72,7 @@ public class ImpCompilo {
         } catch (ImpCompiloException e) {
             ImpCompilo.error(e);
         }
+        parser.buildAST();
         parser.printDerivationTree();
         //if(tokens != null){
 //
