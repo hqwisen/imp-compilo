@@ -34,8 +34,22 @@ public class TreeNode {
         return value;
     }
 
-    public String setValue(String value){
+    public void setValue(String value) {
         this.value = value;
+    }
+
+    public void removeChild(int index) {
+        children.remove(index);
+    }
+
+//    public TreeNode pushLeft(String value) {
+//        TreeNode child = new TreeNode(value);
+//        children.add(0, child);
+//        return child;
+//    }
+
+    public void pushLeft(TreeNode child) {
+        children.add(0, child);
     }
 
     public List<TreeNode> getChildren() {
@@ -57,12 +71,16 @@ public class TreeNode {
         }
     }
 
-    public String toString(){
+    public String toString() {
         return "T(" + getValue() + ")";
     }
 
-    public String getChildValue(int i){
-        return children.get(i).getValue();
+    public String getChildValue(int i) {
+        return getChild(i).getValue();
+    }
+
+    public TreeNode getChild(int i) {
+        return children.get(i);
     }
 
 }

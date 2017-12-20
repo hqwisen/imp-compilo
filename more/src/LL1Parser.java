@@ -549,7 +549,6 @@ public class LL1Parser {
             ImpCompilo.error(e);
         }
         if (args.length > 1 && args[1].equals("printTree")) {
-            parser.buildAST();
             parser.printDerivationTree();
         } else {
             parser.printLeftMostDerivation();

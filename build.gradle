@@ -5,7 +5,7 @@ apply plugin: 'idea'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = 'CodeGenerator'
+mainClassName = 'ImpCompilo'
 
 sourceSets {
     main {
@@ -59,7 +59,7 @@ task compilerJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'ImpCompilo Compiler',
                 'Implementation-Version': '',
-                'Main-Class': 'CodeGenerator'
+                'Main-Class': 'ImpCompilo'
     }
     baseName 'compiler'
     destinationDir file('dist/')
