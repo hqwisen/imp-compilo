@@ -72,8 +72,9 @@ public class ImpCompilo {
         } catch (ImpCompiloException e) {
             ImpCompilo.error(e);
         }
+        //parser.printDerivationTree();
         parser.buildAST();
-        parser.printDerivationTree();
+        //parser.printDerivationTree();
         //if(tokens != null){
 //
 //            BytePointer error = new BytePointer((Pointer)null); // Used to retrieve messages from functions
