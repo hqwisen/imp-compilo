@@ -27,6 +27,7 @@ public class CodeGenerator {
                     generateAssign(child);
                     break;
                 case "<Print>":
+                    generatePrint(child);
                     break;
                 case "<Read>":
                     break;
@@ -90,7 +91,14 @@ public class CodeGenerator {
         code += "%" + varName + " = alloca i32\n";
         code += "store i32 %" + (instructionCount - 1) + ", i32* %" + varName + "\n";
         System.out.println(code);
+    }
 
+    public void generatePrint(TreeNode print) {
+        log.info("Generating LLVM for <Print>");
+        String varName = print.getChild(0).getConcreteValue();
+        String code = "";
+        code += "call void @println(i32* %" + varName + ")";
+        System.out.println(code);
     }
 
 
