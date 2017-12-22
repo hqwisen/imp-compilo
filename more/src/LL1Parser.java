@@ -575,49 +575,64 @@ public class LL1Parser {
         }
     }
 
-    private TreeNode simplifyExprProd(TreeNode exprProd) {
+    private TreeNode simplifyExprProdPrime(TreeNode exprProdPrime,
+                                           TreeNode leftChild) {
         TreeNode newNode;
-        if (exprProd.numberOfChildren() == 2) {
-            TreeNode exprProdPrime = exprProd.getChild(1);
+        if (exprProdPrime.numberOfChildren() == 2
+                || exprProdPrime.numberOfChildren() == 3) {
             newNode = new TreeNode("");
             newNode.setValue(exprProdPrime.getChild(0).getChild(0).getValue());
-            exprProdPrime.removeChild(0); // remove operator
-            newNode.addChild(simplifyAtom(exprProd.getChild(0)));
-            newNode.addChild(simplifyExprProd(exprProdPrime));
+            // Atom of Upper (like Prod) <op> Atom of ProdPrime
+            newNode.addChild(leftChild);
+            newNode.addChild(simplifyAtom(exprProdPrime.getChild(1)));
         } else {
-            newNode = simplifyAtom(exprProd.getChild(0));
+            throw new ImpCompiloException("ExprProdPrime with" +
+                    "less that 2 children");
         }
+        if (exprProdPrime.numberOfChildren() == 3) { // recursive ProdPrime
+            return simplifyExprProdPrime(exprProdPrime.getChild(2), newNode);
+        }
+        newNode.print();
         return newNode;
-
     }
 
-    private TreeNode simplifyExprArith(TreeNode exprArithNode) {
-        return simplifyExprArith(exprArithNode, false);
+    private TreeNode simplifyExprProd(TreeNode exprProd) {
+        TreeNode atom = simplifyAtom(exprProd.getChild(0));
+        if (exprProd.numberOfChildren() == 2) { // has ExprProdPrime
+            TreeNode exprProdPrime = exprProd.getChild(1);
+            return simplifyExprProdPrime(exprProdPrime, atom);
+        } else {
+            return atom;
+        }
     }
 
-    private TreeNode simplifyExprArith(TreeNode exprArithNode, boolean prime) {
+    private TreeNode simplifyExprArith(TreeNode exprArith) {
+        return simplifyExprArith(exprArith, false);
+    }
+
+    private TreeNode simplifyExprArith(TreeNode exprArith, boolean prime) {
         // First.first child is ExprProd.Atom and always exist
-        TreeNode newExpr = new TreeNode(exprArithNode.getValue());
+        TreeNode newExpr = new TreeNode(exprArith.getValue());
         TreeNode subExpr = newExpr;
-        TreeNode exprProd = exprArithNode.getChild(0);
-        if (exprArithNode.numberOfChildren() == 2) { // has ExprArithPrime
-            TreeNode exprArithPrime = exprArithNode.getChild(1);
-            if(prime){
+        TreeNode exprProd = exprArith.getChild(0);
+        if (exprArith.numberOfChildren() == 2) { // has ExprArithPrime
+            TreeNode exprArithPrime = exprArith.getChild(1);
+            if (prime) {
                 newExpr = new TreeNode("");
                 newExpr.setValue(exprArithPrime.getChild(0).
                         getChild(0).getValue());
                 subExpr = newExpr;
-            }else {
+            } else {
                 newExpr.addChildAsValue(exprArithPrime.getChild(0).getChild(0));
                 subExpr = newExpr.getChild(0);
             }
             exprArithPrime.removeChild(0); // remove operator
             subExpr.addChild(simplifyExprProd(exprProd));
             subExpr.addChild(simplifyExprArith(exprArithPrime, true));
-        } else if (exprArithNode.numberOfChildren() == 1) { // only ExprProd
-            if(prime){
+        } else if (exprArith.numberOfChildren() == 1) { // only ExprProd
+            if (prime) {
                 newExpr = simplifyExprProd(exprProd);
-            }else{
+            } else {
                 subExpr.addChild(simplifyExprProd(exprProd));
             }
         }
