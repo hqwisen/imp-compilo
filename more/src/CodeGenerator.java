@@ -48,7 +48,7 @@ public class CodeGenerator {
                 left = instructionCount - 1;
                 instruction += generateExprArith(exprArith.getChild(1));
                 right = instructionCount - 1;
-                instruction += "%" + instructionCount + " mul i32 %" + left
+                instruction += "%" + instructionCount + " = mul i32 %" + left
                         + ", %" + right;
                 break;
             case "/":
@@ -56,7 +56,7 @@ public class CodeGenerator {
                 left = instructionCount - 1;
                 instruction += generateExprArith(exprArith.getChild(1));
                 right = instructionCount - 1;
-                instruction += "%" + instructionCount + " sdiv i32 %" + left
+                instruction += "%" + instructionCount + " = sdiv i32 %" + left
                         + ", %" + right;
                 break;
             case "-":
@@ -64,7 +64,7 @@ public class CodeGenerator {
                 left = instructionCount - 1;
                 instruction += generateExprArith(exprArith.getChild(1));
                 right = instructionCount - 1;
-                instruction += "%" + instructionCount + " sub i32 %" + left
+                instruction += "%" + instructionCount + " = sub i32 %" + left
                         + ", %" + right;
                 break;
             case "+":
@@ -72,11 +72,11 @@ public class CodeGenerator {
                 left = instructionCount - 1;
                 instruction += generateExprArith(exprArith.getChild(1));
                 right = instructionCount - 1;
-                instruction += "%" + instructionCount + " add i32 %" + left
+                instruction += "%" + instructionCount + " = add i32 %" + left
                         + ", %" + right;
                 break;
             default:
-                instruction += "%" + instructionCount + " add i32 0, " + value;
+                instruction += "%" + instructionCount + " = add i32 0, " + value;
         }
         instructionCount++;
         return instruction + "\n";
@@ -88,7 +88,7 @@ public class CodeGenerator {
         String code = "";
         code += generateExprArith(assign.getChild(1).getChild(0));
         code += "%" + varName + " = alloca i32\n";
-        code += "store i32 %" + instructionCount + "i32* %" + varName + "\n";
+        code += "store i32 %" + (instructionCount - 1) + ", i32* %" + varName + "\n";
         System.out.println(code);
 
     }
