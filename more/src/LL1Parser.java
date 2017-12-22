@@ -35,7 +35,7 @@ public class LL1Parser {
     private Stack<String> stack;
     private Stack<TreeNode> treeStack;
     private List<Integer> leftMostDerivation;
-    private TreeNode derivationTree;
+    private TreeNode derivationTree, AST;
     // Following vars are used during the parsing
     private Integer tokenIndex;
     private Symbol token;
@@ -74,6 +74,7 @@ public class LL1Parser {
         this.leftMostDerivation = new ArrayList<>();
         // this.derivationTree = new TreeNode("");
         this.derivationTree = null;
+        this.AST = null;
         buildGrammar();
         buildActionTable();
         // Parsing state variables
@@ -592,7 +593,6 @@ public class LL1Parser {
         if (exprProdPrime.numberOfChildren() == 3) { // recursive ProdPrime
             return simplifyExprProdPrime(exprProdPrime.getChild(2), newNode);
         }
-        newNode.print();
         return newNode;
     }
 
@@ -647,6 +647,9 @@ public class LL1Parser {
                 case "<Assign>":
                     child.setChild(1, simplifyExprArith(child.getChild(1)));
                     break;
+                case "<Print>":
+                case "<Read>":
+                    break;
                 default:
                     throw new ImpCompiloException("Unkown instruction" +
                             child.getValue() + " when simplifying instructions");
@@ -659,15 +662,23 @@ public class LL1Parser {
         removeInformativeTerminals(derivationTree);
         // FIXME WHAT IF derivation tree is empty ?
         derivationTree = derivationTree.getChild(0); // No need of StartSymbol
-        System.out.println("######  BEFORE #######");
-        derivationTree.print();
-        System.out.println("######### AFTER CODE ##########");
+        // System.out.println("######  BEFORE #######");
+        // derivationTree.print();
+        // System.out.println("######### AFTER CODE ##########");
         derivationTree = simplifyCode(derivationTree);
-        derivationTree.print();
-        System.out.println("######  AFTER SIMPL. INSTR #######");
+        // derivationTree.print();
+        // System.out.println("######  AFTER SIMPL. INSTR #######");
         simplifyInstructions(derivationTree);
-        derivationTree.print();
+        // derivationTree.print();
+        AST = derivationTree;
 
+    }
+
+    public TreeNode getAST(){
+        if(AST == null){
+            buildAST();
+        }
+        return AST;
     }
 
     public static void main(String[] args) {
