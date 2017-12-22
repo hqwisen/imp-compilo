@@ -520,6 +520,29 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * All child of code are instructions (assign, if etc)
+     *
+     * @param codeNode
+     */
+    private TreeNode simplifyCode(TreeNode codeNode) {
+        TreeNode newNode = new TreeNode(codeNode.getValue());
+        List<TreeNode> children = new ArrayList<>();
+        newNode.setChildren(children);
+        innerSimplifyCode(codeNode, children);
+        return newNode;
+    }
+
+    private void innerSimplifyCode(TreeNode node, List<TreeNode> children) {
+        for (TreeNode child : node.getChildren()) {
+            if ("<Instruction>".equals(child.getValue())) {
+                children.add(child.getChild(0));
+            } else {
+                innerSimplifyCode(child, children);
+            }
+        }
+    }
+
     private boolean isExprPrime(TreeNode node) {
         // FIXME avoid hardcoding exprprime
         List<String> values = new ArrayList<>();
@@ -530,122 +553,89 @@ public class LL1Parser {
         return result;
     }
 
-    /**
-     *
-     * @param parent
-     * @param tree
-     * @param parentIndex index of parent in grandparent.children list
-     * @param treeIndex index of tree in parent.children list
-     */
-//    private void convertExprPrime(TreeNode grandparent, TreeNode parent, int parentIndex, TreeNode tree, int treeIndex) {
-//        derivationTree.print();
-//        System.out.println();
-//        log.info("GP=" + grandparent.getValue());
-//        log.info("PARENT=" + parent.getValue());
-//        log.info("TREE=" + tree.getValue());
-//        String opValue = tree.getChild(0).getChildValue(0);
-//        log.info("OpValue = " + opValue);
-//        tree.setValue(opValue);
-//        tree.removeChild(0); // removing the operator child
-//        // When having recursive Prime, it is possible that the parent Prime was
-//        // already converted, therefore we don't have to pushLeft the first child,
-//        // but the parent directly
-//        TreeNode leftChild = parent.getChild(0);
-//        if (isTerminal(parent.getValue())) { // Terminal will be the operator
-//            leftChild = parent;
-//        }
-//        if (leftChild == parent.getChild(0)) {
-//            parent.setEmptyChild(0);
-//        }else{
-//            // Parent is linked as the left child of tree, so removing cycle
-//            grandparent.changeChild(parent, tree);
-//            parent.setEmptyChild(tree);
-//            TreeNode.switchChildren(parent, tree);
-////            TreeNode child = new TreeNode("TEST");
-////            child.addChild("TEST"); // necessary, to allow LL1Parser.removeEpsilonNode
-////            parent.getChildren().set(treeIndex, child);
-////            System.out.println("THIS IS A PRINT");
-////            tree.print();
-//        }
-//        tree.pushLeft(leftChild);
-//        // To avoid removal of an element, we will set it as EPSILON and re-run the removeEpsilonNodes
-//        //derivationTree.print();
-//        // parent.removeChild(0); // FIXME this will cause problem in converEpxr loop
-//        // java.util.Scanner sc = new java.util.Scanner(System.in);
-//        // String num = System.console().readLine();
+    //    private boolean isUselessVariables(TreeNode node) {
+//        // FIXME avoid hardcoding exprprime
+//        List<String> values = new ArrayList<>();
+//        values.add("<InstListSeq>");
+//        values.add("<InstList>");
+//        boolean result = values.contains(node.getValue());
+//        return result;
 //    }
 
-//    private void convertExpr(TreeNode parent, TreeNode tree, int treeIndex) {
-//        int childIndex = 0;
-//        for (TreeNode child : tree.getChildren()) {
-//            if (isExprPrime(child)) {
-//                log.info("Found ExprPrime " + tree.getValue() + " → " + child.getValue());
-//                convertExprPrime(parent, tree, treeIndex, child, childIndex);
-//            }
-//            convertExpr(tree, child, childIndex);
-//            childIndex++;
-//        }
-//    }
-
-
-
-    public TreeNode convertExprPrime(TreeNode abstractNode, TreeNode derivationPrimeNode){
-        derivationPrimeNode.print();
-        System.out.println();
-        abstractNode.print();
-        String opValue = derivationPrimeNode.getChild(0).getChildValue(0);
-        TreeNode leftChild = abstractNode.removeChild(0);
-        TreeNode opChild = abstractNode.addChild(opValue);
-        opChild.pushLeft(leftChild);
-//        for(TreeNode child : derivationPrimeNode.getChildren()){
-//            if(child != derivationPrimeNode.getChild(0)){
-//                opChild.addChild(child);
-//            }
-//        }
-        System.out.println("AFTER");
-        abstractNode.print();
-        return opChild;
-        // tree.setValue(opValue);
-        // tree.removeChild(0); // removing the operator child
+    private TreeNode simplifyAtom(TreeNode atomNode) {
+        TreeNode child = atomNode.getChild(0);
+        switch (child.getValue()) {
+            case "-":
+                // TODO implemented this
+                throw new ImpCompiloException("Not implemented: -<Atom>");
+            case "<ExprArith>":
+                return simplifyExprArith(child);
+            default:
+                return new TreeNode(child.getConcreteValue());
+        }
     }
 
-    public void convertExpr(TreeNode derivationNode, TreeNode abstractNode) {
-        for (TreeNode child : derivationNode.getChildren()) {
-            TreeNode abstractChild;
-            if (isExprPrime(child)) {
-                log.info("Found ExprPrime " + derivationNode.getValue() + " → " + child.getValue());
-                // convertExprPrime(parent, tree, treeIndex, child, childIndex);
-                abstractChild = convertExprPrime(abstractNode, child);
-            }else{
-                if(!"<ProdOp>".equals(child.getValue())) {
-                    abstractChild = abstractNode.addChild(child.getValue(), child.getConcreteValue());
-                }else{
-                    abstractChild = abstractNode;
-                }
+    private TreeNode simplifyExprProd(TreeNode exprProd) {
+        TreeNode newNode = new TreeNode(exprProd.getValue());
+        if (exprProd.numberOfChildren() == 2) {
+            TreeNode exprProdPrime = exprProd.getChild(1);
+            newNode.addChildAsValue(exprProdPrime.getChild(0).getChild(0));
+            exprProdPrime.removeChild(0); // remove operator
+            newNode.addChild(simplifyAtom(exprProd.getChild(0)));
+            newNode.addChild(simplifyExprProd(exprProdPrime));
+        } else {
+            newNode = simplifyAtom(exprProd.getChild(0));
+        }
+        return newNode;
+
+    }
+
+    private TreeNode simplifyExprArith(TreeNode exprArithNode) {
+        // First.first child is ExprProd.Atom and always exist
+        TreeNode newExpr = new TreeNode(exprArithNode.getValue());
+        TreeNode subExpr = newExpr;
+        TreeNode exprProd = exprArithNode.getChild(0);
+        if (exprArithNode.numberOfChildren() == 2) { // has ExprArithPrime
+            TreeNode exprArithPrime = exprArithNode.getChild(1);
+            newExpr.addChildAsValue(exprArithPrime.getChild(0).getChild(0));
+            subExpr = newExpr.getChild(0);
+            exprArithPrime.removeChild(0); // remove operator
+            subExpr.addChild(simplifyExprProd(exprProd));
+            subExpr.addChild(simplifyExprArith(exprArithPrime));
+        } else if (exprArithNode.numberOfChildren() == 1) { // only ExprProd
+            subExpr.addChild(simplifyExprProd(exprProd));
+        }
+        return newExpr;
+    }
+
+    public void simplifyInstructions(TreeNode codeNode) {
+        TreeNode newChild;
+        List<TreeNode> newChildren = new ArrayList<>();
+        for (TreeNode child : codeNode.getChildren()) {
+            switch (child.getValue()) {
+                case "<Assign>":
+                    child.setChild(1, simplifyExprArith(child.getChild(1)));
+                    break;
+                default:
+                    throw new ImpCompiloException("Unkown instruction" +
+                            child.getValue() + " when simplifying instructions");
             }
-            convertExpr(child, abstractChild);
         }
     }
 
     public void buildAST() {
-        log.info("Building AST");
-
-        TreeNode abstractTree = new TreeNode(getStartSymbol());
         removeEpsilonNodes(derivationTree);
         removeInformativeTerminals(derivationTree);
-        System.out.println("DevTree");
+        // FIXME WHAT IF derivation tree is empty ?
+        derivationTree = derivationTree.getChild(0); // No need of StartSymbol
+        System.out.println("######  BEFORE #######");
         derivationTree.print();
-        System.out.println();
-
-        convertExpr(derivationTree, abstractTree);
+        System.out.println("######### AFTER CODE ##########");
+        derivationTree = simplifyCode(derivationTree);
         derivationTree.print();
-        System.out.println("AST");
-        abstractTree.print();
-        // FIXME (this fixme is based on the other method, when we pudate the derivationt ree directly
-        // is it necessary to run it twice ?
-        // FIXME note that it must absolutely be ran after convertExpr, that
-        // FIXME will introduce new EpsilonNodes (because can't delete nodes during recursion)
-        //removeEpsilonNodes(abstractTree);
+        System.out.println("######  AFTER SIMPL. INSTR #######");
+        simplifyInstructions(derivationTree);
+        derivationTree.print();
 
     }
 

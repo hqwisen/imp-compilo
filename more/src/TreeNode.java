@@ -100,11 +100,11 @@ public class TreeNode {
         children.set(index, child);
     }
 
-//    public TreeNode pushLeft(String value) {
-//        TreeNode child = new TreeNode(value);
-//        children.add(0, child);
-//        return child;
-//    }
+    public TreeNode pushLeft(String value) {
+        TreeNode child = new TreeNode(value);
+        children.add(0, child);
+        return child;
+    }
 
     public void pushLeft(TreeNode child) {
         children.add(0, child);
@@ -157,5 +157,13 @@ public class TreeNode {
         firstNode.setValue(secondValue);
         secondNode.setChildren(firstChildren);
         secondNode.setValue(firstValue);
+    }
+
+    public int numberOfChildren() {
+        return children.size();
+    }
+
+    public void addChildAsValue(TreeNode child) {
+        addChild(child.getValue());
     }
 }
