@@ -87,7 +87,7 @@ public class CodeGenerator {
         log.info("Generating LLVM for <Assign>");
         String varName = assign.getChild(0).getConcreteValue();
         String code = "";
-        code += generateExprArith(assign.getChild(1).getChild(0));
+        code += generateExprArith(assign.getChild(1));
         code += "%" + varName + " = alloca i32\n";
         code += "store i32 %" + (instructionCount - 1) + ", i32* %" + varName + "\n";
         System.out.println(code);
