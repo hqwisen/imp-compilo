@@ -16,20 +16,17 @@ public class CodeGenerator {
         this.instructionCount = 1;
     }
 
-    private void init(){
-
+    private void generate(){
+        generateCode(ast);
     }
-    public void generate() {
-        init();
-        for(TreeNode child : ast.getChildren()){
+    public void generateCode(TreeNode code) {
+        for(TreeNode child : code.getChildren()){
             switch (child.getValue()){
                 case "<Assign>":
                     generateAssign(child);
                     break;
                 case "<Print>":
                     generatePrint(child);
-                    break;
-                case "<Read>":
                     break;
                 default:
                     throw new ImpCompiloException("Generation not impl. "
