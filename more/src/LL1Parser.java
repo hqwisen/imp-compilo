@@ -500,6 +500,9 @@ public class LL1Parser {
             } else if (!isEpsilon(value) && isInformativeTerminal(value)) {
                 iter.remove();
             }
+            if (value.equals("<IfSeq>") && child.numberOfChildren() == 0) {
+                iter.remove();
+            }
         }
     }
 
@@ -531,6 +534,7 @@ public class LL1Parser {
         List<TreeNode> children = new ArrayList<>();
         newNode.setChildren(children);
         innerSimplifyCode(codeNode, children);
+        simplifyInstructions(newNode);
         return newNode;
     }
 
@@ -650,11 +654,25 @@ public class LL1Parser {
                 case "<Print>":
                 case "<Read>":
                     break;
+                case "<If>":
+                    if (child.numberOfChildren() == 1) { // only cond
+                        codeNode.setEmptyChild(child);
+                    } else {
+                        TreeNode cond = child.getChild(0);
+                        TreeNode iftrue = child.getChild(1);
+                        child.setChild(1, simplifyCode(iftrue));
+                        if (child.numberOfChildren() > 2) {
+                            TreeNode iffalse = child.getChild(2).getChild(0);
+                            child.setChild(2, simplifyCode(iffalse));
+                        }
+                    }
+                    break;
                 default:
-                    throw new ImpCompiloException("Unkown instruction" +
+                    throw new ImpCompiloException("Unkown instruction " +
                             child.getValue() + " when simplifying instructions");
             }
         }
+        removeEpsilonNodes(codeNode);
     }
 
     public void buildAST() {
@@ -662,20 +680,17 @@ public class LL1Parser {
         removeInformativeTerminals(derivationTree);
         // FIXME WHAT IF derivation tree is empty ?
         derivationTree = derivationTree.getChild(0); // No need of StartSymbol
-        // System.out.println("######  BEFORE #######");
-        // derivationTree.print();
-        // System.out.println("######### AFTER CODE ##########");
+        System.out.println("######  BEFORE #######");
+        derivationTree.print();
+        System.out.println("######### AFTER CODE/INSTR. ##########");
         derivationTree = simplifyCode(derivationTree);
-        // derivationTree.print();
-        // System.out.println("######  AFTER SIMPL. INSTR #######");
-        simplifyInstructions(derivationTree);
-        // derivationTree.print();
+        derivationTree.print();
         AST = derivationTree;
 
     }
 
-    public TreeNode getAST(){
-        if(AST == null){
+    public TreeNode getAST() {
+        if (AST == null) {
             buildAST();
         }
         return AST;

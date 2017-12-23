@@ -8,15 +8,23 @@ begin
     a := (1 + 11 ) * 2 + 5 / 3 / 4;
     a := 1 + 2 * 3 + 4 + 5;
     *)
-    a := 2 + 2 * (3 + 4);
+    (*a := 2 + 2 * (3 + 4);
     b := 1;
     print(a);
-    read(b)
+    read(b)*)
+    a := 1;
+    if a > 2 or a < 5 and a = 1 then
+         a := 1
+        (* a := 7;
+        print(a) *)
+    else
+       (* print(a) *)
+    endif
     (*
     a := 1 + 2 * (3 + 4)
     print(a);
     print(a);
-    if a > 2 then
+    if a > 2 or a < 5 and a = 1 then
     print(b)
     endif
     *)
