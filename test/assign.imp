@@ -13,13 +13,12 @@ begin
     print(a);
     read(b)*)
     a := 1;
-    if not A <> 2 or a < 5 and a = 1 then
-        a := 1 + 2 * (3 + 4) / 5;
-         a := 1
-        (* a := 7;
-        print(a) *)
+    if A = 2 and A > 3 or A <= 8 then
+        a := 7
+        (* a := 1 + 2 * (3 + 4) / 5; *)
+        (* print(a) *)
     else
-       (* print(a) *)
+       (* print(a)*)
     endif
     (*
     print(a);

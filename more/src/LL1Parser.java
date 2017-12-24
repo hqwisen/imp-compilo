@@ -718,15 +718,27 @@ public class LL1Parser {
                 case "<If>":
                     if (child.numberOfChildren() == 1) { // only cond
                         codeNode.setEmptyChild(child);
-                    } else {
+                        child.addChild(new TreeNode("<Code>"));
+                        child.addChild(new TreeNode("<Code>"));
+
+                    } else if( child.numberOfChildren() == 2){ // cond + code
                         TreeNode cond = child.getChild(0);
-                        child.setChild(0, simplifyExprArith(cond, false, true));
-                        TreeNode iftrue = child.getChild(1);
-                        child.setChild(1, simplifyCode(iftrue));
-                        if (child.numberOfChildren() > 2) {
-                            TreeNode iffalse = child.getChild(2).getChild(0);
-                            child.setChild(2, simplifyCode(iffalse));
+                        child.setChild(0, simplifyExprArith(cond, true, true));
+                        TreeNode firstCode = child.getChild(1);
+                        if("<IfSeq>".equals(firstCode.getValue())){
+                            child.setChild(1, new TreeNode("<Code>"));
+                            child.addChild(
+                                    simplifyCode(firstCode.getChild(0)));
+                        }else{
+                            child.setChild(1, simplifyCode(firstCode));
+                            child.addChild(new TreeNode("<Code>"));
                         }
+                    }else{
+                        TreeNode cond = child.getChild(0);
+                        child.setChild(0, simplifyExprArith(cond, true, true));
+                        child.setChild(1, simplifyCode(child.getChild(1)));
+                        child.setChild(2,
+                                simplifyCode(child.getChild(2).getChild(0)));
                     }
                     break;
                 default:
