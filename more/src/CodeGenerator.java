@@ -1,10 +1,18 @@
 import sun.reflect.generics.tree.Tree;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class CodeGenerator {
     private static final Logger log;
-    static{
+
+    static {
         log = ImpCompilo.log;
     }
 
@@ -17,16 +25,38 @@ public class CodeGenerator {
         this.ifCount = 0;
     }
 
-    public void generate(){
-        String code = generateCode(ast);
+    public String buildInit() {
+        String result = "";
+        try {
+            List<String> lines = Files.readAllLines(Paths.get("more/src/init.ll"),
+                    Charset.defaultCharset());
+            for (String line : lines) {
+                result += line + "\n";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public void generate() {
+        String code = "";
+        code += buildInit();
+        String generatedLL = "define void @main(){\n";
+        for(String line: generateCode(ast).split("\n")){
+            generatedLL += "\t" + line + "\n";
+        }
+        generatedLL += "}";
+        code += "\n; Generated LL below\n" + generatedLL;
         log.info("Generated AST instructions:");
-        log.info(code);
+        log.info(generatedLL);
         System.out.println(code);
     }
+
     public String generateCode(TreeNode code) {
         String instructions = "";
-        for(TreeNode child : code.getChildren()){
-            switch (child.getValue()){
+        for (TreeNode child : code.getChildren()) {
+            switch (child.getValue()) {
                 case "<Assign>":
                     instructions += generateAssign(child);
                     break;
@@ -46,11 +76,11 @@ public class CodeGenerator {
     }
 
 
-    public String generateExprArith(TreeNode exprArith){
+    public String generateExprArith(TreeNode exprArith) {
         String instruction = "";
         String value = exprArith.getValue();
         int left, right;
-        switch (value){
+        switch (value) {
             case "*":
                 instruction += generateExprArith(exprArith.getChild(0));
                 left = instructionCount - 1;
@@ -90,22 +120,22 @@ public class CodeGenerator {
         return instruction + "\n";
     }
 
-    public String varOrNumber(String value){
+    public String varOrNumber(String value) {
         try {
             Integer.parseInt(value);
             return value;
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return "%" + value;
         }
 
 
     }
 
-    public String generateSimpleCond(TreeNode simpleCond){
+    public String generateSimpleCond(TreeNode simpleCond) {
         String instruction = "";
         String value = simpleCond.getChild(1).getValue();
         String left, right;
-        switch (value){
+        switch (value) {
             case "=":
                 left = varOrNumber(simpleCond.getChildValue(0));
                 right = varOrNumber(simpleCond.getChildValue(2));
@@ -150,11 +180,11 @@ public class CodeGenerator {
     }
 
 
-    public String generateCond(TreeNode cond){
+    public String generateCond(TreeNode cond) {
         String instruction = "";
         String value = cond.getValue();
         int left, right;
-        switch (value){
+        switch (value) {
             case "and":
                 instruction += generateCond(cond.getChild(0));
                 left = instructionCount - 1;
@@ -203,7 +233,7 @@ public class CodeGenerator {
         return instructions;
     }
 
-    public String generateIf(TreeNode ifNode){
+    public String generateIf(TreeNode ifNode) {
         log.info("Generating LLVM for <If>");
         ifCount++;
         String instructions = "; " + ifNode + "ifCount=" + ifCount + "\n";
