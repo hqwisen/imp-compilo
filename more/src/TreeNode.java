@@ -92,7 +92,6 @@ public class TreeNode {
 
     public void changeChild(TreeNode oldChild, TreeNode newChild) {
         int index = getChildren().indexOf(oldChild);
-        System.out.println("Index of parent" + index);
         setChild(index, newChild);
     }
 
@@ -120,7 +119,7 @@ public class TreeNode {
 
     private void print(String prefix, boolean isTail) {
         String value = this.concreteValue == null ? this.value : this.concreteValue;
-        System.out.println(prefix + (isTail ? "└── " : "├── ") + value);
+        System.err.println(prefix + (isTail ? "└── " : "├── ") + value);
         for (int i = 0; i < children.size() - 1; i++) {
             children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
         }

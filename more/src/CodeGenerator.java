@@ -20,7 +20,8 @@ public class CodeGenerator {
     public void generate(){
         String code = generateCode(ast);
         log.info("Generated AST instructions:");
-        System.err.println(code);
+        log.info(code);
+        System.out.println(code);
     }
     public String generateCode(TreeNode code) {
         String instructions = "";

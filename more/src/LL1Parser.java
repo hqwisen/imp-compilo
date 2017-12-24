@@ -754,9 +754,9 @@ public class LL1Parser {
         removeInformativeTerminals(derivationTree);
         // FIXME WHAT IF derivation tree is empty ?
         derivationTree = derivationTree.getChild(0); // No need of StartSymbol
-        System.out.println("######  BEFORE #######");
+        System.err.println("######  BEFORE #######");
         derivationTree.print();
-        System.out.println("######### AFTER CODE/INSTR. ##########");
+        System.err.println("######### AFTER CODE/INSTR. ##########");
         derivationTree = simplifyCode(derivationTree);
         derivationTree.print();
         AST = derivationTree;
