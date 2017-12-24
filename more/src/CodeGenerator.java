@@ -15,13 +15,14 @@ public class CodeGenerator {
     }
 
     private TreeNode ast;
-    private int instructionCount, ifCount;
+    private int instructionCount, ifCount, loopCount;
     private Map<String, Boolean> allocaVars;
 
     public CodeGenerator(TreeNode ast) {
         this.ast = ast;
         this.instructionCount = 1;
         this.ifCount = 0;
+        this.loopCount = 0;
         this.allocaVars = new HashMap<>();
     }
 
@@ -53,7 +54,11 @@ public class CodeGenerator {
         System.out.println(code);
     }
 
-    public String generateCode(TreeNode code) {
+    public String generateCode(TreeNode code){
+        return generateCode(code, true);
+    }
+
+    public String generateCode(TreeNode code, boolean ret) {
         String instructions = "";
         for (TreeNode child : code.getChildren()) {
             switch (child.getValue()) {
@@ -66,12 +71,18 @@ public class CodeGenerator {
                 case "<If>":
                     instructions += generateIf(child);
                     break;
+                case "<While>":
+                    instructions += generateWhile(child);
+                    break;
                 default:
                     throw new ImpCompiloException("Generation not impl. "
                             + child.getValue());
             }
         }
-        instructions += "\nret void" + "\n";
+        if(ret){
+            instructions += "\nret void";
+        }
+        instructions += "\n";
         return instructions;
     }
 
@@ -114,6 +125,15 @@ public class CodeGenerator {
                         + ", %" + right;
                 break;
             default:
+                try {
+                    Integer.parseInt(value); // if value is digit do nothing
+                } catch (NumberFormatException e) {
+                    // if value is var, load it
+                    instruction += "%" + instructionCount +
+                            " = load i32, i32* %" + value + "\n";
+                    value = "%" + instructionCount;
+                    instructionCount++;
+                }
                 instruction += "%" + instructionCount + " = add i32 0, " + value;
         }
         instructionCount++;
@@ -230,7 +250,7 @@ public class CodeGenerator {
         log.info("Generating LLVM for <Print>");
         String varName = print.getChild(0).getConcreteValue();
         String instructions = "";
-        instructions += "call void @println(i32* %" + varName + ")";
+        instructions += "call void @println(i32* %" + varName + ")" + "\n";
         return instructions;
     }
 
@@ -248,6 +268,26 @@ public class CodeGenerator {
         instructions += generateCode(ifNode.getChild(1));
         instructions += ifFalse + ":\n";
         instructions += generateCode(ifNode.getChild(2));
+        return instructions;
+    }
+
+    public String generateWhile(TreeNode whileNode) {
+        log.info("Generating LLVM for <While>");
+        loopCount++;
+        String instructions = "; " + whileNode + "loopCount="
+                + loopCount + "\n";
+        int localLoopCount = loopCount;
+        String ifTrue = "beginLoop" + localLoopCount;
+        String ifFalse = "endLoop" + localLoopCount;
+        instructions += generateCond(whileNode.getChild(0));
+        instructions += "br i1 %" + (instructionCount - 1) + "," +
+                " label %" + ifTrue + ", label %" + ifFalse + "\n";
+        instructions += ifTrue + ":\n";
+        instructions += generateCode(whileNode.getChild(1), false);
+        instructions += generateCond(whileNode.getChild(0));
+        instructions += "br i1 %" + (instructionCount - 1) + "," +
+                " label %" + ifTrue + ", label %" + ifFalse + "\n";
+        instructions += ifFalse + ":\n";
         return instructions;
     }
 }

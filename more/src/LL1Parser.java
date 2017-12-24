@@ -580,8 +580,8 @@ public class LL1Parser {
         }
     }
 
-    private String negComp(String comp){
-        switch (comp){
+    private String negComp(String comp) {
+        switch (comp) {
             case "<>":
                 return "=";
             case "=":
@@ -598,18 +598,19 @@ public class LL1Parser {
                 throw new ImpCompiloException("Unknown comparator " + comp);
         }
     }
-    private TreeNode simplifyAtomOfCond(TreeNode atomNode){
+
+    private TreeNode simplifyAtomOfCond(TreeNode atomNode) {
         TreeNode newNode = new TreeNode(atomNode.getValue());
         boolean not = false;
-        if (atomNode.numberOfChildren() == 2){ // negation
-           atomNode.removeChild(0);
-           not = true;
+        if (atomNode.numberOfChildren() == 2) { // negation
+            atomNode.removeChild(0);
+            not = true;
         }
         TreeNode simpleCond = atomNode.getChild(0);
         newNode.addChild(simplifyExprArith(simpleCond.getChild(0),
                 true, false));
         String comp = simpleCond.getChild(1).getChildValue(0);
-        comp = not ?  negComp(comp): comp;
+        comp = not ? negComp(comp) : comp;
         newNode.addChild(comp);
         newNode.addChild(simplifyExprArith(simpleCond.getChild(2),
                 true, false));
@@ -619,7 +620,7 @@ public class LL1Parser {
     private TreeNode simplifyAtom(TreeNode atomNode, boolean isCond) {
         if (isCond) {
             return simplifyAtomOfCond(atomNode);
-        }else{
+        } else {
             return simplifyAtomOfExpr(atomNode);
 
         }
@@ -631,9 +632,9 @@ public class LL1Parser {
         if (exprProdPrime.numberOfChildren() == 2
                 || exprProdPrime.numberOfChildren() == 3) {
             newNode = new TreeNode("");
-            if(isCond){
+            if (isCond) {
                 newNode.setValue(exprProdPrime.getChild(0).getValue());
-            }else{
+            } else {
                 newNode.setValue(exprProdPrime.getChild(0).getChild(0).getValue());
             }
             // Atom of Upper (like Prod) <op> Atom of ProdPrime
@@ -721,24 +722,34 @@ public class LL1Parser {
                         child.addChild(new TreeNode("<Code>"));
                         child.addChild(new TreeNode("<Code>"));
 
-                    } else if( child.numberOfChildren() == 2){ // cond + code
+                    } else if (child.numberOfChildren() == 2) { // cond + code
                         TreeNode cond = child.getChild(0);
                         child.setChild(0, simplifyExprArith(cond, true, true));
                         TreeNode firstCode = child.getChild(1);
-                        if("<IfSeq>".equals(firstCode.getValue())){
+                        if ("<IfSeq>".equals(firstCode.getValue())) {
                             child.setChild(1, new TreeNode("<Code>"));
                             child.addChild(
                                     simplifyCode(firstCode.getChild(0)));
-                        }else{
+                        } else {
                             child.setChild(1, simplifyCode(firstCode));
                             child.addChild(new TreeNode("<Code>"));
                         }
-                    }else{
+                    } else {
                         TreeNode cond = child.getChild(0);
                         child.setChild(0, simplifyExprArith(cond, true, true));
                         child.setChild(1, simplifyCode(child.getChild(1)));
                         child.setChild(2,
                                 simplifyCode(child.getChild(2).getChild(0)));
+                    }
+                    break;
+                case "<While>":
+                    if (child.numberOfChildren() == 1) { // only cond
+                        codeNode.setEmptyChild(child);
+                    } else {
+                        TreeNode cond = child.getChild(0);
+                        TreeNode code = child.getChild(1);
+                        child.setChild(0, simplifyExprArith(cond, true, true));
+                        child.setChild(1, simplifyCode(code));
                     }
                     break;
                 default:

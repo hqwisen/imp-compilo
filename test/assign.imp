@@ -12,17 +12,17 @@ begin
     b := 1;
     print(a);
     read(b)*)
-    a := 1 + 5;
-    b := 7;
-    c := 1;
-    if a = 6 and b = 8 or c = 2 then
-        b := 7;
-        print(b)
-    else
-        c := 187;
-            print(c)
+    a := 2;
 
-    endif
+    while a < 50 do
+        print(a);
+        a := a + 1
+
+    done;
+
+    c := 20;
+    a := a + c;
+    print(a)
     (*
     print(a);
     print(a);
