@@ -12,13 +12,16 @@ begin
     b := 1;
     print(a);
     read(b)*)
-    a := 1;
-    if A = 2 and A > 3 or A <= 8 then
-        a := 7
-        (* a := 1 + 2 * (3 + 4) / 5; *)
-        (* print(a) *)
+    a := 1 + 5;
+    b := 7;
+    c := 1;
+    if a = 6 and b = 8 or c = 2 then
+        b := 7;
+        print(b)
     else
-       (* print(a)*)
+        c := 187;
+            print(c)
+
     endif
     (*
     print(a);

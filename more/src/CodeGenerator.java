@@ -1,12 +1,10 @@
-import sun.reflect.generics.tree.Tree;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class CodeGenerator {
@@ -18,11 +16,13 @@ public class CodeGenerator {
 
     private TreeNode ast;
     private int instructionCount, ifCount;
+    private Map<String, Boolean> allocaVars;
 
     public CodeGenerator(TreeNode ast) {
         this.ast = ast;
         this.instructionCount = 1;
         this.ifCount = 0;
+        this.allocaVars = new HashMap<>();
     }
 
     public String buildInit() {
@@ -43,7 +43,7 @@ public class CodeGenerator {
         String code = "";
         code += buildInit();
         String generatedLL = "define void @main(){\n";
-        for(String line: generateCode(ast).split("\n")){
+        for (String line : generateCode(ast).split("\n")) {
             generatedLL += "\t" + line + "\n";
         }
         generatedLL += "}";
@@ -71,7 +71,7 @@ public class CodeGenerator {
                             + child.getValue());
             }
         }
-        // instructions += "ret void" + "\n";
+        instructions += "\nret void" + "\n";
         return instructions;
     }
 
@@ -120,55 +120,53 @@ public class CodeGenerator {
         return instruction + "\n";
     }
 
-    public String varOrNumber(String value) {
-        try {
-            Integer.parseInt(value);
-            return value;
-        } catch (NumberFormatException e) {
-            return "%" + value;
-        }
-
-
-    }
 
     public String generateSimpleCond(TreeNode simpleCond) {
         String instruction = "";
         String value = simpleCond.getChild(1).getValue();
         String left, right;
+        try {
+            Integer.parseInt(simpleCond.getChildValue(0));
+            left = simpleCond.getChildValue(0);
+        } catch (NumberFormatException e) {
+            instruction += "%" + instructionCount +
+                    " = load i32, i32* %" + simpleCond.getChildValue(0) + "\n";
+            left = "%" + instructionCount;
+            instructionCount++;
+        }
+        try {
+            Integer.parseInt(simpleCond.getChildValue(2));
+            right = simpleCond.getChildValue(2);
+        } catch (NumberFormatException e) {
+            instruction += "%" + instructionCount +
+                    " = load i32, i32* %" + simpleCond.getChildValue(2) + "\n";
+            right = "%" + instructionCount;
+            instructionCount++;
+        }
+
         switch (value) {
             case "=":
-                left = varOrNumber(simpleCond.getChildValue(0));
-                right = varOrNumber(simpleCond.getChildValue(2));
                 instruction += "%" + instructionCount + " = icmp  eq i32 "
                         + left + ", " + right;
                 break;
             case "<>":
-                left = varOrNumber(simpleCond.getChildValue(0));
-                right = varOrNumber(simpleCond.getChildValue(2));
+
                 instruction += "%" + instructionCount + " = icmp  neq i32 "
                         + left + ", " + right;
                 break;
             case ">":
-                left = varOrNumber(simpleCond.getChildValue(0));
-                right = varOrNumber(simpleCond.getChildValue(2));
                 instruction += "%" + instructionCount + " = icmp  sgt i32 "
                         + left + ", " + right;
                 break;
             case ">=":
-                left = varOrNumber(simpleCond.getChildValue(0));
-                right = varOrNumber(simpleCond.getChildValue(2));
                 instruction += "%" + instructionCount + " = icmp  sge i32 "
                         + left + ", " + right;
                 break;
             case "<":
-                left = varOrNumber(simpleCond.getChildValue(0));
-                right = varOrNumber(simpleCond.getChildValue(2));
                 instruction += "%" + instructionCount + " = icmp  slt i32 "
                         + left + ", " + right;
                 break;
             case "<=":
-                left = varOrNumber(simpleCond.getChildValue(0));
-                right = varOrNumber(simpleCond.getChildValue(2));
                 instruction += "%" + instructionCount + " = icmp  sle i32 "
                         + left + ", " + right;
                 break;
@@ -220,7 +218,10 @@ public class CodeGenerator {
         String varName = assign.getChild(0).getConcreteValue();
         String instructions = "; " + assign + "\n";
         instructions += generateExprArith(assign.getChild(1));
-        instructions += "%" + varName + " = alloca i32\n";
+        if(!allocaVars.containsKey(varName)){
+            instructions += "%" + varName + " = alloca i32\n";
+            allocaVars.put(varName, true);
+        }
         instructions += "store i32 %" + (instructionCount - 1) + ", i32* %" + varName + "\n";
         return instructions;
     }
@@ -242,7 +243,7 @@ public class CodeGenerator {
         String ifFalse = "iffalse" + localIfCount;
         instructions += generateCond(ifNode.getChild(0));
         instructions += "br i1 %" + (instructionCount - 1) + "," +
-                " label " + ifTrue + ", label " + ifFalse + "\n";
+                " label %" + ifTrue + ", label %" + ifFalse + "\n";
         instructions += ifTrue + ":\n";
         instructions += generateCode(ifNode.getChild(1));
         instructions += ifFalse + ":\n";
