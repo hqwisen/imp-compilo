@@ -54,7 +54,7 @@ public class CodeGenerator {
         System.out.println(code);
     }
 
-    public String generateCode(TreeNode code){
+    public String generateCode(TreeNode code) {
         return generateCode(code, true);
     }
 
@@ -74,12 +74,15 @@ public class CodeGenerator {
                 case "<While>":
                     instructions += generateWhile(child);
                     break;
+                case "<For>":
+                    instructions += generateFor(child);
+                    break;
                 default:
                     throw new ImpCompiloException("Generation not impl. "
                             + child.getValue());
             }
         }
-        if(ret){
+        if (ret) {
             instructions += "\nret void";
         }
         instructions += "\n";
@@ -233,17 +236,26 @@ public class CodeGenerator {
         return instruction + "\n";
     }
 
-    public String generateAssign(TreeNode assign) {
-        log.info("Generating LLVM for <Assign>");
-        String varName = assign.getChild(0).getConcreteValue();
-        String instructions = "; " + assign + "\n";
-        instructions += generateExprArith(assign.getChild(1));
-        if(!allocaVars.containsKey(varName)){
+    public String generateAssign(String varName, TreeNode exprArith) {
+        String instructions = "";
+        instructions += generateExprArith(exprArith);
+        if (!allocaVars.containsKey(varName)) {
             instructions += "%" + varName + " = alloca i32\n";
             allocaVars.put(varName, true);
         }
         instructions += "store i32 %" + (instructionCount - 1) + ", i32* %" + varName + "\n";
         return instructions;
+    }
+
+    public String generateAssign(TreeNode assign) {
+        log.info("Generating LLVM for <Assign>");
+        String instructions = "; " + assign + "\n";
+        String varName = assign.getChild(0).getConcreteValue();
+        TreeNode exprArith = assign.getChild(1);
+        instructions += generateAssign(varName, exprArith);
+        return instructions;
+
+
     }
 
     public String generatePrint(TreeNode print) {
@@ -279,6 +291,7 @@ public class CodeGenerator {
         int localLoopCount = loopCount;
         String ifTrue = "beginLoop" + localLoopCount;
         String ifFalse = "endLoop" + localLoopCount;
+
         instructions += generateCond(whileNode.getChild(0));
         instructions += "br i1 %" + (instructionCount - 1) + "," +
                 " label %" + ifTrue + ", label %" + ifFalse + "\n";
@@ -290,4 +303,68 @@ public class CodeGenerator {
         instructions += ifFalse + ":\n";
         return instructions;
     }
+
+    private String generateFor(TreeNode forNode) {
+        log.info("Generating LLVM for <For>");
+        loopCount++;
+        String instructions = "; " + forNode + "loopCount="
+                + loopCount + "\n";
+        int localLoopCount = loopCount;
+        String ifTrue = "beginLoop" + localLoopCount;
+        String ifFalse = "endLoop" + localLoopCount;
+        // Intialize var
+        String varName = forNode.getChild(0).getConcreteValue();
+        TreeNode initExprArith = forNode.getChild(1);
+        TreeNode stepExprArith = forNode.getChild(2);
+        TreeNode thresholdExprArith = forNode.getChild(3);
+        TreeNode codeNode = forNode.getChild(4);
+        instructions += generateAssign(varName, initExprArith);
+
+        // Condition from < to (outside br)
+        instructions += generateExprArith(thresholdExprArith);
+        instructions += "%" + instructionCount +
+                " = load i32, i32* %" + varName + "\n";
+        instructionCount++;
+        instructions += "%" + instructionCount + " = icmp  slt i32 "
+                + "%" + (instructionCount - 1) + ", %"
+                + (instructionCount - 2) + "\n";
+        instructionCount++;
+        instructions += "br i1 %" + (instructionCount - 1) + "," +
+                " label %" + ifTrue + ", label %" + ifFalse + "\n";
+
+        instructions += ifTrue + ":\n";
+        instructions += generateCode(codeNode, false);
+
+        // varName + by
+        instructions += generateExprArith(stepExprArith);
+        instructions += "%" + instructionCount +
+                " = load i32, i32* %" + varName + "\n";
+        instructionCount++;
+        instructions += "%" + instructionCount + " = add i32 %"
+                + (instructionCount - 1)
+                + ", %" + (instructionCount - 2) + "\n";
+        instructionCount++;
+        instructions += "store i32 %" + (instructionCount - 1) +
+                ", i32* %" + varName + "\n";
+
+        // Condition from < to (inside br)
+        instructions += generateExprArith(thresholdExprArith);
+        instructions += "%" + instructionCount +
+                " = load i32, i32* %" + varName + "\n";
+        instructionCount++;
+        instructions += "%" + instructionCount + " = icmp  slt i32 "
+                + "%" + (instructionCount - 1) +
+                ", %" + (instructionCount - 2) + "\n";
+        instructionCount++;
+        instructions += "br i1 %" + (instructionCount - 1) + "," +
+                " label %" + ifTrue + ", label %" + ifFalse + "\n";
+
+        instructions += ifFalse + ":\n";
+
+
+        return instructions;
+    }
+
+
 }
+

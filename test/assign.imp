@@ -12,11 +12,11 @@ begin
     b := 1;
     print(a);
     read(b)*)
-    a := 2;
+    a := 0;
 
-    for b from a + 2 by a + 7 to a + 4 do
-        print(a);
-        print(b)
+    for b from a + 2 by a + 2 to 10 do
+        print(b);
+        a := a + 1
     done
     (*
     print(a);

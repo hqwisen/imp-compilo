@@ -6,10 +6,8 @@ runOutput(){
 }
 
 gradle compilerJar
-java -jar dist/compiler.jar $1
-# > output.ll 
+java -jar dist/compiler.jar $1 > output.ll 
 
 if [ $? -eq 0 ]; then
-	echo ""
-	# runOutput
+	runOutput
 fi
