@@ -77,7 +77,7 @@ public class ImpCompilo {
         TreeNode ast = parser.getAST();
         ast.print();
         CodeGenerator generator = new CodeGenerator(ast);
-        generator.generate();
+        // generator.generate();
 
     }
 }

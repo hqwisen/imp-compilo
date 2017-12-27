@@ -109,6 +109,10 @@ public class TreeNode {
         children.add(0, child);
     }
 
+    public void addChild(int index, TreeNode child) {
+        children.add(index, child);
+    }
+
     public List<TreeNode> getChildren() {
         return children;
     }

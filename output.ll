@@ -33,34 +33,17 @@ define void @main(){
 	%1 = add i32 0, 2
 	%a = alloca i32
 	store i32 %1, i32* %a
-	; T(<While>)loopCount=1
-	%2 = load i32, i32* %a
-	%3 = icmp  slt i32 %2, 50
-	br i1 %3, label %beginLoop1, label %endLoop1
-	beginLoop1:
-	call void @println(i32* %a)
 	; T(<Assign>)
-	%4 = load i32, i32* %a
-	%5 = add i32 0, %4
-	%6 = add i32 0, 1
-	%7 = add i32 %5, %6
-	store i32 %7, i32* %a
-	
-	%8 = load i32, i32* %a
-	%9 = icmp  slt i32 %8, 50
-	br i1 %9, label %beginLoop1, label %endLoop1
-	endLoop1:
-	; T(<Assign>)
-	%10 = add i32 0, 20
+	%2 = add i32 0, 20
 	%c = alloca i32
-	store i32 %10, i32* %c
+	store i32 %2, i32* %c
 	; T(<Assign>)
-	%11 = load i32, i32* %a
-	%12 = add i32 0, %11
-	%13 = load i32, i32* %c
-	%14 = add i32 0, %13
-	%15 = add i32 %12, %14
-	store i32 %15, i32* %a
+	%3 = load i32, i32* %a
+	%4 = add i32 0, %3
+	%5 = load i32, i32* %c
+	%6 = add i32 0, %5
+	%7 = add i32 %4, %6
+	store i32 %7, i32* %a
 	call void @println(i32* %a)
 	
 	ret void

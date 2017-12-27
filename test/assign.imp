@@ -14,15 +14,10 @@ begin
     read(b)*)
     a := 2;
 
-    while a < 50 do
+    for b from a + 2 by a + 7 to a + 4 do
         print(a);
-        a := a + 1
-
-    done;
-
-    c := 20;
-    a := a + c;
-    print(a)
+        print(b)
+    done
     (*
     print(a);
     print(a);

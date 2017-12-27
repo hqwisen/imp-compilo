@@ -752,6 +752,20 @@ public class LL1Parser {
                         child.setChild(1, simplifyCode(code));
                     }
                     break;
+                case "<For>":
+                    child.setChild(1, simplifyExprArith(child.getChild(1),
+                            true, false));
+                    if(child.numberOfChildren() == 4){ // no by
+                        child.addChild(2, new TreeNode("1")); // by 1
+                    }else{
+                        TreeNode byExpr = child.getChild(2).getChild(0);
+                        child.setChild(2, simplifyExprArith(byExpr,
+                                true, false)); // ForOp
+                    }
+                    child.setChild(3, simplifyExprArith(child.getChild(3),
+                            true, false));
+                    child.setChild(4, simplifyCode(child.getChild(4)));
+                    break;
                 default:
                     throw new ImpCompiloException("Unkown instruction " +
                             child.getValue() + " when simplifying instructions");
