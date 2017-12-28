@@ -68,6 +68,9 @@ public class CodeGenerator {
                 case "<Print>":
                     instructions += generatePrint(child);
                     break;
+                case "<Read>":
+                    instructions += generateRead(child);
+                    break;
                 case "<If>":
                     instructions += generateIf(child);
                     break;
@@ -169,28 +172,28 @@ public class CodeGenerator {
 
         switch (value) {
             case "=":
-                instruction += "%" + instructionCount + " = icmp  eq i32 "
+                instruction += "%" + instructionCount + " = icmp eq i32 "
                         + left + ", " + right;
                 break;
             case "<>":
 
-                instruction += "%" + instructionCount + " = icmp  neq i32 "
+                instruction += "%" + instructionCount + " = icmp ne i32 "
                         + left + ", " + right;
                 break;
             case ">":
-                instruction += "%" + instructionCount + " = icmp  sgt i32 "
+                instruction += "%" + instructionCount + " = icmp sgt i32 "
                         + left + ", " + right;
                 break;
             case ">=":
-                instruction += "%" + instructionCount + " = icmp  sge i32 "
+                instruction += "%" + instructionCount + " = icmp sge i32 "
                         + left + ", " + right;
                 break;
             case "<":
-                instruction += "%" + instructionCount + " = icmp  slt i32 "
+                instruction += "%" + instructionCount + " = icmp slt i32 "
                         + left + ", " + right;
                 break;
             case "<=":
-                instruction += "%" + instructionCount + " = icmp  sle i32 "
+                instruction += "%" + instructionCount + " = icmp sle i32 "
                         + left + ", " + right;
                 break;
             default:
@@ -266,6 +269,22 @@ public class CodeGenerator {
         return instructions;
     }
 
+    public String generateRead(TreeNode readNode) {
+        log.info("Generating LLVM for <Read>");
+        String varName = readNode.getChild(0).getConcreteValue();
+        String instructions = "";
+        instructions += "%" + instructionCount +
+                " = call i32 @readInt()" + "\n";
+        instructionCount++;
+        if (!allocaVars.containsKey(varName)) {
+            instructions += "%" + varName + " = alloca i32\n";
+            allocaVars.put(varName, true);
+        }
+        instructions += "store i32 %" + (instructionCount - 1)
+                + ", i32* %" + varName + "\n";
+        return instructions;
+    }
+
     public String generateIf(TreeNode ifNode) {
         log.info("Generating LLVM for <If>");
         ifCount++;
@@ -273,13 +292,19 @@ public class CodeGenerator {
         int localIfCount = ifCount;
         String ifTrue = "iftrue" + localIfCount;
         String ifFalse = "iffalse" + localIfCount;
+        String ifContinue = "ifcontinue" + localIfCount;
         instructions += generateCond(ifNode.getChild(0));
         instructions += "br i1 %" + (instructionCount - 1) + "," +
                 " label %" + ifTrue + ", label %" + ifFalse + "\n";
         instructions += ifTrue + ":\n";
-        instructions += generateCode(ifNode.getChild(1));
+        instructions += generateCode(ifNode.getChild(1), false);
+        // jump to ifContinue
+        instructions += "br label %" + ifContinue + "\n";
         instructions += ifFalse + ":\n";
-        instructions += generateCode(ifNode.getChild(2));
+        // jump to ifContinue
+        instructions += "br label %" + ifContinue + "\n";
+        instructions += generateCode(ifNode.getChild(2), false);
+        instructions += ifContinue + ":\n";
         return instructions;
     }
 

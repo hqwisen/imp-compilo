@@ -12,7 +12,7 @@ begin
     b := 1;
     print(a);
     read(b)*)
-    a := 0;
+    a := -1;
 
     for b from a + 2 by a + 2 to 10 do
         print(b);
