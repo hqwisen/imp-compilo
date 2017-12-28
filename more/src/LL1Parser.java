@@ -571,8 +571,10 @@ public class LL1Parser {
         TreeNode child = atomNode.getChild(0);
         switch (child.getValue()) {
             case "-":
-                // TODO implemented -<Atom>
-                throw new ImpCompiloException("Not implemented: -<Atom>");
+                TreeNode result = new TreeNode("-");
+                result.addChild("0");
+                result.addChild(simplifyAtomOfExpr(atomNode.getChild(1)));
+                return result;
             case "<ExprArith>":
                 return simplifyExprArith(child, true, false);
             default:
@@ -755,9 +757,9 @@ public class LL1Parser {
                 case "<For>":
                     child.setChild(1, simplifyExprArith(child.getChild(1),
                             true, false));
-                    if(child.numberOfChildren() == 4){ // no by
+                    if (child.numberOfChildren() == 4) { // no by
                         child.addChild(2, new TreeNode("1")); // by 1
-                    }else{
+                    } else {
                         TreeNode byExpr = child.getChild(2).getChild(0);
                         child.setChild(2, simplifyExprArith(byExpr,
                                 true, false)); // ForOp

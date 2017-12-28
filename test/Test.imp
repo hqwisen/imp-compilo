@@ -1,11 +1,11 @@
 (* This is an useless comment *)
 begin
-    x := -2 - 1;
+    x := -(2 - 1);
     for i from 0 by 1 to 10 do
         x := x + 2
     done;
     print(x);
-    if not x = 10 then
-    endif;
-    print(x)
+    read(y);
+    z := x + y;
+    print(z)
 end
