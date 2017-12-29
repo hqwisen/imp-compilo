@@ -1,0 +1,130 @@
+\documentclass[letterpaper]{article}
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=3.5cm]{geometry}
+\usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{graphicx}%images
+\usepackage{fancyhdr}%for headers and footers
+\usepackage{adjustbox}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{mathpazo}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{csvsimple}
+\usepackage{filecontents}
+\usepackage{lscape}
+\usepackage{afterpage}
+\usepackage{hyperref}
+\usepackage{inconsolata}
+\usepackage{color}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  basicstyle=\ttfamily,
+  moredelim=[il][\textcolor{pgrey}]{$ $},
+  moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
+
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+
+% ------ HEADERS AND FOOTERS -----------
+% \lhead{INFO-F403}
+% \rhead{Project Report - Part 1}
+%\pagestyle{fancy}
+% \rfoot{\thepage}
+%\cfoot{}
+%\lfoot{Academic Year 2017-18}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} %newcommand for cover page
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+
+
+\textsc{\LARGE universit\'e libre de bruxelles}\\[1.0cm]
+\textsc{\Large D\'epartment d'Informatique}\\[1.5cm]
+
+% Upper part of the page. The '~' is needed because \\
+% only works if a paragraph has started.
+\includegraphics[width=0.3\textwidth]{image/ulblogo.jpg}~\\[1cm]
+
+\textsc{
+\large INFO-F403 \\
+\Large  Introduction to language theory and compiling
+ \\[1cm]}
+% Title
+\HRule \\[0.7cm]
+
+{ \huge \bfseries Project Report – Part 3  \\[0.7cm] }
+
+\HRule \\[2cm]
+
+% Author and supervisor
+\noindent
+\begin{center} \large
+
+\emph{Author:}\\
+\Large Hakim \textsc{Boulahya}\\
+\end{center}
+\begin{center} \large
+
+% \emph{Professor:} \\
+% Gilles \textsc{Geeraerts}\\
+
+\end{center}
+
+\vfill
+
+% Bottom of the page
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\paragraph{}
+
+As part of the course of \textit{Introduction to Language theory and Compiling}
+we were asked to
+write a compiler of the IMP language. The goal of the third part of the
+project was to implement the \textit{code generatar}.
+\section{Conclusion}
+
+\paragraph{}
+
+
+\end{document}

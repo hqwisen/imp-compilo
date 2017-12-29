@@ -22,7 +22,7 @@ public class ImpCompilo {
 
     static {
         log = Logger.getLogger("ImpCompilo Log");
-        log.setLevel(Level.FINE);
+        log.setLevel(Level.OFF);
     }
 
     /**
@@ -72,10 +72,8 @@ public class ImpCompilo {
         } catch (ImpCompiloException e) {
             ImpCompilo.error(e);
         }
-        //parser.printDerivationTree();
-        //parser.printDerivationTree();
         TreeNode ast = parser.getAST();
-        ast.print();
+        ast.logPrint();
         CodeGenerator generator = new CodeGenerator(ast);
         generator.generate();
 

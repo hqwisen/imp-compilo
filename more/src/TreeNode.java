@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Class inspired from:
@@ -14,6 +15,7 @@ public class TreeNode {
     public TreeNode(String value) {
         this(value, new ArrayList<>());
     }
+
     public TreeNode(String value, String concreteValue) {
         this(value);
         this.concreteValue = concreteValue;
@@ -29,12 +31,13 @@ public class TreeNode {
         TreeNode child = new TreeNode(value, concreteValue);
         return addChild(child);
     }
+
     public TreeNode addChild(String value) {
         TreeNode child = new TreeNode(value);
         return addChild(child);
     }
 
-    public TreeNode addChild(TreeNode child){
+    public TreeNode addChild(TreeNode child) {
         children.add(child);
         return child;
     }
@@ -70,9 +73,10 @@ public class TreeNode {
      * The child will not be epsilon, but a child pointing to epsilon.
      * This is implemented like this to follow the concept of the grammar,
      * that make a variable point to epsilon.
+     *
      * @param index
      */
-    public void setEmptyChild(int index){
+    public void setEmptyChild(int index) {
         TreeNode child = new TreeNode(LL1Parser.EPSILON);
         child.addChild(LL1Parser.EPSILON); // necessary, to allow LL1Parser.removeEpsilonNode
         setChild(index, child);
@@ -80,9 +84,10 @@ public class TreeNode {
 
     /**
      * set empty child where child is.
+     *
      * @param child child to replace by empty node.
      */
-    public void setEmptyChild(TreeNode child){
+    public void setEmptyChild(TreeNode child) {
         int childIndex = getChildren().indexOf(child);
         TreeNode newChild = new TreeNode(LL1Parser.EPSILON);
         newChild.addChild(LL1Parser.EPSILON); // necessary, to allow LL1Parser.removeEpsilonNode
@@ -95,7 +100,7 @@ public class TreeNode {
         setChild(index, newChild);
     }
 
-    public void setChild(int index, TreeNode child){
+    public void setChild(int index, TreeNode child) {
         children.set(index, child);
     }
 
@@ -150,10 +155,10 @@ public class TreeNode {
         String secondValue = secondNode.getValue();
         List<TreeNode> firstChildren = firstNode.getChildren();
         List<TreeNode> secondChildren = secondNode.getChildren();
-        if(firstChildren.contains(secondNode)){
+        if (firstChildren.contains(secondNode)) {
             firstNode.setEmptyChild(secondNode);
         }
-        if (secondChildren.contains(firstNode)){
+        if (secondChildren.contains(firstNode)) {
             secondNode.setEmptyChild(firstNode);
         }
         firstNode.setChildren(secondChildren);
@@ -169,4 +174,11 @@ public class TreeNode {
     public void addChildAsValue(TreeNode child) {
         addChild(child.getValue());
     }
+
+    public void logPrint() {
+        if (ImpCompilo.log.isLoggable(Level.INFO)) {
+            print();
+        }
+    }
+
 }

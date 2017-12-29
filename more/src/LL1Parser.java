@@ -548,25 +548,6 @@ public class LL1Parser {
         }
     }
 
-    private boolean isExprPrime(TreeNode node) {
-        // FIXME avoid hardcoding exprprime
-        List<String> values = new ArrayList<>();
-        values.add("<ExprArithPrime>");
-        values.add("<ExprProdPrime>");
-        boolean result = values.contains(node.getValue());
-        log.info("IsExprPrime " + node.getValue() + ": " + result);
-        return result;
-    }
-
-    //    private boolean isUselessVariables(TreeNode node) {
-//        // FIXME avoid hardcoding exprprime
-//        List<String> values = new ArrayList<>();
-//        values.add("<InstListSeq>");
-//        values.add("<InstList>");
-//        boolean result = values.contains(node.getValue());
-//        return result;
-//    }
-
     private TreeNode simplifyAtomOfExpr(TreeNode atomNode) {
         TreeNode child = atomNode.getChild(0);
         switch (child.getValue()) {
@@ -777,17 +758,14 @@ public class LL1Parser {
     }
 
     public void buildAST() {
+        if(derivationTree.numberOfChildren() == 0){
+            return;
+        }
         removeEpsilonNodes(derivationTree);
         removeInformativeTerminals(derivationTree);
-        // FIXME WHAT IF derivation tree is empty ?
         derivationTree = derivationTree.getChild(0); // No need of StartSymbol
-        System.err.println("######  BEFORE #######");
-        derivationTree.print();
-        System.err.println("######### AFTER CODE/INSTR. ##########");
         derivationTree = simplifyCode(derivationTree);
-        derivationTree.print();
         AST = derivationTree;
-
     }
 
     public TreeNode getAST() {
