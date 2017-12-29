@@ -22,7 +22,7 @@ public class ImpCompilo {
 
     static {
         log = Logger.getLogger("ImpCompilo Log");
-        log.setLevel(Level.OFF);
+        log.setLevel(Level.FINE);
     }
 
     /**
@@ -73,9 +73,11 @@ public class ImpCompilo {
             ImpCompilo.error(e);
         }
         TreeNode ast = parser.getAST();
-        ast.logPrint();
-        CodeGenerator generator = new CodeGenerator(ast);
-        generator.generate();
+        if(ast != null){
+            ast.logPrint();
+            CodeGenerator generator = new CodeGenerator(ast);
+            generator.generate();
+        }
 
     }
 }

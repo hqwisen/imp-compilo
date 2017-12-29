@@ -758,11 +758,11 @@ public class LL1Parser {
     }
 
     public void buildAST() {
+        removeEpsilonNodes(derivationTree);
+        removeInformativeTerminals(derivationTree);
         if(derivationTree.numberOfChildren() == 0){
             return;
         }
-        removeEpsilonNodes(derivationTree);
-        removeInformativeTerminals(derivationTree);
         derivationTree = derivationTree.getChild(0); // No need of StartSymbol
         derivationTree = simplifyCode(derivationTree);
         AST = derivationTree;

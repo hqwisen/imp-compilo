@@ -1,11 +1,32 @@
 (* This is an useless comment *)
+(*
 begin
     x := -(2 - 1);
+    x := (1 + 2) * 5 / 1;
+    print(x);
+    read(c);
     for i from 0 by 1 to 10 do
         x := x + 2
     done;
     print(x);
     read(y);
     z := x + y;
-    print(z)
+    print(z);
+
+    if x <> 1 and x < 10 or z = 1 then
+        print(x)
+    else
+        print(z)
+    endif;
+    while i <= 10 do
+        print(x);
+        x := 1
+    done
 end
+*)
+        begin
+    for i from 0 by 1 to 10 do
+         x := x + 2
+     done
+             end
+

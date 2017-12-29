@@ -301,9 +301,9 @@ public class CodeGenerator {
         // jump to ifContinue
         instructions += "br label %" + ifContinue + "\n";
         instructions += ifFalse + ":\n";
+        instructions += generateCode(ifNode.getChild(2), false);
         // jump to ifContinue
         instructions += "br label %" + ifContinue + "\n";
-        instructions += generateCode(ifNode.getChild(2), false);
         instructions += ifContinue + ":\n";
         return instructions;
     }
