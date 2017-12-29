@@ -11,6 +11,7 @@ Tested with Java 9 (JDK) and JFlex 1.6.1.
 ```bash
 java -jar dist/scanner.jar <input>
 java -jar dist/parser.jar <input>
+java -jar dist/compiler.jar <input>
 ```
 
 ## How to **gradle**
@@ -18,8 +19,9 @@ java -jar dist/parser.jar <input>
 Run the scanner or parser
 
 ```bash
-gradle scanner -Pinput=<input>
-gradle parser  -Pinput=<input>
+gradle scanner  -Pinput=<input>
+gradle parser   -Pinput=<input>
+gradle compiler -Pinput=<input>
 ```
 
 Generate **more/src/GeneratedScanner.java** from LexicalAnalyzer.flex
@@ -28,11 +30,12 @@ Generate **more/src/GeneratedScanner.java** from LexicalAnalyzer.flex
 gradle generateScanner
 ```
 
-Generate jar **dist/scanner.jar** or **dist/parser.jar**
+Generate jar **dist/scanner.jar** or **dist/parser.jar** or **dist/compiler.jar**
 
 ```bash
 gradle generateScannerJar
 gradle generateParserJar
+gradle generateCompilerJar
 ```
 
 Generate JavaDoc in **doc/javadoc**
