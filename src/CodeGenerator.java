@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,10 +31,12 @@ public class CodeGenerator {
     public String buildInit() {
         String result = "";
         try {
-            List<String> lines = Files.readAllLines(Paths.get("more/src/init.ll"),
-                    Charset.defaultCharset());
-            for (String line : lines) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    this.getClass().getResourceAsStream("init.ll")));
+            String line = br.readLine();
+            while (line != null) {
                 result += line + "\n";
+                line = br.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();

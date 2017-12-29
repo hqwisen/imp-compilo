@@ -29,31 +29,48 @@ declare i32 @printf(i8*, ...)
 
 ; Generated LL below
 define void @main(){
-	; T(<For>)loopCount=1
-	%1 = add i32 0, 0
-	%i = alloca i32
-	store i32 %1, i32* %i
-	%2 = add i32 0, 10
-	%3 = load i32, i32* %i
-	%4 = icmp  slt i32 %3, %2
-	br i1 %4, label %beginLoop1, label %endLoop1
-	beginLoop1:
 	; T(<Assign>)
-	%5 = load i32, i32* %x
-	%6 = add i32 0, %5
-	%7 = add i32 0, 2
-	%8 = add i32 %6, %7
+	%1 = add i32 0, 7
 	%x = alloca i32
-	store i32 %8, i32* %x
+	store i32 %1, i32* %x
+	call void @println(i32* %x)
+	%2 = call i32 @readInt()
+	%b = alloca i32
+	store i32 %2, i32* %b
+	; T(<Assign>)
+	%3 = load i32, i32* %b
+	%4 = add i32 0, %3
+	%5 = add i32 0, 1
+	%6 = load i32, i32* %x
+	%7 = add i32 0, %6
+	%8 = add i32 %5, %7
+	%9 = add i32 %4, %8
+	%c = alloca i32
+	store i32 %9, i32* %c
+	call void @println(i32* %b)
+	call void @println(i32* %c)
+	; T(<Assign>)
+	%10 = add i32 0, 0
+	%a = alloca i32
+	store i32 %10, i32* %a
+	; T(<While>)loopCount=1
+	%11 = load i32, i32* %a
+	%12 = icmp sle i32 %11, 12
+	br i1 %12, label %beginLoop1, label %endLoop1
+	beginLoop1:
+	call void @println(i32* %a)
+	; T(<Assign>)
+	%13 = load i32, i32* %a
+	%14 = add i32 0, %13
+	%15 = add i32 0, 2
+	%16 = add i32 0, 1
+	%17 = mul i32 %15, %16
+	%18 = add i32 %14, %17
+	store i32 %18, i32* %a
 	
-	%9 = add i32 0, 1
-	%10 = load i32, i32* %i
-	%11 = add i32 %10, %9
-	store i32 %11, i32* %i
-	%12 = add i32 0, 10
-	%13 = load i32, i32* %i
-	%14 = icmp  slt i32 %13, %12
-	br i1 %14, label %beginLoop1, label %endLoop1
+	%19 = load i32, i32* %a
+	%20 = icmp sle i32 %19, 12
+	br i1 %20, label %beginLoop1, label %endLoop1
 	endLoop1:
 	
 	ret void

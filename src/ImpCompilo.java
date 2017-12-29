@@ -22,7 +22,7 @@ public class ImpCompilo {
 
     static {
         log = Logger.getLogger("ImpCompilo Log");
-        log.setLevel(Level.FINE);
+        log.setLevel(Level.OFF);
     }
 
     /**

@@ -1,0 +1,13 @@
+begin
+	x := 7;
+	print(x);
+	read(b);
+	c := b + 1 + x;
+	print(b);
+	print(c);
+	a := 0;
+	while a <= 12 do
+   		print(a);
+		a := a + 2 * 1
+	done
+end

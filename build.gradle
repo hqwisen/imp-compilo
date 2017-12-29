@@ -10,10 +10,10 @@ mainClassName = 'ImpCompilo'
 sourceSets {
     main {
         java {
-            srcDir 'more/src'
+            srcDir 'src'
         }
         resources {
-            srcDir 'more/src/resources'
+            srcDir 'src/resources'
         }
     }
     test {
@@ -72,7 +72,7 @@ task compilerJar(type: Jar) {
 task generateScanner {
     javaexec {
         main = '-jar';
-        args = ['dist/lib/jflex.jar', 'more/src/LexicalAnalyzer.flex']
+        args = ['dist/lib/jflex.jar', 'src/LexicalAnalyzer.flex']
     }
 }
 
