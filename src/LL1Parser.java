@@ -1,5 +1,3 @@
-import sun.reflect.generics.tree.Tree;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -491,6 +489,11 @@ public class LL1Parser {
         derivationTree.print();
     }
 
+    /**
+     * Remove the informative terminals i.e. the token that
+     * are used only for the syntax, therefore useless for semantics.
+     * @param tree
+     */
     private void removeInformativeTerminals(TreeNode tree) {
         for (Iterator<TreeNode> iter = tree.getChildren().listIterator(); iter.hasNext(); ) {
             TreeNode child = iter.next();
@@ -525,7 +528,7 @@ public class LL1Parser {
     }
 
     /**
-     * All child of code are instructions (assign, if etc)
+     * Convert an Code node in AST Format.
      *
      * @param codeNode
      */
@@ -548,6 +551,11 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * Convert Atom in AST format.
+     * @param atomNode
+     * @return
+     */
     private TreeNode simplifyAtomOfExpr(TreeNode atomNode) {
         TreeNode child = atomNode.getChild(0);
         switch (child.getValue()) {
@@ -582,6 +590,11 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * Convert AtomCond in AST format.
+     * @param atomNode
+     * @return
+     */
     private TreeNode simplifyAtomOfCond(TreeNode atomNode) {
         TreeNode newNode = new TreeNode(atomNode.getValue());
         boolean not = false;
@@ -609,6 +622,13 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * Convert ExprProdPrime in AST format.
+     * @param exprProdPrime
+     * @param leftChild
+     * @param isCond
+     * @return
+     */
     private TreeNode simplifyExprProdPrime(TreeNode exprProdPrime,
                                            TreeNode leftChild, boolean isCond) {
         TreeNode newNode;
@@ -634,6 +654,12 @@ public class LL1Parser {
         return newNode;
     }
 
+    /**
+     * Convert ExprProd in AST format.
+     * @param exprProd
+     * @param isCond
+     * @return
+     */
     private TreeNode simplifyExprProd(TreeNode exprProd, boolean isCond) {
         TreeNode atom = simplifyAtom(exprProd.getChild(0), isCond);
         if (exprProd.numberOfChildren() == 2) { // has ExprProdPrime
@@ -644,6 +670,16 @@ public class LL1Parser {
         }
     }
 
+    /**
+     * Convert <ExprArith> in AST format.
+     * The isPrime parameter is only used to choose
+     * if the root node must be an operator or ExprArith
+     * @param exprArith
+     * @param isPrime
+     * @param isCond Cond follow the same structure, therefore the transormation
+     *               is more or less the same, except for the operators.
+     * @return
+     */
     private TreeNode simplifyExprArith(TreeNode exprArith, boolean isPrime,
                                        boolean isCond) {
         // First.first child is ExprProd.Atom and always exist
@@ -687,6 +723,10 @@ public class LL1Parser {
         return newExpr;
     }
 
+    /**
+     * Convert Code children i.e. instructions in AST format.
+     * @param codeNode
+     */
     public void simplifyInstructions(TreeNode codeNode) {
         TreeNode newChild;
         List<TreeNode> newChildren = new ArrayList<>();
@@ -757,6 +797,9 @@ public class LL1Parser {
         removeEpsilonNodes(codeNode);
     }
 
+    /**
+     * Build the Abstract Syntax Tree and stores it in AST.
+     */
     public void buildAST() {
         removeEpsilonNodes(derivationTree);
         removeInformativeTerminals(derivationTree);

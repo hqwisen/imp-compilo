@@ -121,16 +121,22 @@
 As part of the course of \textit{Introduction to Language theory and Compiling}
 we were asked to
 write a compiler of the IMP language. The goal of the third part of the
-project was to implement the \textit{code generatar}.
+project was to implement the \textit{code generator}. The code is
+generated using the tree from the parser implemented in the previous part.
+The parser was modified to produce an abstract syntax tree, to ease the
+code generation. The generation consists into transforming an IMP source file
+into LLVM IR code.
 
 \section{Parser Improvements}
+
+\label{simplify}
 
 \paragraph{}
 
 To make the code generation easier to implement, the parser was modified
 to produce an AST (abstract syntax tree).
 
-To do so, some modification were make on the parser of part 2. The
+To do so, some modification were made on the parser of part 2. The
 derivation tree is constructed during the parsing \textit{i.e.} using
 the stack implementation. The AST a post-process function, that modify
 the derivation tree. The method \texttt{LL1Parser.buildAST()} simplifies
@@ -140,8 +146,8 @@ To simplify the derivation tree to an AST, \textit{simplifying} methods
 has been implemented in \texttt{LL1Parser}. The resulitng
 format of the AST are shown in the Figures below.
 The trees
-must be read from to bottom \textit{i.e.} the topmost
-node is considered as the leftmost node.
+must be read from top to bottom \textit{i.e.} the topmost
+node is the leftmost child.
 
 
 \begin{figure}[H]
@@ -265,7 +271,16 @@ The code generation consists in transforming the resulting AST into
 LLVM IR code. The implementation of the code generation is in the
 classe \texttt{CodeGenerator}. The initial AST is a code node \textit{i.e.}
 an AST with children that represent each an instruction. Each type of
-instruction are converted into specific instructions. Those following
+instruction are converted into specific instructions. The method
+\texttt{CodeGenerator.generate()} will output in stdout the generared LLVM
+IR code of the AST. It will also contains at the beginning of the output
+the functions println and readInt that are in the file
+ \textit{src/resources/init.ll}.
+
+\paragraph{}
+
+
+Those following
 decisions were made when generating the LLVM IR:
 
 \begin{itemize}
@@ -446,5 +461,71 @@ LLVM IR:
     \caption{If example. Note that the jump to the ifcontinue label must
     also be done in the else scope \textit{i.e.} in the iffalse label.}
 \end{figure}
+
+\section{Project details}
+
+\subsection{Project files}
+
+\paragraph{Files} Java source files are in \textbf{src/} directory.
+The implementation of our compiler is divided in 4 parts:
+\begin{enumerate}
+    \item Files that composes the scanner: \texttt{Scanner.java} abstract
+    class and the \texttt{LexicalAnalyzer.lex} that is used to generate
+    the \texttt{GeneratedScanner.java} class, and
+    the provided \texttt{Symbol.java} and \texttt{LexicalUnit.java} classes.
+    \item Files that composes the parser: \texttt{LL1Parser.java}
+    and the \texttt{TreeNode.java}, that is used to generate and print
+    the derivation tree, classes. \texttt{LL1Parser.java} is also
+    used to generate the AST, that is used in the code generator.
+    \item Utilities methods in \texttt{ImpCompilo.java} classes
+    used by the scanner and the parser to read
+    files, log informations or exit safely the compiler. The
+    \texttt{ImpCompilo.java} is the main class used to run the
+    compiler. The class \texttt{CodeGenerator.java} is used by
+    the main class to output the LLVM IR code.
+    \item A set of exceptions to be thrown by the scanner/parser.
+\end{enumerate}
+
+\paragraph{Javadoc} The JavaDoc is available in \textbf{doc/javadoc}.
+The documentation for \texttt{Scanner.java} is \textbf{Scanner.html},
+this document the scanner of part 1.
+The documentation for the parser
+\texttt{LL1Parser.java} is in
+\textbf{LL1Parser.html}, including simplifying methods explain in
+section \ref{simplify}. Those methods are not easy to read, but their
+goals is only to convert the derivation tree into AST as shown in Figures
+from section \ref{simplify}. There is no javadoc for \texttt{CodeGenerator},
+the methods are self-explanatory and only generate LLVM IR from AST
+nodes.
+
+\subsection{How to run}
+
+\label{howto}
+
+\paragraph{}
+
+\begin{itemize}
+    \item To run the compiler use the following command:
+    \begin{lstlisting}
+        java -jar dist/part3.jar file.imp
+    \end{lstlisting}
+    This command will output the LLVM IR code in stdout.
+    \item It is still possible to run the scanner/parser
+    as a standalone applications:
+    \begin{lstlisting}
+        java -jar dist/{scanner, parser}.jar file.imp
+    \end{lstlisting}
+\end{itemize}
+
+\section{Conclusion}
+
+\paragraph{}
+
+The code generation part provide a way to compile the IMP source file
+into machine code. By using an abstract syntax tree, the code generation
+was easier to implement compare to using the rules or the parse tree.
+The compiler provide an executable file
+of an IMP source file, which is the main purpose of this compiler.
+
 
 \end{document}
